@@ -19,4 +19,17 @@ First, read the already mentioned READMEs for both parts. Roughly, you need to
 
 **Note:** Extensive online help (in German language) is provided in the AS/400 part. Please read the initial help text in the main menu (by pressing `F1`) to get started quickly.
 
+## Acknowledgements.
+A huge thank you goes to [Mathias Peter IT-Systemhaus](https://www.mathpeter.com), my current employer who allowed me to spend part of my work time on this project.
+
+We agreed on this "light" version of the application to be released as OpenSource, and a non-public, more complete version for our internal use, featuring:
+- customer numbers,
+- further device flags,
+- update audit trails when doing a "maintenance run",
+- and more.
+
+Contact me if you're interested. This version will be available for a fee.
+
+**Note:** Currently, the internal version is still in development stage and not yet ready for external deployment.
+
 2023-11-27 poc@pocnet.net
