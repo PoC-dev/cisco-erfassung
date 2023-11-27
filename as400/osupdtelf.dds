@@ -1,0 +1,55 @@
+     A* This file is part of cisco-erfassung, an application conglomerate for
+     A*  management of Cisco devices on AS/400, i5/OS and IBM i.
+     A*
+     A* This is free software; you can redistribute it and/or modify it
+     A*  under the terms of the GNU General Public License as published by the
+     A*  Free Software Foundation; either version 2 of the License, or (at your
+     A*  option) any later version.
+     A*
+     A* It is distributed in the hope that it will be useful, but WITHOUT
+     A*  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+     A*  FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+     A*  for more details.
+     A*
+     A* You should have received a copy of the GNU General Public License along
+     A*  with it; if not, write to the Free Software Foundation, Inc., 59
+     A*  Temple Place, Suite 330, Boston, MA 02111-1307 USA or get it at
+     A*  http://www.gnu.org/licenses/gpl.html
+     A*
+     A* Globals ----------------------------------------------------------------
+     A                                      DYNSLT
+     A* Record Format Name -----------------------------------------------------
+     A          R UPDATES                   JFILE(DCAPF HSTPF OSMATCHPF)
+     A          J                           JOIN(DCAPF HSTPF)
+     A                                      JFLD(HOSTNAME HOSTNAME)
+     A          J                           JOIN(DCAPF OSMATCHPF)
+     A                                      JFLD(FLASH FLASH)
+     A                                      JFLD(MODEL MODEL)
+     A                                      JFLD(RAM RAM)
+     A* Data fields ------------------------------------------------------------
+     A            HOSTNAME                  JREF(1)
+     A            UPD_IGN                   JREF(2)
+     A            VERS_IST                  JREF(1) RENAME(VERSION)
+     A            VERS_SOLL                 JREF(3) RENAME(VERSION)
+     A            FLASH_IST                 JREF(1) RENAME(FLASH)
+     A            FLASH_SOLL                JREF(3) RENAME(FLASH)
+     A            MODEL_IST                 JREF(1) RENAME(MODEL)
+     A            MODEL_SOLL                JREF(3) RENAME(MODEL)
+     A            RAM_IST                   JREF(1) RENAME(RAM)
+     A            RAM_SOLL                  JREF(3) RENAME(RAM)
+     A* Key field(s) -----------------------------------------------------------
+     A* Beware, key fields are required to be in the first referenced JFILE!
+     A          K MODEL_IST
+     A          K VERS_IST
+     A          K FLASH_IST
+     A          K RAM_IST
+     A          K HOSTNAME
+     A* Select/Omit ------------------------------------------------------------
+     A          O UPD_IGN                   COMP(EQ 1)
+     A          O VERS_IST                  COMP(EQ VERS_SOLL)
+     A          S FLASH_IST                 COMP(EQ FLASH_SOLL)
+     A          S MODEL_IST                 COMP(EQ MODEL_SOLL)
+     A          S RAM_IST                   COMP(EQ RAM_SOLL)
+     A          O                           ALL
+     A* For vim ----------------------------------------------------------------
+     A* vim: syntax=dds colorcolumn=81 autoindent noignorecase

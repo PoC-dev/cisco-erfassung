@@ -1,0 +1,313 @@
+.* This file is part of cisco-erfassung, an application conglomerate for
+.*  management of Cisco devices on AS/400, i5/OS and IBM i.
+.*
+.* This is free software; you can redistribute it and/or modify it under the
+.*  terms of the GNU General Public License as published by the Free Software
+.*  Foundation; either version 2 of the License, or (at your option) any later
+.*  version.
+.*
+.* It is distributed in the hope that it will be useful, but WITHOUT ANY
+.*  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+.*  FOR PARTICULAR PURPOSE. See the GNU General Public License for more details.
+.*
+.* You should have received a copy of the GNU General Public License along with
+.*  it; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
+.*  Suite 330, Boston, MA 02111-1307 USA or get it at
+.*  http://www.gnu.org/licenses/gpl.html
+.*
+:PNLGRP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='GLOBAL'.Cisco-Wartungen: Erfasste Daten
+:P.Diese Applikation dient dazu, automatisch erfasste Daten (Details) zu einem
+ausgewählten Gerät anzuzeigen.
+:P.Die Informationen sind auf zwei Bildschirmseiten verteilt. Durch Drücken der
+Rollen-Tasten (Scroll) kann die jeweils andere Seite angezeigt werden.
+:P.Durch Drücken der Taste :HP1.F10=Vlan-Info:EHP1. wird ein Fenster mit
+Detailinformationen zur Vlan- bzw. VTP-Konfiguration des ausgewählten Geräts
+eingeblendet.
+:P.Die Cisco-Wartungsverwaltung ist eine Sammlung von Applikationen zur
+Verwaltung von Cisco- und auf Kommandozeilenebene kompatiblen Geräten. Eine
+Funktionsübersicht findet sich in der Hilfefunktion im Hauptmenü.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DCA/HOSTNAME'.Hostname
+:XH3.Hostname
+:P.Hier wird der Host- bzw. DNS-Name (FQDN, Fully Qualified Domain Name) des
+ausgwählten Gerätes angezeigt.
+:NOTE.Diese Information wird aus der zuvor angezeigten Auswahlliste übernommen.
+:ENOTE.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DCA/FKEYS'.Funktionstasten
+:XH3.Funktionstasten
+:PARML.
+:PT.F1=Hilfe
+:PD.Ruft die cursorpositionsabhängige Hilfefunktion auf.
+:PT.F3=Verlassen
+:PD.Beendet die momentan aufgerufene Funktion und kehrt zur vorherigen Anzeige
+zurück.
+:PT.F10=Vlan-Info
+:PD.Blendet ein Fenster mit Informationen zur Vlan-Konfiguration des angezeigten
+Gerätes ein.
+:PT.F12=Abbrechen
+:PD.Beendet die momentan aufgerufene Funktion und kehrt zur vorherigen Anzeige
+zurück.
+:EPARML.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DCA1/SERVTYP'.Hosttyp
+:XH3.Hosttyp
+:P.Hier wird der konfigurierte Wert der Geräteklasse zur Erfassung angezeigt.
+:P.Nähere Informationen finden sich in der Hilfe zur :LINK
+PERFORM='DSPHELP DFIELD/SERVTYP HSTHP'.Stammdatenkonfiguration: Typ.:ELINK.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DCA1/CONN'.Zugriffsmethode
+:XH3.Zugriffsmethode
+:P.Hier wird der konfigurierte Wert der Zugriffsmethode zur Erfassung angezeigt.
+:P.Nähere Informationen finden sich in der Hilfe zur :LINK
+PERFORM='DSPHELP DFIELD/CONN HSTHP'.Stammdatenkonfiguration: Zugriffsmethode.
+:ELINK.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DCA1/USERNAME'.Benutzer
+:XH3.Benutzer
+:P.Hier wird der konfigurierte Benutzer für den Login zur zur Erfassung
+angezeigt.
+:P.Nähere Informationen finden sich in der Hilfe zur :LINK
+PERFORM='DSPHELP DFIELD/USERNAME HSTHP'.Stammdatenkonfiguration: Benutzer.
+:ELINK.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DCA1/PASSWD'.Passwort
+:XH3.Passwort
+:P.Hier wird das konfigurierte Passwort für den Login zur zur Erfassung
+angezeigt.
+:P.Nähere Informationen finden sich in der Hilfe zur :LINK
+PERFORM='DSPHELP DFIELD/PASSWD HSTHP'.Stammdatenkonfiguration: Password.:ELINK.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DCA1/ENABLE'.Enable-Secret
+:XH3.Enable-Secret
+:P.Hier wird das konfigurierte Enable-Secret nach dem Login zur zur Erfassung
+angezeigt.
+:P.Nähere Informationen finden sich in der Hilfe zur :LINK
+PERFORM='DSPHELP DFIELD/ENABLE HSTHP'.Stammdatenkonfiguration: Enable-Secret.
+:ELINK.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DCA1/DCA'.Automatische Erfassung
+:XH3.Automatische Erfassung
+:P.Hier wird der konfigurierte Wert für die Durchführung der automatischen
+Erfassung angezeigt.
+:P.Nähere Informationen finden sich in der Hilfe zur :LINK
+PERFORM='DSPHELP DFIELD/DCA HSTHP'.Stammdatenkonfiguration: Automatische
+Erfassung.:ELINK.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DCA1/UPD_IGN'.Ignoriere neues OS
+:XH3.Ignoriere neues OS
+:P.Hier wird der konfigurierte Wert zum Ignorieren einer neueren OS-Version
+angezeigt.
+:P.Nähere Informationen finden sich in der Hilfe zur :LINK
+PERFORM='DSPHELP DFIELD/UPD_IGN HSTHP'.Stammdatenkonfiguration: Ignoriere
+OS-Updates.:ELINK.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DCA1/ACU_IGN'.Ignoriere neuen Anyconnect
+:XH3.Ignoriere neuen Anyconnect
+:P.Hier wird der konfigurierte Wert zum Ignorieren einer neueren
+Anyconnect-Version angezeigt.
+:P.Nähere Informationen finden sich in der Hilfe zur :LINK
+PERFORM='DSPHELP DFIELD/ACU_IGN HSTHP'.Stammdatenkonfiguration: Ignoriere
+Anyconnect-Updates.:ELINK.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DCA1/COMMT'.Bemerkung
+:XH3.Bemerkung
+:P.Hier wird eine eventuell in den Stammdaten hinterlegte Bemerkung angezeigt.
+:P.Nähere Informationen finden sich in der Hilfe zur :LINK
+PERFORM='DSPHELP DFIELD/COMMT HSTHP'.Stammdatenkonfiguration: Bemerkung.:ELINK.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DCA1/STAMP'.Erfassungs-Zeitstempel
+:XH3.Erfassungs-Zeitstempel
+:P.Hier wird der Zeitpunkt der letzten erfolgreichen Erfassung angezeigt.
+:NOTE.Wenn der Zeitpunkt der letzten Erfassung länger als zwei Tage zurückliegt,
+wird eine Warnmeldung eingeblendet. Empfohlenerweise sollte das
+Erfassungs-Script daher mindestens alle zwei Tage, besser täglich laufen.:ENOTE.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DCA1/CFUPDDB'.Cfg-Änderungs-Zeitstempel
+:XH3.Cfg-Änderungs-Zeitstempel
+:P.Hier wird der Zeitpunkt der letzten Konfigurationsänderung angezeigt.
+:P.Eine Konfigurationsänderung wird festgestellt, indem das
+Versionskontrollsystem für die Konfigurationsablage auf Differenzen zur
+vorherigen Version ("commit") abgefragt wird. Gibt es Änderungen, wird dieser
+Zeitstempel aktualisiert.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DCA1/MORE'.Bedienhinweis: Weitere...
+:XH3.Bedienhinweis: Weitere...
+:P.Diese Ausgabe zeigt, dass mit der Taste RollUp bzw. ScrollDown eine weitere
+Bildschirmseite mit Informationen abgerufen werden kann.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DCA2/MODEL'.Modell
+:XH3.Modell
+:P.Hier wird die gemäß Show Version ausgegebene Modellbezeichnung angezeigt.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DCA2/RAM'.RAM
+:XH3.RAM
+:P.Hier wird die gemäß Show Version ausgegebene Menge an Arbeitsspeicher
+angezeigt.
+:NOTE.Bei neueren Geräten ist dieser Wert nicht zwingend gleich der physikalisch
+verbauten Menge an Speicher.:ENOTE.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DCA2/FLASH'.Flash
+:XH3.Flash
+:P.Hier wird die gemäß Show-Befehlen ausgegebene Menge an Flash-Speicher
+angezeigt.
+:P.Dieser dient primär zur Ablage des Betriebssystem-Images, aber auch weiterer
+Komponenten, wie ASDM, Anyconnect, VLAN-Datenbank, usw.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DCA2/SERNO'.Seriennummer
+:XH3.Seriennummer
+:P.Hier wird die gemäß Show Version ausgegebene Seriennummer angezeigt.
+:NOTE.Bei ASAs wird hier die tatsächliche Chassis-Seriennummer angezeigt und
+nicht die virtuelle Seriennummer. Erstere wird für Wartungsverträge benötigt,
+letztere für Software-Erweiterungen (Lizenzerweiterungen). Die Cisco-Erfassung
+erfasst letztere nicht, diese wird zweckmäßigerweise auf dem Gerät selbst mit
+Show Version in Erfahrung gebracht.:ENOTE.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DCA2/VERSION'.Version
+:XH3.Version
+:P.Hier wird die gemäß Show Version ausgegebene Betriebssystemversion angezeigt.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DCA2/ASA_DM_VER'.ASDM-Version
+:XH3.ASDM-Version
+:P.Hier wird die gemäß Show Version ausgegebene ASDM-Version angezeigt.
+:NOTE.ASDM wird nur auf Cisco ASA unterstützt und daher auch nur für diese
+Plattform angezeigt.:ENOTE.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DCA2/SYSIMG'.OS-Image
+:XH3.OS-Image
+:P.Hier wird das gemäß Show Version ausgegebene aktive Betriebssystem-Image
+angezeigt (Dateiname, ggfs. Pfad).
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DCA2/RLDREASON'.Reload Reason
+:XH3.Reload Reason
+:P.Hier wird der gemäß Show Version ausgegebene Grund des letzten Reloads
+angezeigt.
+:NOTE.Nicht alle Geräte unterstützen diese Ausgabe.:ENOTE.
+:P.Sollte in der Ausgabe eines der Worte "error", "Critical" oder "fault"
+vorkommen, wird die Ausgabe in roter Farbe zur Hervorhebung dargestellt.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DCA2/UPTIME'.Uptime
+:XH3.Uptime
+:P.Hier wird die gemäß Show Version ausgegebene Uptime angezeigt.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DCA2/CONFREG'.Config-Register
+:XH3.Config-Register
+:P.Hier wird die gemäß Show Version ausgegebene Config-Register Angabe
+angezeigt.
+:P.Dieser Wert kodiert Bootflags, z. B. für Router:
+:UL.
+:LI.0x2102: Normaler Start
+:LI.0x2142: Ignoriere Konfiguration beim Start
+:EUL.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DCA2/ASA_FOVER'.Failover-Warnung
+:XH3.Failover-Warnung
+:P.Falls das aktuell ausgewählte Gerät Teil eines Failover-Clusters ist, wird
+ein entsprechender Hinweis angezeigt.
+:NOTE.Dies gilt nur für Cisco ASA.:ENOTE.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DCA2/END'.Bedienhinweis: Ende
+:XH3.Bedienhinweis: Ende
+:P.Diese Ausgabe zeigt, dass mit der Taste RollDown bzw. ScrollUp die vorherige
+Bildschirmseite mit Informationen abgerufen werden kann.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='VLAN/VTPDOM'.VTP Domain
+:XH3.VTP Domain
+:P.Hier wird die gemäß Show VTP Status ausgebene VTP Domain angezeigt.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='VLAN/VTPMODE'.VTP Modus
+:XH3.VTP Modus
+:P.Hier wird der gemäß Show VTP Status ausgebene VTP Modus angezeigt. Mögliche
+Modi sind:
+:UL.
+:LI.Server
+:LI.Client
+:LI.Transparent
+:EUL.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='VLAN/VTPVERS'.VTP Version
+:XH3.VTP Version
+:P.Hier wird die gemäß Show VTP Status ausgebene aktive VTP Version angezeigt.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='VLAN/VTPPRUNE'.VTP Pruning
+:XH3.VTP Pruning
+:P.Hier wird der gemäß Show VTP Status ausgebene Pruning-Status angezeigt.
+:P.Normalerweise leitet ein Switch Broadcast- und Unicast-Traffic mit
+unbekannten MAC adressen an alle Ports weiter. Diese Frames werden daher auch
+über alle Trunkports gesendet. Mit aktiviertem VTP Pruning werden die genannten
+Frames nur noch an einen anderen Switch weitergeleitet, wenn dieser auch ein
+Interface in diesem VLAN hat.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='VLAN/VLAN'.Vlan ID
+:XH3.Vlan ID
+:P.Dies ist die numerische Vlan ID.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='VLAN/NAME'.Vlan Name
+:XH3.Vlan Name
+:P.Dies ist der textuelle Vlan Name.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='VLAN/SFLDTA'.Datenbereich
+:XH3.Datenbereich
+:P.Hier sind einige Datensätze aus der Gesamtheit aller vorhandenen Datensätze
+sichtbar.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='VLAN/SFLBTM'.Funktionstasten
+:XH3.Funktionstasten
+:PARML.
+:PT.F1=Hilfe
+:PD.Ruft die cursorpositionsabhängige Hilfefunktion auf.
+:PT.F3=Verlassen
+:PD.Beendet die momentan aufgerufene Funktion und kehrt zur vorherigen Anzeige
+zurück.
+:PT.F12=Abbrechen
+:PD.Beendet die momentan aufgerufene Funktion und kehrt zur vorherigen Anzeige
+zurück.
+:EPARML.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='VLAN/SFLND'.Keine Vlans gefunden
+:XH3.Keine Vlans gefunden
+:P.Diese Anzeige wird dann eingeblendet, wenn keine Datensätze für die
+Listendarstellung gefunden werden konnten.
+:P.Manche Geräte unterstützen keine Vlan-Datenbank, dann bleibt diese Anzeige
+leer.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:EPNLGRP.
+.* vim: ft=pnlgrp textwidth=80 colorcolumn=81

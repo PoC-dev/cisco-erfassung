@@ -1,0 +1,328 @@
+     A* This file is part of cisco-erfassung, an application conglomerate for
+     A*  management of Cisco devices on AS/400, i5/OS and IBM i.
+     A*
+     A* This is free software; you can redistribute it and/or modify it
+     A*  under the terms of the GNU General Public License as published by the
+     A*  Free Software Foundation; either version 2 of the License, or (at your
+     A*  option) any later version.
+     A*
+     A* It is distributed in the hope that it will be useful, but WITHOUT
+     A*  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+     A*  FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+     A*  for more details.
+     A*
+     A* You should have received a copy of the GNU General Public License along
+     A*  with it; if not, write to the Free Software Foundation, Inc., 59
+     A*  Temple Place, Suite 330, Boston, MA 02111-1307 USA or get it at
+     A*  http://www.gnu.org/licenses/gpl.html
+     A*
+     A* Globals ----------------------------------------------------------------
+     A                                      REF(DCAPF)
+     A                                      ERRSFL
+     A                                      HELP
+     A                                      ALTHELP(CA01)
+     A                                      HLPPNLGRP(GLOBAL OSMRPTHP)
+     A* Global Heading --------------------------------------------------------
+     A          R HEADING
+     A*                                   ##Command Key definitions.
+     A                                      CA03(03 'Verlassen')
+     A                                      CA05(05 'Aktualisieren')
+     A                                      CA12(12 'Abbrechen')
+     A                                      VLDCMDKEY(29 'Any valid key')
+     A                                  1 22'OS zu Geräte-Zuordnungs-
+     A                                      abweichungen' DSPATR(HI)
+     A                                  3  2'Auswahl eingeben und -
+     A                                      Eingabetaste drücken.'
+     A                                      COLOR(BLU)
+     A* -----------------------------------------------------------------------
+     A* Subfile 1: Orphans ----------------------------------------------------
+     A          R ORPHSFL                   SFL
+     A  99                                  SFLNXTCHG
+     A*         ##What may we do with the selected record?
+     A            OPT            1A  B  8  3VALUES(' ' '4')
+     A  99                                  DSPATR(RI)
+     A*         ##Pull values from the table definition itself...
+     A            VERS_SOLL R        O  8  7REFFLD(VERSION)
+     A            MODEL_SOLLR        O  8 30REFFLD(MODEL)
+     A            RAM_SOLL  R     Y  O  8 53EDTCDE(1) REFFLD(RAM)
+     A                                  8 59'MB'
+     A            FLASH_SOLLR     Y  O  8 64EDTCDE(1) REFFLD(FLASH)
+     A                                  8 71'MB'
+     A            ID        R        H      REFFLD(ID OSMATCHPF)
+     A* Subfile 1 Control Screen ----------------------------------------------
+     A          R ORPHCTL                   SFLCTL(ORPHSFL)
+     A*                                   ##Command Key definitions.
+     A                                      CA03(03 'Verlassen')
+     A                                      CA05(05 'Aktualisieren')
+     A                                      CA12(12 'Abbrechen')
+     A                                      VLDCMDKEY(29 'Any valid key')
+     A*                                   ##Basic Settings for subfile ctrl.
+     A                                      OVERLAY
+     A  91                                  SFLMSGID(ERR0012 GENERICMSG 91)
+     A  92                                  SFLMSGID(ERR1021 GENERICMSG 92)
+     A  93                                  SFLMSGID(ERR1218 GENERICMSG 93)
+     A  95                                  SFLMSGID(INF0001 GENERICMSG 95)
+     A  96                                  SFLMSGID(INF0999 GENERICMSG 96)
+     A                                      SFLSIZ(8)
+     A                                      SFLPAG(4)
+     A  31                                  SFLDSP
+     A  32                                  SFLDSPCTL
+     A  33                                  SFLCLR
+     A  34                                  SFLEND(*MORE)
+     A*         ##Help Area definition for this screen.
+     A                                      HLPTITLE('Zuordnungsabweichungen --
+     A                                      Listendarstellung')
+     A          H                           HLPARA(5 1 5 80)
+     A                                      HLPPNLGRP('MAIN/SFLOPTS' OSMATCHHP)
+     A          H                           HLPARA(*CNST 1)
+     A                                      HLPPNLGRP('SFLHDR/OPT' OSMATCHHP)
+     A          H                           HLPARA(*CNST 2)
+     A                                      HLPPNLGRP('SFLHDR/VERSION'
+     A                                      OSMATCHHP)
+     A          H                           HLPARA(*CNST 3)
+     A                                      HLPPNLGRP('SFLHDR/MODEL' OSMATCHHP)
+     A          H                           HLPARA(*CNST 4)
+     A                                      HLPPNLGRP('SFLHDR/RAM' OSMATCHHP)
+     A          H                           HLPARA(*CNST 5)
+     A                                      HLPPNLGRP('SFLHDR/FLASH' OSMATCHHP)
+     A          H                           HLPARA(8 1 12 80)
+     A                                      HLPPNLGRP('MAIN/SFLDTA' OSMATCHHP)
+     A            ORPHRCDNBR     3S 0H      SFLRCDNBR(CURSOR)
+     A*         ##End of definitions. Here be real screen elements.
+     A                                  4  2'.     .     .     .     .     .  -
+     A                                         .     .     .     .     .     -
+     A                                      .     .     .' COLOR(TRQ)
+     A                                  5  2'Verwaist' DSPATR(UL) COLOR(TRQ)
+     A                                  5 23'4=Löschen' COLOR(BLU)
+     A                                  7  2'Opt' DSPATR(HI) HLPID(1)
+     A                                  7  7'Version' DSPATR(HI) HLPID(2)
+     A                                  7 30'Modell' DSPATR(HI) HLPID(3)
+     A                                  7 55'RAM' DSPATR(HI) HLPID(4)
+     A                                  7 65'Flash' DSPATR(HI) HLPID(5)
+     A* No data instead of SFL ------------------------------------------------
+     A          R ORPHND                    OVERLAY
+     A                                      HLPTITLE('Zuordnungsabweichungen --
+     A                                      Listendarstellung')
+     A          H                           HLPARA(*RCD)
+     A                                      HLPPNLGRP('MAIN/SFLND' OSMATCHHP)
+     A                                  8  3'(Keine überflüssigen Einträge -
+     A                                      gefunden.)'
+     A* -----------------------------------------------------------------------
+     A* Subfile 2: Missing ----------------------------------------------------
+     A          R MISSSFL                   SFL
+     A  99                                  SFLNXTCHG
+     A*         ##What may we do with the selected record?
+     A            OPT            1A  B 17  3VALUES(' ' '1' '2')
+     A  99                                  DSPATR(RI)
+     A*         ##Pull values from the table definition itself...
+     A            VERS_IST  R        O 17  7REFFLD(VERSION)
+     A            MODEL_IST R        O 17 30REFFLD(MODEL)
+     A            RAM_IST   R     Y  O 17 53EDTCDE(1) REFFLD(RAM)
+     A                                 17 59'MB'
+     A            FLASH_IST R     Y  O 17 64EDTCDE(1) REFFLD(FLASH)
+     A                                 17 71'MB'
+     A* Subfile 1 Control Screen ----------------------------------------------
+     A          R MISSCTL                   SFLCTL(MISSSFL)
+     A*                                   ##Command Key definitions.
+     A                                      CA03(03 'Verlassen')
+     A                                      CA05(05 'Aktualisieren')
+     A                                      CA12(12 'Abbrechen')
+     A                                      VLDCMDKEY(29 'Any valid key')
+     A*                                   ##Basic Settings for subfile ctrl.
+     A                                      OVERLAY
+     A  92                                  SFLMSGID(ERR1021 GENERICMSG 92)
+     A  99                                  SFLMSGID(SFL0001 GENERICMSG 99)
+     A                                      SFLSIZ(8)
+     A                                      SFLPAG(4)
+     A  41                                  SFLDSP
+     A  42                                  SFLDSPCTL
+     A  43                                  SFLCLR
+     A  44                                  SFLEND(*MORE)
+     A*         ##Help Area definition for this screen.
+     A                                      HLPTITLE('Zuordnungsabweichungen --
+     A                                      Listendarstellung')
+     A          H                           HLPARA(14 1 14 80)
+     A                                      HLPPNLGRP('MAIN/SFLOPTS' OSMATCHHP)
+     A          H                           HLPARA(*CNST 1)
+     A                                      HLPPNLGRP('SFLHDR/OPT' OSMATCHHP)
+     A          H                           HLPARA(*CNST 2)
+     A                                      HLPPNLGRP('SFLHDR/VERSION'
+     A                                      OSMATCHHP)
+     A          H                           HLPARA(*CNST 3)
+     A                                      HLPPNLGRP('SFLHDR/MODEL' OSMATCHHP)
+     A          H                           HLPARA(*CNST 4)
+     A                                      HLPPNLGRP('SFLHDR/RAM' OSMATCHHP)
+     A          H                           HLPARA(*CNST 5)
+     A                                      HLPPNLGRP('SFLHDR/FLASH' OSMATCHHP)
+     A          H                           HLPARA(17 1 22 80)
+     A                                      HLPPNLGRP('MAIN/SFLDTA' OSMATCHHP)
+     A            MISSRCDNBR     3S 0H      SFLRCDNBR(CURSOR)
+     A*         ##End of definitions. Here be real screen elements.
+     A                                 13  2'.     .     .     .     .     .  -
+     A                                         .     .     .     .     .     -
+     A                                      .     .     .' COLOR(TRQ)
+     A                                 14  2'Zuordnung fehlt' DSPATR(UL)
+     A                                      COLOR(TRQ)
+     A                                 14 23'1=Mit akt. Version übern., -
+     A                                      2=Mit ''ZUORDNEN'' übern.'
+     A                                      COLOR(BLU)
+     A                                 16  2'Opt' DSPATR(HI) HLPID(1)
+     A                                 16  7'Version' DSPATR(HI) HLPID(2)
+     A                                 16 30'Modell' DSPATR(HI) HLPID(3)
+     A                                 16 55'RAM' DSPATR(HI) HLPID(4)
+     A                                 16 65'Flash' DSPATR(HI) HLPID(5)
+     A* No data instead of SFL ------------------------------------------------
+     A          R MISSND                    OVERLAY
+     A                                      HLPTITLE('Zuordnungsabweichungen --
+     A                                      Listendarstellung')
+     A          H                           HLPARA(*RCD)
+     A                                      HLPPNLGRP('MAIN/SFLND' OSMATCHHP)
+     A                                 17  3'(Keine fehlenden Einträge gefun-
+     A                                      den.)'
+     A* -----------------------------------------------------------------------
+     A* ***********************************************************************
+     A* Subfile 3: Really delete Orphans --------------------------------------
+     A          R ORPHDLTSFL                SFL
+     A                                      SFLNXTCHG
+     A*         ##What may we do with the selected record?
+     A            DOPT           1A  B  7  3VALUES(' ' '4')
+     A  99                                  DSPATR(RI)
+     A*         ##Pull values from the table definition itself...
+     A            VERS_SOLL R        O  7  7REFFLD(VERSION)
+     A            MODEL_SOLLR        O  7 30REFFLD(MODEL)
+     A            RAM_SOLL  R     Y  O  7 53EDTCDE(1) REFFLD(RAM)
+     A                                  7 59'MB'
+     A            FLASH_SOLLR     Y  O  7 64EDTCDE(1) REFFLD(FLASH)
+     A                                  7 71'MB'
+     A            ID        R        H      REFFLD(ID OSMATCHPF)
+     A* Subfile 1 Control Screen ----------------------------------------------
+     A          R ORPHDLTCTL                SFLCTL(ORPHDLTSFL)
+     A*                                   ##Command Key definitions.
+     A                                      CA12(12 'Abbrechen')
+     A                                      VLDCMDKEY(29 'Any valid key')
+     A*                                   ##Basic Settings for subfile ctrl.
+     A                                      OVERLAY
+     A  91                                  SFLMSGID(ERR0012 GENERICMSG 91)
+     A  92                                  SFLMSGID(ERR1021 GENERICMSG 92)
+     A  93                                  SFLMSGID(ERR1218 GENERICMSG 93)
+     A  95                                  SFLMSGID(INF0001 GENERICMSG 95)
+     A  96                                  SFLMSGID(INF0999 GENERICMSG 96)
+     A                                      SFLSIZ(30)
+     A                                      SFLPAG(15)
+     A  31                                  SFLDSP
+     A  32                                  SFLDSPCTL
+     A  33                                  SFLCLR
+     A  34                                  SFLEND(*MORE)
+     A*         ##Help Area definition for this screen.
+     A                                      HLPTITLE('Zuordnungsabweichungen --
+     A                                      Löschabfrage')
+     A          H                           HLPARA(3 1 4 80)
+     A                                      HLPPNLGRP('DELETE/SFLOPTS' SFLDLTHP)
+     A          H                           HLPARA(*CNST 1)
+     A                                      HLPPNLGRP('DELETE/OPT' SFLDLTHP)
+     A          H                           HLPARA(6 7 6 80)
+     A                                      HLPPNLGRP('DELETE/FIELDS' SFLDLTHP)
+     A          H                           HLPARA(7 1 21 80)
+     A                                      HLPPNLGRP('DELETE/SFLDTA' SFLDLTHP)
+     A            SFLDLTNBR      3S 0H      SFLRCDNBR(CURSOR)
+     A*         ##End of definitions. Here be real screen elements.
+     A                                  1 29'Löschen von Einträgen'
+     A                                      DSPATR(HI)
+     A                                  3  2'Auswahl ggfs. anpassen und -
+     A                                      Eingabetaste drücken.'
+     A                                      COLOR(BLU)
+     A                                  4  3'4=Löschen, Leer=Nicht löschen.'
+     A                                      COLOR(BLU)
+     A                                  6  2'Opt' DSPATR(HI) HLPID(1)
+     A                                  6  7'Version' DSPATR(HI)
+     A                                  6 30'Modell' DSPATR(HI)
+     A                                  6 55'RAM' DSPATR(HI)
+     A                                  6 65'Flash' DSPATR(HI)
+     A* -----------------------------------------------------------------------
+     A* Subfile 4: Really add Missing -----------------------------------------
+     A          R MISSADDSFL                SFL
+     A                                      SFLNXTCHG
+     A*         ##What may we do with the selected record?
+     A            AOPT           1A  B  7  3VALUES(' ' '1' '2')
+     A  99                                  DSPATR(RI)
+     A*         ##Pull values from the table definition itself...
+     A            VERS_IST  R        O  7  7REFFLD(VERSION)
+     A            MODEL_IST R        O  7 30REFFLD(MODEL)
+     A            RAM_IST   R     Y  O  7 53EDTCDE(1) REFFLD(RAM)
+     A                                  7 59'MB'
+     A            FLASH_IST R     Y  O  7 64EDTCDE(1) REFFLD(FLASH)
+     A                                  7 71'MB'
+     A* Subfile 1 Control Screen ----------------------------------------------
+     A          R MISSADDCTL                SFLCTL(MISSADDSFL)
+     A*                                   ##Command Key definitions.
+     A                                      CA12(12 'Abbrechen')
+     A                                      VLDCMDKEY(29 'Any valid key')
+     A*                                   ##Basic Settings for subfile ctrl.
+     A                                      OVERLAY
+     A                                      SFLSIZ(30)
+     A                                      SFLPAG(15)
+     A  41                                  SFLDSP
+     A  42                                  SFLDSPCTL
+     A  43                                  SFLCLR
+     A  44                                  SFLEND(*MORE)
+     A*         ##Help Area definition for this screen.
+     A                                      HLPTITLE('Zuordnungsabweichungen --
+     A                                      Abfrage')
+     A          H                           HLPARA(3 1 4 80)
+     A                                      HLPPNLGRP('ADD/SFLOPTS' OSMRPTHP)
+     A          H                           HLPARA(*CNST 1)
+     A                                      HLPPNLGRP('ADD/OPT' OSMRPTHP)
+     A          H                           HLPARA(6 7 6 80)
+     A                                      HLPPNLGRP('ADD/FIELDS' OSMRPTHP)
+     A          H                           HLPARA(7 1 21 80)
+     A                                      HLPPNLGRP('ADD/SFLDTA' OSMRPTHP)
+     A            SFLADDNBR      3S 0H      SFLRCDNBR(CURSOR)
+     A*         ##End of definitions. Here be real screen elements.
+     A                                  1 29'Übertrag von Einträgen'
+     A                                      DSPATR(HI)
+     A                                  3  2'Auswahl ggfs. anpassen und -
+     A                                      Eingabetaste drücken.'
+     A                                      COLOR(BLU)
+     A                                  4  3'1=Mit akt. Version übern.  2=Mit -
+     A                                      ''ZUORDNEN'' übern., Leer=Nicht -
+     A                                      übern.'
+     A                                      COLOR(BLU)
+     A                                  6  2'Opt' DSPATR(HI) HLPID(1)
+     A                                  6  7'Version' DSPATR(HI)
+     A                                  6 30'Modell' DSPATR(HI)
+     A                                  6 55'RAM' DSPATR(HI)
+     A                                  6 65'Flash' DSPATR(HI)
+     A* -----------------------------------------------------------------------
+     A* Footer of the standard form -------------------------------------------
+     A* A subfile control record may contain elements above or below
+     A* the actual subfile, but not both. So here is a simple screen
+     A* overlay to add below the subfile display.
+     A          R SCRBTM                    OVERLAY
+     A*                                   ##Command Key definitions.
+     A                                      CA03(03 'Verlassen')
+     A                                      CA05(05 'Aktualisieren')
+     A                                      CA12(12 'Abbrechen')
+     A                                      VLDCMDKEY(29 'Any valid key')
+     A                                      HLPTITLE('Zuordnungsabweichungen --
+     A                                      Listendarstellung')
+     A          H                           HLPARA(*RCD)
+     A                                      HLPPNLGRP('MAIN/SFLBTM' OSMRPTHP)
+     A                                 23  2'F1=Hilfe   -
+     A                                      F3=Verlassen   -
+     A                                      F5=Aktualisieren   -
+     A                                      F12=Abbrechen'
+     A                                      COLOR(BLU)
+     A* Footer of the standard form -------------------------------------------
+     A          R SCRPROMBTM                OVERLAY
+     A*                                   ##Command Key definitions.
+     A                                      CA12(12 'Abbrechen')
+     A                                      VLDCMDKEY(29 'Any valid key')
+     A                                      HLPTITLE('Zuordnungsabweichungen --
+     A                                      Listendarstellung')
+     A          H                           HLPARA(*RCD)
+     A                                      HLPPNLGRP('DELETE/SFLBTM' SFLDLTHP)
+     A                                 23  2'F1=Hilfe   -
+     A                                      F12=Abbrechen'
+     A                                      COLOR(BLU)
+     A* For vim ---------------------------------------------------------------
+     A* vim:syntax=dds:colorcolumn=81:autoindent

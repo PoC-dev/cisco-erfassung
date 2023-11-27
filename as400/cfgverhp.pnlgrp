@@ -1,0 +1,85 @@
+.* This file is part of cisco-erfassung, an application conglomerate for
+.*  management of Cisco devices on AS/400, i5/OS and IBM i.
+.*
+.* This is free software; you can redistribute it and/or modify it under the
+.*  terms of the GNU General Public License as published by the Free Software
+.*  Foundation; either version 2 of the License, or (at your option) any later
+.*  version.
+.*
+.* It is distributed in the hope that it will be useful, but WITHOUT ANY
+.*  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+.*  FOR PARTICULAR PURPOSE. See the GNU General Public License for more details.
+.*
+.* You should have received a copy of the GNU General Public License along with
+.*  it; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
+.*  Suite 330, Boston, MA 02111-1307 USA or get it at
+.*  http://www.gnu.org/licenses/gpl.html
+.*
+:PNLGRP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='GLOBAL'.Textbetrachter
+:P.Diese Applikation ermöglicht das Einsehen von als Freitext erfassten Daten.
+Dazu gehören insbesondere:
+:UL.
+:LI.Konfiguration,
+:LI.Ausgabe von Show Version.
+:EUL.
+:P.Die Cisco-Wartungsverwaltung ist eine Sammlung von Applikationen zur
+Verwaltung von Cisco- und auf Kommandozeilenebene kompatiblen Geräten. Eine
+Funktionsübersicht findet sich in der Hilfefunktion im Hauptmenü.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='MAIN/HEADING'.Überschrift
+:XH3.Überschrift
+:P.Anhand der Überschrift wird die Art der dargestellten Information benannt:
+:UL.
+:LI.Konfiguration
+:LI.Show Version
+:EUL.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='MAIN/HOSTNAME'.Hostname
+:XH3.Hostname
+:P.Hier wird der zugrundeliegende Host- bzw. DNS-Name (FQDN, Fully Qualified
+Domain Name) des derzeit angezeigten Texts ausgegeben.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='MAIN/CFUPDDB'.Erfassung
+:XH3.Erfassung
+:P.Hier wird der Zeitstempel der letzten erfassten Konfigurationsänderung
+ausgegeben.
+:NOTE.Die Ausgabe des Erfassungs-Zeitstempels erfolgt nur für die Darstellung
+der Konfiguration, nicht aber für Show Version.:ENOTE.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='MAIN/SFLDTA'.Datenbereich
+:XH3.Datenbereich
+:P.In diesem Bereich wird ein rollbarer Ausschnitt aus dem gespeicherten Text
+dargestellt.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='MAIN/SFLBTM'.Funktionstasten
+:XH3.Funktionstasten
+:PARML.
+:PT.F1=Hilfe
+:PD.Ruft die cursorpositionsabhängige Hilfefunktion auf.
+:PT.F3=Verlassen
+:PD.Beendet die momentan aufgerufene Funktion und kehrt zur vorherigen Anzeige
+zurück.
+:PT.F5=Aktualisieren
+:PD.Forciert einen Neuaufbau des dargestellten Listenausschnittes aus der
+Datenbank.
+:PT.F12=Abbrechen
+:PD.Beendet die momentan aufgerufene Funktion und kehrt zur vorherigen Anzeige
+zurück.
+:EPARML.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='MAIN/SFLND'.Keine Datensätze zum Anzeigen
+:XH3.Keine Datensätze zum Anzeigen
+:P.Diese Anzeige wird dann eingeblendet, wenn keine Datensätze für die
+Listendarstellung gefunden werden konnten.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:EPNLGRP.
+.* vim: ft=pnlgrp textwidth=80 colorcolumn=81

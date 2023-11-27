@@ -1,0 +1,350 @@
+     A* This file is part of cisco-erfassung, an application conglomerate for
+     A*  management of Cisco devices on AS/400, i5/OS and IBM i.
+     A*
+     A* This is free software; you can redistribute it and/or modify it
+     A*  under the terms of the GNU General Public License as published by the
+     A*  Free Software Foundation; either version 2 of the License, or (at your
+     A*  option) any later version.
+     A*
+     A* It is distributed in the hope that it will be useful, but WITHOUT
+     A*  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+     A*  FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+     A*  for more details.
+     A*
+     A* You should have received a copy of the GNU General Public License along
+     A*  with it; if not, write to the Free Software Foundation, Inc., 59
+     A*  Temple Place, Suite 330, Boston, MA 02111-1307 USA or get it at
+     A*  http://www.gnu.org/licenses/gpl.html
+     A*
+     A* Globals ----------------------------------------------------------------
+     A                                      REF(HSTPF)
+     A                                      ERRSFL
+     A                                      HELP
+     A                                      ALTHELP(CA01)
+     A                                      HLPPNLGRP(GLOBAL HSTHP)
+     A* Subfile Screen ---------------------------------------------------------
+     A          R MAINSFL                   SFL
+     A  99                                  SFLNXTCHG
+     A*         ##What may we do with the selected record?
+     A            OPT            1A  B 10  3VALUES(' ' '2' '3' '4' '5' '7' '8' -
+     A                                      '9')
+     A  99                                  DSPATR(RI)
+     A  36                                  COLOR(BLU)
+     A  37                                  COLOR(TRQ)
+     A  38                                  COLOR(RED)
+     A*         ##Pull values from the table definition itself...
+     A            HOSTNAME  R        O 10  7
+     A  36                                  COLOR(BLU)
+     A  37                                  COLOR(TRQ)
+     A  38                                  COLOR(RED)
+     A            SERVTYP   R        O 10 47
+     A  36                                  COLOR(BLU)
+     A  37                                  COLOR(TRQ)
+     A  38                                  COLOR(RED)
+     A            COMMT$        29A  O 10 52
+     A  36                                  COLOR(BLU)
+     A  37                                  COLOR(TRQ)
+     A  38                                  COLOR(RED)
+     A* This helps to coloring rows BLU without an extra CHAIN.
+     A            DCA       R        H
+     A            COMMT     R        H
+     A* Subfile Control Screen -------------------------------------------------
+     A          R MAINCTL                   SFLCTL(MAINSFL)
+     A                                      CHGINPDFT(LC UL)
+     A*                                   ##Command Key definitions.
+     A                                      CA03(03 'Verlassen')
+     A                                      CA05(05 'Aktualisieren')
+     A                                      CA06(06 'Neu')
+     A                                      CA12(12 'Abbrechen')
+     A N34                                  PAGEDOWN(25)
+     A N35                                  PAGEUP(26)
+     A                                      HOME(27 'Suchfeld')
+     A                                      VLDCMDKEY(29 'Any valid key')
+     A*                                   ##Basic Settings for subfile ctrl.
+     A                                      OVERLAY
+     A  91                                  SFLMSGID(ERR0012 GENERICMSG 91)
+     A  92                                  SFLMSGID(ERR1021 GENERICMSG 92)
+     A  93                                  SFLMSGID(ERR1218 GENERICMSG 93)
+     A  95                                  SFLMSGID(INF0001 GENERICMSG 95)
+     A                                      SFLSIZ(&SFLSIZ)
+     A                                      SFLPAG(12)
+     A  31                                  SFLDSP
+     A  32                                  SFLDSPCTL
+     A  33                                  SFLCLR
+     A  34                                  SFLEND(*MORE)
+     A*         ##Help Area definition for this screen.
+     A                                      HLPTITLE('Gerätestammdaten --
+     A                                      Listendarstellung')
+     A          H                           HLPARA(3 1 3 80)
+     A                                      HLPPNLGRP('MAIN/POSTO' HSTHP)
+     A          H                           HLPARA(5 1 7 80)
+     A                                      HLPPNLGRP('MAIN/SFLOPTS' HSTHP)
+     A          H                           HLPARA(*CNST 1)
+     A                                      HLPPNLGRP('MAIN/START' HSTHP)
+     A          H                           HLPARA(*CNST 2)
+     A                                      HLPPNLGRP('SFLHDR/OPT' HSTHP)
+     A          H                           HLPARA(*CNST 3)
+     A                                      HLPPNLGRP('SFLHDR/HOSTNAME' HSTHP)
+     A          H                           HLPARA(*CNST 4)
+     A                                      HLPPNLGRP('SFLHDR/SERVTYP' HSTHP)
+     A          H                           HLPARA(*CNST 5)
+     A                                      HLPPNLGRP('SFLHDR/COMMT' HSTHP)
+     A          H                           HLPARA(10 3 21 80)
+     A                                      HLPPNLGRP('MAIN/SFLDTA' HSTHP)
+     A            SFLRCDNBR      3S 0H      SFLRCDNBR(CURSOR)
+     A            SFLSIZ         5S 0P
+     A*         ##End of definitions. Here be real screen elements.
+     A                                  1 32'Gerätestammdaten'
+     A                                      DSPATR(HI)
+     A                                  3  7'Listenanfang bei . . .'
+     A            POSTO     R        I  3 31REFFLD(HOSTNAME HSTPF)
+     A  41                                  DSPATR(PC)
+     A                                  3 71'(Hostname)'
+     A                                  5  2'Auswahl eingeben und -
+     A                                      Eingabetaste drücken.'
+     A                                      COLOR(BLU)
+     A                                  5 70'Anzahl:'
+     A            DBRCDCNT$      2Y 0   5 78EDTCDE(1)
+     A                                  6  3'2=Ändern   3=Kopieren   4=Löschen-
+     A                                         5=Details   7=Show running--
+     A                                      configuration'
+     A                                      COLOR(BLU)
+     A                                  7  3'8=Show version   9=Show inventory'
+     A                                      COLOR(BLU)
+     A  35                              8 70'Beginn ...' DSPATR(HI) HLPID(1)
+     A                                  9  2'Opt' DSPATR(HI) HLPID(2)
+     A                                  9  7'Hostname' DSPATR(HI) HLPID(3)
+     A                                  9 47'Typ' DSPATR(HI) HLPID(4)
+     A                                  9 52'Bemerkung' DSPATR(HI) HLPID(5)
+     A*
+     A* Footer of the form -----------------------------------------------------
+     A* A subfile control record may contain elements above or below the actual
+     A* subfile, but not both.
+     A          R MAINBTM
+     A                                      HLPTITLE('Gerätestammdaten --
+     A                                      Listendarstellung')
+     A          H                           HLPARA(22 69 22 80)
+     A                                      HLPPNLGRP('MAIN/END' HSTHP)
+     A          H                           HLPARA(*RCD)
+     A                                      HLPPNLGRP('MAIN/SFLBTM' HSTHP)
+     A                                 23  2'F1=Hilfe   -
+     A                                      F3=Verlassen   -
+     A                                      F5=Aktualisieren   -
+     A                                      F6=Neu   -
+     A                                      F12=Abbrechen'
+     A                                      COLOR(BLU)
+     A* No data instead of SFL -------------------------------------------------
+     A          R MAINND                    OVERLAY
+     A                                      HLPTITLE('Gerätestammdaten --
+     A                                      Listendarstellung')
+     A          H                           HLPARA(*RCD)
+     A                                      HLPPNLGRP('MAIN/SFLND' HSTHP)
+     A                                 11  7'(Keine Datensätze zum Anzeigen.)'
+     A* ------------------------------------------------------------------------
+     A* Subfile Screen: Delete confirmation ------------------------------------
+     A          R DLTSFL                    SFL
+     A                                      SFLNXTCHG
+     A            DOPT           1A  B  7  3VALUES(' ' '4')
+     A  99                                  DSPATR(RI)
+     A*         ##Pull values from the table definition itself...
+     A            HOSTNAME  R        O  7  7
+     A            SERVTYP   R        O  7 47
+     A            COMMT$    R        O  7 52REFFLD(MAINSFL/COMMT$ *SRC)
+     A* Subfile Control Screen -------------------------------------------------
+     A          R DLTCTL                    SFLCTL(DLTSFL)
+     A*                                   ##Command Key definitions.
+     A                                      CA12(12 'Abbrechen')
+     A                                      VLDCMDKEY(29 'Any valid key')
+     A*                                   ##Basic Settings for subfile ctrl.
+     A                                      OVERLAY
+     A  91                                  SFLMSGID(ERR0012 GENERICMSG 91)
+     A  93                                  SFLMSGID(ERR1218 GENERICMSG 93)
+     A  96                                  SFLMSGID(INF0999 GENERICMSG 96)
+     A                                      SFLSIZ(30)
+     A                                      SFLPAG(15)
+     A  31                                  SFLDSP
+     A  32                                  SFLDSPCTL
+     A  33                                  SFLCLR
+     A  34                                  SFLEND(*MORE)
+     A*         ##Help Area definition for this screen.
+     A                                      HLPTITLE('Gerätestammdaten --
+     A                                      Löschabfrage')
+     A          H                           HLPARA(3 1 4 80)
+     A                                      HLPPNLGRP('DELETE/SFLOPTS' SFLDLTHP)
+     A          H                           HLPARA(*CNST 1)
+     A                                      HLPPNLGRP('DELETE/OPT' SFLDLTHP)
+     A          H                           HLPARA(6 7 6 80)
+     A                                      HLPPNLGRP('DELETE/FIELDS' SFLDLTHP)
+     A          H                           HLPARA(7 1 21 80)
+     A                                      HLPPNLGRP('DELETE/SFLDTA' SFLDLTHP)
+     A            SFLDLTNBR      3S 0H      SFLRCDNBR(CURSOR)
+     A*         ##End of definitions. Here be real screen elements.
+     A                                  1 29'Löschen von Einträgen'
+     A                                      DSPATR(HI)
+     A                                  3  2'Auswahl ggfs. anpassen und -
+     A                                      Eingabetaste drücken.'
+     A                                      COLOR(BLU)
+     A                                  4  3'4=Löschen  Leer=Nicht löschen'
+     A                                      COLOR(BLU)
+     A                                  6  2'Opt' DSPATR(HI) HLPID(1)
+     A                                  6  7'Hostname' DSPATR(HI)
+     A                                  6 47'Typ' DSPATR(HI)
+     A                                  6 52'Bemerkung' DSPATR(HI)
+     A* Footer of the form -----------------------------------------------------
+     A* A subfile control record may contain elements above or below the actual
+     A* subfile, but not both.
+     A          R DLTBTM
+     A                                      HLPTITLE('Gerätestammdaten --
+     A                                      Löschabfrage')
+     A          H                           HLPARA(22 76 22 80)
+     A                                      HLPPNLGRP('DELETE/END' SFLDLTHP)
+     A          H                           HLPARA(*RCD)
+     A                                      HLPPNLGRP('DELETE/SFLBTM' SFLDLTHP)
+     A                                 23  2'F1=Hilfe   F12=Abbrechen'
+     A                                      COLOR(BLU)
+     A* No data instead of SFL -------------------------------------------------
+     A          R DLTND                     OVERLAY
+     A                                      HLPTITLE('Gerätestammdaten --
+     A                                      Löschabfrage')
+     A          H                           HLPARA(*RCD)
+     A                                      HLPPNLGRP('DELETE/SFLND' SFLDLTHP)
+     A                                  8  7'(Keine Datensätze zum Anzeigen.)'
+     A* ------------------------------------------------------------------------
+     A* ------------------------------------------------------------------------
+     A* One form for editing existing, or adding new records. Viewing is done
+     A*  separately. But we still can switch to readonly if the initial
+     A*  record is locked.
+     A          R DETAILFRM
+     A                                      CHGINPDFT(LC UL)
+     A                                      CHANGE(28 'Content has changed')
+     A                                      CA03(03 'Verlassen')
+     A                                      CA12(12 'Abbrechen')
+     A                                      RTNCSRLOC(*RECNAME &CSREC &CSFLD)
+     A*         ##Help Area definition for this screen.
+     A                                      HLPTITLE('Gerätestammdaten --
+     A                                      Details')
+     A          H                           HLPARA(1 1 1 80)
+     A                                      HLPPNLGRP('DETAIL/MODE' HSTHP)
+     A          H                           HLPARA(3 1 3 80)
+     A                                      HLPPNLGRP('DETAIL/OPTIONS' HSTHP)
+     A          H                           HLPARA(*CNST 1)
+     A                                      HLPPNLGRP('DETAIL/GENERAL' HSTHP)
+     A          H                           HLPARA(6 3 6 65)
+     A                                      HLPPNLGRP('DFIELD/HOSTNAME' HSTHP)
+     A          H                           HLPARA(*CNST 2)
+     A                                      HLPPNLGRP('DETAIL/ACCESS' HSTHP)
+     A          H                           HLPARA(9 3 9 55)
+     A                                      HLPPNLGRP('DFIELD/SERVTYP' HSTHP)
+     A          H                           HLPARA(10 3 10 58)
+     A                                      HLPPNLGRP('DFIELD/CONN' HSTHP)
+     A          H                           HLPARA(11 3 11 55)
+     A                                      HLPPNLGRP('DFIELD/USERNAME' HSTHP)
+     A          H                           HLPARA(12 3 12 42)
+     A                                      HLPPNLGRP('DFIELD/PASSWD' HSTHP)
+     A          H                           HLPARA(13 3 13 55)
+     A                                      HLPPNLGRP('DFIELD/ENABLE' HSTHP)
+     A          H                           HLPARA(15 3 16 35)
+     A                                      HLPPNLGRP('DFIELD/DCA' HSTHP)
+     A          H                           HLPARA(*CNST 3)
+     A                                      HLPPNLGRP('DETAIL/IGNORE' HSTHP)
+     A          H                           HLPARA(18 27 19 45)
+     A                                      HLPPNLGRP('DFIELD/UPD_IGN' HSTHP)
+     A          H                           HLPARA(18 54 19 80)
+     A                                      HLPPNLGRP('DFIELD/ACU_IGN' HSTHP)
+     A          H                           HLPARA(19 2 19 75)
+     A                                      HLPPNLGRP('DFIELD/COMMT' HSTHP)
+     A          H                           HLPARA(23 2 23 80)
+     A                                      HLPPNLGRP('DETAIL/FKEYS' HSTHP)
+     A*         ##End of definitions. Here be real screen elements.
+     A  42N43                           1 30'Neuen Eintrag erfassen'
+     A                                      DSPATR(HI)
+     A N42 43                           1 32'Eintrag ändern'
+     A                                      DSPATR(HI)
+     A N42N43                           1 31'Eintrag anzeigen'
+     A                                      DSPATR(HI)
+     A  42N43                           3  2'Felder ausfüllen und Eingabetaste -
+     A                                      drücken.'
+     A                                      COLOR(BLU)
+     A N42 43                           3  2'Felder anpassen und Eingabetaste -
+     A                                      drücken.'
+     A                                      COLOR(BLU)
+     A N42N43                           3  2'Details:'
+     A                                      COLOR(BLU)
+     A*
+     A                                  5  2'Allgemein' DSPATR(HI) HLPID(1)
+     A                                  6  3'Hostname . . . . . . .'
+     A            HOSTNAME  R        B  6 27
+     A  44                                  DSPATR(PR)
+     A N44                                  DSPATR(UL)
+     A N44 60                               DSPATR(PC)
+     A  92                                  ERRMSGID(ERR1021 GENERICMSG 92)
+     A*
+     A                                  8  2'Zugriff' DSPATR(HI) HLPID(2)
+     A                                  9  3'Typ  . . . . . . . . .'
+     A            SERVTYP   R        B  9 27VALUES('ASA' 'IOS')
+     A  44                                  DSPATR(PR)
+     A N44                                  DSPATR(UL)
+     A N44 61                               DSPATR(PC)
+     A                                  9 46'(ASA, IOS)'
+     A                                 10  3'Zugriffsmethode  . . .'
+     A            CONN      R        B 10 27VALUES('ssh' 'telnet')
+     A  44                                  DSPATR(PR)
+     A N44                                  DSPATR(UL)
+     A N44 62                               DSPATR(PC)
+     A                                 10 46'(ssh, telnet)'
+     A                                 11  3'Benutzer . . . . . . .'
+     A            USERNAME  R        B 11 27
+     A  44                                  DSPATR(PR)
+     A N44                                  DSPATR(UL)
+     A N44 63                               DSPATR(PC)
+     A                                 11 46'(optional)'
+     A                                 12  3'Passwort . . . . . . .'
+     A            PASSWD    R        B 12 27
+     A  44                                  DSPATR(PR)
+     A N44                                  DSPATR(UL)
+     A N44 64                               DSPATR(PC)
+     A                                 13  3'Enable-Secret  . . . .'
+     A            ENABLE    R        B 13 27
+     A  44                                  DSPATR(PR)
+     A N44                                  DSPATR(UL)
+     A N44 65                               DSPATR(PC)
+     A                                 13 46'(optional)'
+     A                                 15  3'Automatische Erfassung'
+     A            DCA$           2Y 0B 15 27SNGCHCFLD
+     A                                      CHOICE(1 'Nein')
+     A                                      CHOICE(2 'Ja')
+     A N44                                  DSPATR(UL)
+     A                                 18  2'Ignoriere Updates . . .'
+     A                                      DSPATR(HI) HLPID(3)
+     A                                 18 27'OS . . .'
+     A            UPD_IGN$       2Y 0B 18 37SNGCHCFLD
+     A                                      CHOICE(1 'Nein')
+     A                                      CHOICE(2 'Ja')
+     A N44                                  DSPATR(UL)
+     A                                 18 54'Anyconnect . . .'
+     A            ACU_IGN$       2Y 0B 18 72SNGCHCFLD
+     A                                      CHOICE(1 'Nein')
+     A                                      CHOICE(2 'Ja')
+     A N44                                  DSPATR(UL)
+     A*
+     A                                 21  2'Bemerkung'
+     A                                      DSPATR(HI)
+     A                                 21 12'. . . . . . .'
+     A            COMMT     R        B 21 26
+     A  44                                  DSPATR(PR)
+     A N44                                  DSPATR(UL)
+     A N44 66                               DSPATR(PC)
+     A                                 23  2'F1=Hilfe   F3=Verlassen   -
+     A                                      F12=Abbrechen'
+     A                                      COLOR(BLU)
+     A* This is entirely to prevent DSPATR(RI) error indication with just a
+     A*  warning message. Place in least used screen position.
+     A            DUMMY$$        1A  O 23 80DSPATR(ND)
+     A  91                                  ERRMSGID(ERR0012 GENERICMSG 91)
+     A  93                                  ERRMSGID(ERR1218 GENERICMSG 93)
+     A  94                                  ERRMSGID(RDO1218 GENERICMSG 94)
+     A  95                                  ERRMSGID(INF0001 GENERICMSG 95)
+     A            CSREC         10A  H
+     A            CSFLD         10A  H
+     A* For vim ----------------------------------------------------------------
+     A* vim: syntax=dds colorcolumn=81 autoindent noignorecase

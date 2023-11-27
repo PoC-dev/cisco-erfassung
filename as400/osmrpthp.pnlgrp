@@ -1,0 +1,132 @@
+.* This file is part of cisco-erfassung, an application conglomerate for
+.*  management of Cisco devices on AS/400, i5/OS and IBM i.
+.*
+.* This is free software; you can redistribute it and/or modify it under the
+.*  terms of the GNU General Public License as published by the Free Software
+.*  Foundation; either version 2 of the License, or (at your option) any later
+.*  version.
+.*
+.* It is distributed in the hope that it will be useful, but WITHOUT ANY
+.*  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+.*  FOR PARTICULAR PURPOSE. See the GNU General Public License for more details.
+.*
+.* You should have received a copy of the GNU General Public License along with
+.*  it; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
+.*  Suite 330, Boston, MA 02111-1307 USA or get it at
+.*  http://www.gnu.org/licenses/gpl.html
+.*
+:PNLGRP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='GLOBAL'.Zuordnungsabweichungen
+:P.Die Cisco-Erfassung als Gesamtlösung beinhaltet die Funktion
+:LINK PERFORM='DSPHELP GLOBAL OSMATCHHP'.Mit OS-Geräte-Zuordnungen arbeiten
+:ELINK., um empfohlene Firmware-Versionen für Geräte zu hinterlegen. Diese
+Funktion ist die Basis für die Ausgabe in der :HP1.Geräteliste mit anstehenden
+OS Aktualisierungen:EHP1..
+:P.Diese Applikation ermöglicht einen einfachen Abgleich des Datenbestands der
+Firmware-Versionen. Dazu ist die Anzeige im Wesentlichen in eine obere und in
+eine untere Hälfte geteilt.
+:UL.
+:LI.In der oberen Hälfte werden :HP1.verwaiste:EHP1. Einträge aus Sicht der
+OS-Geräte-Zuordnung dargestellt, also wenn diese Attributkombination nicht
+(mehr) in der automatischen Erfassung enthalten ist.
+:LI.In der unteren Hälfte werden :HP1.fehlende:EHP1. Einträge aus Sicht der
+OS-Geräte-Zuordnung dargestellt, also wenn diese Attributkombination nur in der
+automatischen Erfassung enthalten ist.
+:EUL.
+:P.Folgende Fälle können hiermit identifiziert und korrigiert werden:
+:UL.
+:LI.Über die automatische Erfassung wurde ein Gerät mit einer
+Attributekombination erfasst, für die kein Eintrag in der OS-Geräte-Zuordnung
+besteht.
+:LI.Ein Gerät wurde aus der Stammdatenverwaltung gelöscht. Damit sind auch die
+automatisch erfassten Daten hinfällig und in Folge der korrespondierende Eintrag
+in der OS-Geräte-Zuordnung - sofern diese spezifische Attributkombination nur
+für dieses eine Gerät gültig war.
+:LI.Bei neueren Cisco-Geräten ist der erfasste Wert des RAM nicht zwingend
+gleich der physikalisch verbauten Menge an Speicher. Der Wert kann sich durch
+eine neue Version der Firmware ändern. Dadurch wird aber auch der Eintrag in der
+OS-Geräte-Zuordnung ungültig. Gleichzeitig taucht ein noch nicht erfasstes Gerät
+in der Abgleichliste auf.
+:EUL.
+:P.Die Cisco-Wartungsverwaltung ist eine Sammlung von Applikationen zur
+Verwaltung von Cisco- und auf Kommandozeilenebene kompatiblen Geräten. Eine
+Funktionsübersicht findet sich in der Hilfefunktion im Hauptmenü.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='ADD/SFLOPTS'.Auswahloptionen
+:XH3.Auswahloptionen
+:P.Für die Liste gültige Auswahl-Werte, welche in der Spalte :HP1.Opt:EHP1.
+eingegeben werden können.
+:PARML.
+:PT.1=Mit akt. Version übern.
+:PD.Markierte Einträge werden mit der dargestellten OS-Version aus der Erfassung
+in die Zuordnungstabelle übernommen.
+:PT.Leer=Mit 'ZUORDNEN' übern.
+:PD.Markierte Einträge werden mit der Bezeichung 'ZUORDNEN' als OS-Version aus
+der Erfassung in die Zuordnungstabelle übernommen. Dadurch können solche
+Abweichungen schnell in der Liste identifiziert und korrigiert werden. Dies ist
+allerdings nicht Bestandteil dieser Applikation.
+:PT.Leer=Nichts tun
+:PD.Wenn ein Datensatz nicht ausgewählt ist, wird keine Aktion durchgeführt.
+:EPARML.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='ADD/OPT'.Spalte Opt
+:XH3.Spalte Opt
+:P.In diese Spalte eine Auswahlziffer eingegeben, um den Datensatz zum einen zu
+Selektieren und zum anderen vorzugeben, was das System mit diesem Satz tun soll.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='ADD/FIELDS'.Weitere Spalten
+:XH3.Weitere Spalten
+:P.Zur besseren Identifikation des Datensatzes werden einige Felder dargestellt.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='ADD/SFLDTA'.Datenbereich
+:XH3.Datenbereich
+:P.Hier sind die Datensätze aus der Gesamtheit aller selektierten Datensätze
+sichtbar.
+:NOTE.Die Opt-Selektionen werden über Scrollgrenzen hinweg beibehalten.
+:ENOTE.
+:P.Diese Bildschirmmaske dient dazu, den Hinzufügen-Vorgang zu steuern.
+:P.Nur Einträge, die mit :HP1.Opt=4:EHP1. markiert sind, werden beim Drücken der
+Eingabetaste gelöscht.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='ADD/SFLBTM'.Funktionstasten
+:XH3.Funktionstasten
+:PARML.
+:PT.F1=Hilfe
+:PD.Ruft die cursorpositionsabhängige Hilfefunktion auf.
+:PT.F12=Abbrechen
+:PD.Beendet die momentan aufgerufene Funktion und kehrt zur vorherigen Anzeige
+zurück.
+:EPARML.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='ADD/SFLND'.Keine Datensätze zum Anzeigen
+:XH3.Keine Datensätze zum Anzeigen
+:P.Diese Anzeige wird dann eingeblendet, wenn keine Datensätze für die
+Listendarstellung gefunden werden konnten.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='MAIN/SFLBTM'.Funktionstasten
+:XH3.Funktionstasten
+:PARML.
+:PT.F1=Hilfe
+:PD.Ruft die cursorpositionsabhängige Hilfefunktion auf.
+:PT.F3=Verlassen
+:PD.Beendet die Listenansicht und gibt die Kontrolle an das vorherige Menü
+zurück.
+:PT.F5=Aktualisieren
+:PD.Forciert einen Neuaufbau des dargestellten Listenausschnittes aus der
+Datenbank.
+:PT.F12=Abbrechen
+:PD.Beendet die momentan aufgerufene Funktion und kehrt zur vorherigen Anzeige
+zurück.
+:EPARML.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:EPNLGRP.
+.* vim: ft=pnlgrp textwidth=80 colorcolumn=81

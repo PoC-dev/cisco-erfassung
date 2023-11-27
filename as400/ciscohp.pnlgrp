@@ -1,0 +1,80 @@
+.* This file is part of cisco-erfassung, an application conglomerate for
+.*  management of Cisco devices on AS/400, i5/OS and IBM i.
+.*
+.* This is free software; you can redistribute it and/or modify it under the
+.*  terms of the GNU General Public License as published by the Free Software
+.*  Foundation; either version 2 of the License, or (at your option) any later
+.*  version.
+.*
+.* It is distributed in the hope that it will be useful, but WITHOUT ANY
+.*  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+.*  FOR PARTICULAR PURPOSE. See the GNU General Public License for more details.
+.*
+.* You should have received a copy of the GNU General Public License along with
+.*  it; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
+.*  Suite 330, Boston, MA 02111-1307 USA or get it at
+.*  http://www.gnu.org/licenses/gpl.html
+.*
+:PNLGRP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='GENERAL'.Cisco-Wartungsverwaltung
+:P.Die Cisco-Erfassung ist eine Lösung um eine automatisch gepflegte
+Inventarliste für Cisco- und ähnliche (kommandozeilenbasierte) Geräte zu
+unterhalten. Mit der Applikationssammlung kann so recht einfach festgestellt
+werden, welche Geräte z. B. eine Aktualisierung benötigen.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='CONFIG'.Konfigurationsanweisungen für die Erfassung
+:P.Die nachfolgenden Ausführungen gelten für Cisco IOS und dessen Abkömmlinge
+IOS XR und IOS XE.
+.* -----------------------------------------------------------------------------
+:H3.AAA-Konfiguration
+:P.In der Standardeinstellung wird für die Hardwarekonsole als auch für
+virtuelle Konsolen (Zugriffe über telnet) lediglich ein Passwort erfragt.
+Folgende Einstellungen sind empfohlen, um Logins mit dem bekannten Paar aus
+Benutzername und dem zugehörigen Passwort pflegen zu können:
+:XMP.aaa authentication login default local
+aaa authorization exec default local
+aaa authorization console:EXMP.
+:P.Eventuell vorhandene :HP1.password:EHP1. Direktiven in den jeweiligen
+:HP1.line:EHP1. Sektionen sollten danach entfernt werden.
+.* -----------------------------------------------------------------------------
+:H3.Benutzer
+:P.Im Allgemeinen können auf Cisco-Geräten verschiedene Benutzer mit
+individuellen Zugriffsstufen (privilege level) angelegt werden. Es empfiehlt
+sich, einen Benutzer für die Zwecke der Erfassung anzulegen, der mit einem
+niedrigen Level angelegt wurde, z. B. 2. Darüber hinaus sollte es noch
+mindestens einen maximal privilegierten Benutzer für die Administration geben.
+:XMP.username supervisor privilege 15 secret 0 mysecretpassword
+username configbackup privilege 2 secret 0 myothersecretpassword:EXMP.
+:P.:HP1.Supervisor:EHP1. wird hier nur der Vollständigkeit halber erwähnt. Er
+ist für die Erfassung nicht relevant.
+.* -----------------------------------------------------------------------------
+:H3.Kommandozeilen-Beschänkungen
+:P.Die folgenden Konfigurationseinstellungen limitieren die verfügbaren
+Kommandos für Benutzer, der mit Stufe 2 angelegt wurden:
+:XMP.privilege exec level 2 show running-config
+privilege exec level 2 show startup-config
+privilege exec level 2 show:EXMP.
+:P.Neuere IOS-Versionen haben einen separaten Parameter für den Zugriff auf die
+gesicherte :HP1.startup-config:EHP1.
+:XMP.file privilege 2:EXMP.
+:NOTE.Vor dem Beenden der Konfigurationssitzung empfiehlt es sich, eine zweite
+Sitzung über Netzwerk auf das Gerät zu öffnen und zu prüfen ob man sich durch
+eine fehlerhafte Konfiguration nicht selbst ausgesperrt hat.
+:ENOTE.
+.* -----------------------------------------------------------------------------
+:H3.Cisco ASA
+:P.Für Cisco ASA existiert derzeit keine geprüfte Musterkonfiguration. Daher
+wird hier mit den Datenbankfeldern
+:UL.
+:LI.Benutzer,
+:LI.Passwort und
+:LI.Enable-Secret
+:EUL.
+:P.gearbeitet. Als Benutzer wird dann das administrative Benutzerkonto
+verwendet.
+.* -----------------------------------------------------------------------------
+:EHELP.
+:EPNLGRP.
+.* vim: ft=pnlgrp textwidth=80 colorcolumn=81

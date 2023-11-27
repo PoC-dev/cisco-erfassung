@@ -1,0 +1,112 @@
+ascii
+put acdcapf.dds CISCO/SOURCES.ACDCAPF
+put acmatchdf.dds CISCO/SOURCES.ACMATCHDF
+put acmatchhp.pnlgrp CISCO/SOURCES.ACMATCHHP
+put acmatchpf.dds CISCO/SOURCES.ACMATCHPF
+put acmatchpg.rpgle CISCO/SOURCES.ACMATCHPG
+put acmatchrpl.dds CISCO/SOURCES.ACMATCHRPL
+put acupdlf.dds CISCO/SOURCES.ACUPDLF
+put cfgverdf.dds CISCO/SOURCES.CFGVERDF
+put cfgverhp.pnlgrp CISCO/SOURCES.CFGVERHP
+put cfgverpf.dds CISCO/SOURCES.CFGVERPF
+put cfgverpg.rpgle CISCO/SOURCES.CFGVERPG
+put ciscohp.pnlgrp CISCO/SOURCES.CISCOHP
+put cmdcisco.pnlgrp CISCO/SOURCES.CMDCISCO
+put dcadf.dds CISCO/SOURCES.DCADF
+put dcahp.pnlgrp CISCO/SOURCES.DCAHP
+put dcaosmatch.dds CISCO/SOURCES.DCAOSMATCH
+put dcapf.dds CISCO/SOURCES.DCAPF
+put dcapg.rpgle CISCO/SOURCES.DCAPG
+put hstdf.dds CISCO/SOURCES.HSTDF
+put hsthp.pnlgrp CISCO/SOURCES.HSTHP
+put hstpf.dds CISCO/SOURCES.HSTPF
+put hstpg.rpgle CISCO/SOURCES.HSTPG
+put hstposlf.dds CISCO/SOURCES.HSTPOSLF
+put invdf.dds CISCO/SOURCES.INVDF
+put invhp.pnlgrp CISCO/SOURCES.INVHP
+put invpf.dds CISCO/SOURCES.INVPF
+put invpg.rpgle CISCO/SOURCES.INVPG
+put osmatch1lf.dds CISCO/SOURCES.OSMATCH1LF
+put osmatch2lf.dds CISCO/SOURCES.OSMATCH2LF
+put osmatch3lf.dds CISCO/SOURCES.OSMATCH3LF
+put osmatch4lf.dds CISCO/SOURCES.OSMATCH4LF
+put osmatch5lf.dds CISCO/SOURCES.OSMATCH5LF
+put osmatchdf.dds CISCO/SOURCES.OSMATCHDF
+put osmatchhp.pnlgrp CISCO/SOURCES.OSMATCHHP
+put osmatchmax.dds CISCO/SOURCES.OSMATCHMAX
+put osmatchpf.dds CISCO/SOURCES.OSMATCHPF
+put osmatchpg.rpgle CISCO/SOURCES.OSMATCHPG
+put osmatchrpl.dds CISCO/SOURCES.OSMATCHRPL
+put osmrptdf.dds CISCO/SOURCES.OSMRPTDF
+put osmrpthp.pnlgrp CISCO/SOURCES.OSMRPTHP
+put osmrptmlf.dds CISCO/SOURCES.OSMRPTMLF
+put osmrptolf.dds CISCO/SOURCES.OSMRPTOLF
+put osmrptpg.rpgle CISCO/SOURCES.OSMRPTPG
+put osupdtelf.dds CISCO/SOURCES.OSUPDTELF
+put rptprtpg.rpgle CISCO/SOURCES.RPTPRTPG
+put rptupdtepg.rpgle CISCO/SOURCES.RPTUPDTEPG
+put rptupdtept.dds CISCO/SOURCES.RPTUPDTEPT
+put rptuptimlf.dds CISCO/SOURCES.RPTUPTIMLF
+put rptuptimpg.rpgle CISCO/SOURCES.RPTUPTIMPG
+put rptuptimpt.dds CISCO/SOURCES.RPTUPTIMPT
+put sernodf.dds CISCO/SOURCES.SERNODF
+put sernohp.pnlgrp CISCO/SOURCES.SERNOHP
+put sernolf.dds CISCO/SOURCES.SERNOLF
+put sernopg.rpgle CISCO/SOURCES.SERNOPG
+put vlanpf.dds CISCO/SOURCES.VLANPF
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(ACDCAPF) SRCTYPE(PF) TEXT('DCA list of installed Cisco Anyconnects')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(ACMATCHDF) SRCTYPE(DSPF) TEXT('Recommended Cisco Anyconnect')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(ACMATCHHP) SRCTYPE(PNLGRP) TEXT('Recommended Cisco Anyconnect')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(ACMATCHPF) SRCTYPE(PF) TEXT('Recommended Cisco Anyconnect')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(ACMATCHPG) SRCTYPE(RPGLE) TEXT('Recommended Cisco Anyconnect')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(ACMATCHRPL) SRCTYPE(LF) TEXT('Recommended Cisco Anyconnect: Change Version')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(ACUPDLF) SRCTYPE(LF) TEXT('List hosts if AC updates are available: Join LF')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(CFGVERDF) SRCTYPE(DSPF) TEXT('Show run/show ver: Subfile as Text Viewer')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(CFGVERHP) SRCTYPE(PNLGRP) TEXT('Show run/show ver')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(CFGVERPF) SRCTYPE(PF) TEXT('Show run/show ver')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(CFGVERPG) SRCTYPE(RPGLE) TEXT('Show run/show ver')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(CISCOHP) SRCTYPE(PNLGRP) TEXT('Configuration guide for Cisco devices for DCA')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(CMDCISCO) SRCTYPE(PNLGRP) TEXT('Main Menu')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(DCADF) SRCTYPE(DSPF) TEXT('Data Collected Automatically')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(DCAHP) SRCTYPE(PNLGRP) TEXT('Data Collected Automatically')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(DCAOSMATCH) SRCTYPE(LF) TEXT('Data Collected Automatically: Lookup of newer OS')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(DCAPF) SRCTYPE(PF) TEXT('Data Collected Automatically')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(DCAPG) SRCTYPE(RPGLE) TEXT('Data Collected Automatically')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(HSTDF) SRCTYPE(DSPF) TEXT('Hosts master file')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(HSTHP) SRCTYPE(PNLGRP) TEXT('Hosts master file')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(HSTPF) SRCTYPE(PF) TEXT('Hosts master file')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(HSTPG) SRCTYPE(RPGLE) TEXT('Hosts master file')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(HSTPOSLF) SRCTYPE(LF) TEXT('Hosts master file: POSTO aid')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(INVDF) SRCTYPE(DSPF) TEXT('DCA list of show inventory')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(INVHP) SRCTYPE(PNLGRP) TEXT('DCA list of show inventory')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(INVPF) SRCTYPE(PF) TEXT('DCA list of show inventory')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(INVPG) SRCTYPE(RPGLE) TEXT('DCA list of show inventory')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(OSMATCH1LF) SRCTYPE(LF) TEXT('Recommended OS versions master file: SFL by ver')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(OSMATCH2LF) SRCTYPE(LF) TEXT('Recommended OS versions master file: SFL by model')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(OSMATCH3LF) SRCTYPE(LF) TEXT('Recommended OS versions master file: SFL by RAM')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(OSMATCH4LF) SRCTYPE(LF) TEXT('Recommended OS versions master file: SFL by flash')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(OSMATCH5LF) SRCTYPE(LF) TEXT('Recommended OS versions master file: SFL by EOS')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(OSMATCHDF) SRCTYPE(DSPF) TEXT('Recommended OS versions master file')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(OSMATCHHP) SRCTYPE(PNLGRP) TEXT('Recommended OS versions master file: Help')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(OSMATCHMAX) SRCTYPE(LF) TEXT('Recommended OS versions master file: New IDs')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(OSMATCHPF) SRCTYPE(PF) TEXT('Recommended OS versions master file')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(OSMATCHPG) SRCTYPE(RPGLE) TEXT('Recommended OS versions master file')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(OSMATCHRPL) SRCTYPE(LF) TEXT('Recommended OS versions master file: Change vers.')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(OSMRPTDF) SRCTYPE(DSPF) TEXT('Edit missing/orphaned osmatchpf-records')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(OSMRPTHP) SRCTYPE(PNLGRP) TEXT('Edit missing/orphaned osmatchpf-records: help')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(OSMRPTMLF) SRCTYPE(LF) TEXT('Edit missing/orphaned osmatchpf-records: missing')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(OSMRPTOLF) SRCTYPE(LF) TEXT('Edit missing/orphaned osmatchpf-records: orphans')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(OSMRPTPG) SRCTYPE(RPGLE) TEXT('Edit missing/orphaned osmatchpf-records')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(OSUPDTELF) SRCTYPE(LF) TEXT('List hosts if OS updates are available')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(RPTPRTPG) SRCTYPE(CLP) TEXT('Print to printer and state that we've printed')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(RPTUPDTEPG) SRCTYPE(RPGLE) TEXT('List hosts if updates are available')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(RPTUPDTEPT) SRCTYPE(PRTF) TEXT('List hosts if updates are available')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(RPTUPTIMLF) SRCTYPE(LF) TEXT('List hosts by uptime')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(RPTUPTIMPG) SRCTYPE(RPGLE) TEXT('List hosts by uptime')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(RPTUPTIMPT) SRCTYPE(PRTF) TEXT('List hosts by uptime')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(SERNODF) SRCTYPE(DSPF) TEXT('List hosts by serial number')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(SERNOHP) SRCTYPE(PNLGRP) TEXT('List hosts by serial number')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(SERNOLF) SRCTYPE(LF) TEXT('List hosts by serial number')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(SERNOPG) SRCTYPE(RPGLE) TEXT('List hosts by serial number')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(VLANPF) SRCTYPE(PF) TEXT('DCA list of VLANs per device')
+quit

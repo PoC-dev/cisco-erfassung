@@ -1,0 +1,125 @@
+.* This file is part of cisco-erfassung, an application conglomerate for
+.*  management of Cisco devices on AS/400, i5/OS and IBM i.
+.*
+.* This is free software; you can redistribute it and/or modify it under the
+.*  terms of the GNU General Public License as published by the Free Software
+.*  Foundation; either version 2 of the License, or (at your option) any later
+.*  version.
+.*
+.* It is distributed in the hope that it will be useful, but WITHOUT ANY
+.*  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+.*  FOR PARTICULAR PURPOSE. See the GNU General Public License for more details.
+.*
+.* You should have received a copy of the GNU General Public License along with
+.*  it; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
+.*  Suite 330, Boston, MA 02111-1307 USA or get it at
+.*  http://www.gnu.org/licenses/gpl.html
+.*
+:PNLGRP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='GLOBAL'.Seriennummernsuche
+:P.Diese Applikation ermöglicht das Einsehen und Suchen von Geräten anhand der
+Seriennummer von Komponenten. Die zugrundeliegenden Informationen stammen aus
+Show Inventory.
+:P.Die Cisco-Wartungsverwaltung ist eine Sammlung von Applikationen zur
+Verwaltung von Cisco- und auf Kommandozeilenebene kompatiblen Geräten. Eine
+Funktionsübersicht findet sich in der Hilfefunktion im Hauptmenü.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='MAIN/POSTO'.Listenanfang bei
+:XH3.Listenanfang bei
+:P.Hier können die Anfangsbuchstaben der Seriennummer eingegeben werden. Ein
+Druck auf die Eingabetaste positioniert den Listenausschnitt zur ersten
+(teilweisen) textuellen Übereinstimmung.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='MAIN/SFLOPTS'.Auswahloptionen
+:XH3.Auswahloptionen
+:P.Für die Liste gültige Auswahl-Werte, welche in der Spalte :HP1.Opt:EHP1.
+eingegeben werden können:
+:PARML.
+:PT.5=Details
+:PD.Allgemeine, automatisch erfasste Detaildaten werden für markierte Einträge
+angezeigt.
+:PT.7=Show running-configuration
+:PD.Die zuletzt erfasste Konfiguration wird für markierte Einträge angezeigt.
+:PT.8=Show version
+:PD.Die zuletzt erfasste Ausgabe von Show version wird für markierte Einträge
+angezeigt.
+:PT.9=Show inventory
+:PD.Die zuletzt erfasste Ausgabe von Show Inventory wird für markierte Einträge
+angezeigt.
+:EPARML.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='MAIN/START'.Beginn-Indikator
+:XH3.Beginn-Indikator
+:P.Diese Anzeige wird dann eingeblendet, wenn die Anzeige am ersten Datensatz
+angekommen ist und daher keine vorigen Datensätze mehr aufgerufen werden können.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='SFLHDR/OPT'.Spalte Opt
+:XH3.Spalte Opt
+:P.In diese Spalte eine Auswahlziffer eingegeben, um den Datensatz zum einen zu
+Selektieren und zum anderen vorzugeben, was das System mit diesem Satz tun soll.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='SFLHDR/SERVTYP'.Spalte Seriennummer
+:XH3.Spalte Seriennummer
+:P.Hier wird die Seriennummer eines Datensatzes angezeigt.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='SFLHDR/HOSTNAME'.Spalte Hostname
+:XH3.Spalte Hostname
+:P.Hier wird der Host- bzw. DNS-Name (FQDN, Fully Qualified Domain Name) eines
+Datensatzes mit gegebener Seriennummer angezeigt.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='SFLHDR/MODEL'.Spalte Komponente
+:XH3.Spalte Komponente
+:P.Hier wird der Name der Komponente eines Datensatzes mit gegebener
+Seriennummer angezeigt.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='MAIN/SFLDTA'.Datenbereich
+:XH3.Datenbereich
+:P.Hier sind einige Datensätze aus der Gesamtheit aller vorhandenen Datensätze
+sichtbar. Änderungen können nicht direkt vorgenommen werden. Dazu sind die
+bereits erwähnten Selektionen in der Opt-Spalte da.
+:NOTE.Die Opt-Selektionen gehen beim Scrollen verloren!
+:ENOTE.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='MAIN/END'.Ende-Indikator
+:XH3.Ende-Indikator
+:P.Diese Anzeige macht darauf aufmerksam, wenn die Liste der dargestellten
+Datensätze am Ende angekommen ist und keine weiteren Datensätze mehr vorhanden
+sind.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='MAIN/SFLBTM'.Funktionstasten
+:XH3.Funktionstasten
+:PARML.
+:PT.F1=Hilfe
+:PD.Ruft die cursorpositionsabhängige Hilfefunktion auf.
+:PT.F3=Verlassen
+:PD.Beendet die Listenansicht und gibt die Kontrolle an das vorherige Menü
+zurück.
+:PT.F5=Aktualisieren
+:PD.Forciert einen Neuaufbau des dargestellten Listenausschnittes aus der
+Datenbank.
+:PT.F12=Abbrechen
+:PD.Beendet die momentan aufgerufene Funktion und kehrt zur vorherigen Anzeige
+zurück.
+:EPARML.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='MAIN/SFLND'.Keine Datensätze zum Anzeigen
+:XH3.Keine Datensätze zum Anzeigen
+:P.Diese Anzeige wird dann eingeblendet, wenn keine Datensätze für die
+Listendarstellung gefunden werden konnten.
+:P.Dies kann in einer leeren Datenbankdatei begründet sein.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:EPNLGRP.
+.* vim: ft=pnlgrp textwidth=80 colorcolumn=81

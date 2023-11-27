@@ -1,0 +1,60 @@
+     A* This file is part of cisco-erfassung, an application conglomerate for
+     A*  management of Cisco devices on AS/400, i5/OS and IBM i.
+     A*
+     A* This is free software; you can redistribute it and/or modify it
+     A*  under the terms of the GNU General Public License as published by the
+     A*  Free Software Foundation; either version 2 of the License, or (at your
+     A*  option) any later version.
+     A*
+     A* It is distributed in the hope that it will be useful, but WITHOUT
+     A*  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+     A*  FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+     A*  for more details.
+     A*
+     A* You should have received a copy of the GNU General Public License along
+     A*  with it; if not, write to the Free Software Foundation, Inc., 59
+     A*  Temple Place, Suite 330, Boston, MA 02111-1307 USA or get it at
+     A*  http://www.gnu.org/licenses/gpl.html
+     A*
+     A* Compile me with:
+     A* CRTPRTF FILE(RPTUPTIMPT) SRCFILE(SOURCES) PAGESIZE(74 166 *ROWCOL) OVRFLW(72)
+     A*-------------------------------------------------------------------------
+     A                                      REF(RPTUPTIMLF)
+     A*-------------------------------------------------------------------------
+     A          R PRT1PAG
+     A                                    78'Uptime Top-10'
+     A                                      HIGHLIGHT UNDERLINE SPACEA(2)
+     A                                    75'Stand:'
+     A                                      FONT(222)
+     A                                    82DATE(*YY) EDTWRD('0  .  .    ')
+     A                                      FONT(222) SPACEA(3)
+     A*
+     A*-------------------------------------------------------------------------
+     A          R PRTHEAD                   HIGHLIGHT
+     A                                     1'Uptime'
+     A                                    55'Hostname'
+     A                                      SPACEA(1)
+     A*
+     A*-------------------------------------------------------------------------
+     A          R PRTLST
+     A            UPTIME    R              1
+     A            HOSTNAME  R             55SPACEA(1)
+     A*
+     A*-------------------------------------------------------------------------
+     A          R PRTFOOT
+     A                                      SKIPB(74)
+     A                                    79'-'
+     A                                    81PAGNBR
+     A                                    +1'-'
+     A                                      SKIPA(1)
+     A*
+     A*-------------------------------------------------------------------------
+     A          R PRTEND
+     A                                      SPACEA(1)
+     A                                    72'*** Ende der Liste ***'
+     A                                      SPACEB(1) SKIPA(74)
+     A                                    79'-'
+     A                                    81PAGNBR
+     A                                    +1'-'
+     A* For vim ----------------------------------------------------------------
+     A* vim: syntax=dds colorcolumn=81 autoindent noignorecase

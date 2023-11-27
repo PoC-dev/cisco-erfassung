@@ -1,0 +1,259 @@
+     A* This file is part of cisco-erfassung, an application conglomerate for
+     A*  management of Cisco devices on AS/400, i5/OS and IBM i.
+     A*
+     A* This is free software; you can redistribute it and/or modify it
+     A*  under the terms of the GNU General Public License as published by the
+     A*  Free Software Foundation; either version 2 of the License, or (at your
+     A*  option) any later version.
+     A*
+     A* It is distributed in the hope that it will be useful, but WITHOUT
+     A*  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+     A*  FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+     A*  for more details.
+     A*
+     A* You should have received a copy of the GNU General Public License along
+     A*  with it; if not, write to the Free Software Foundation, Inc., 59
+     A*  Temple Place, Suite 330, Boston, MA 02111-1307 USA or get it at
+     A*  http://www.gnu.org/licenses/gpl.html
+     A*
+     A* Globals-----------------------------------------------------------------
+     A                                      REF(DCAPF)
+     A                                      ERRSFL
+     A                                      HELP
+     A                                      ALTHELP(CA01)
+     A                                      HLPPNLGRP(GLOBAL DCAHP)
+     A* ------------------------------------------------------------------------
+     A* Readonly-Display 1 -----------------------------------------------------
+     A          R DSPHST1
+     A                                      CA03(03 'Verlassen')
+     A                                      CA10(10 'Vlan-Info')
+     A                                      CA12(12 'Abbrechen')
+     A                                      PAGEUP(25)
+     A                                      PAGEDOWN(26)
+     A                                      CHGINPDFT
+     A*         ##Help Area definition for this screen.
+     A                                      HLPTITLE('Cisco-Wartungen: -
+     A                                      Erfasste Daten')
+     A          H                           HLPARA(3 2 3 68)
+     A                                      HLPPNLGRP('DCA/HOSTNAME' DCAHP)
+     A          H                           HLPARA(6 3 6 33)
+     A                                      HLPPNLGRP('DCA1/SERVTYP' DCAHP)
+     A          H                           HLPARA(7 3 7 36)
+     A                                      HLPPNLGRP('DCA1/CONN' DCAHP)
+     A          H                           HLPARA(8 3 8 46)
+     A                                      HLPPNLGRP('DCA1/USERNAME' DCAHP)
+     A          H                           HLPARA(9 3 9 46)
+     A                                      HLPPNLGRP('DCA1/PASSWD' DCAHP)
+     A          H                           HLPARA(10 3 10 46)
+     A                                      HLPPNLGRP('DCA1/ENABLE' DCAHP)
+     A          H                           HLPARA(11 3 11 34)
+     A                                      HLPPNLGRP('DCA1/DCA' DCAHP)
+     A          H                           HLPARA(12 3 12 34)
+     A                                      HLPPNLGRP('DCA1/UPD_IGN' DCAHP)
+     A          H                           HLPARA(13 3 13 34)
+     A                                      HLPPNLGRP('DCA1/ACU_IGN' DCAHP)
+     A          H                           HLPARA(15 2 16 52)
+     A                                      HLPPNLGRP('DCA1/COMMT' DCAHP)
+     A          H                           HLPARA(18 3 18 80)
+     A                                      HLPPNLGRP('DCA1/STAMP' DCAHP)
+     A          H                           HLPARA(19 3 19 46)
+     A                                      HLPPNLGRP('DCA1/CFUPDDB' DCAHP)
+     A          H                           HLPARA(22 70 22 80)
+     A                                      HLPPNLGRP('DCA1/MORE' DCAHP)
+     A          H                           HLPARA(23 1 23 80)
+     A                                      HLPPNLGRP('DCA/FKEYS' DCAHP)
+     A*         ##End of definitions. Here be real screen elements.
+     A                                  1 24'Cisco-Wartungen: Erfasste Daten'
+     A                                      DSPATR(HI)
+     A                                  3  2'Hostname  . . . . . . . . .'
+     A                                      DSPATR(HI)
+     A            HOSTNAME  R           3 31REFFLD(HOSTNAME HSTPF)
+     A                                      COLOR(TRQ)
+     A                                  5  2'Zugriff' DSPATR(HI)
+     A                                  6  3'Hosttyp  . . . . . . . . .'
+     A            SERVTYP   R           6 31REFFLD(SERVTYP HSTPF)
+     A                                  7  3'Zugriffsmethode  . . . . .'
+     A            CONN      R           7 31REFFLD(CONN HSTPF)
+     A                                  8  3'Benutzer . . . . . . . . .'
+     A            USERNAME  R           8 31REFFLD(USERNAME HSTPF)
+     A                                  9  3'Passwort . . . . . . . . .'
+     A            PASSWD    R           9 31REFFLD(PASSWD HSTPF)
+     A  43                             10  3'Enable-Secret  . . . . . .'
+     A  43        ENABLE    R          10 31REFFLD(ENABLE HSTPF)
+     A                                 11  3'Automatische Erfassung . .'
+     A N44                             11 31'Nein'
+     A  44                             11 31'Ja'
+     A                                 12  3'Ignoriere neues OS . . . .'
+     A N45                             12 31'Nein'
+     A  45                             12 31'Ja'
+     A                                 13  3'Ignoriere neuen Anyconnect'
+     A N46                             13 31'Nein'
+     A  46                             13 31'Ja'
+     A                                 15  2'Bemerkung' DSPATR(HI)
+     A            COMMT     R          16  3REFFLD(COMMT HSTPF)
+     A                                 18  2'Zeitstempel' DSPATR(HI)
+     A                                 19  3'Erfassung  . . . . . . . .'
+     A            STAMP$        16A    19 31
+     A  47                             19 54'Erfassung älter als 3 Tage!'
+     A                                      COLOR(RED)
+     A  48                             20  3'Cfg-Änderung . . . . . . .'
+     A  48        CFUPDDB$      16A    20 31
+     A                                 22 70'Weitere ...' DSPATR(HI)
+     A                                 23  2'F3=Verlassen   F10=Vlan-Info   -
+     A                                      F12=Abbrechen'
+     A                                      COLOR(BLU)
+     A* Readonly-Display 2 -----------------------------------------------------
+     A          R DSPHST2
+     A                                      CA03(03 'Verlassen')
+     A                                      CA10(10 'Vlan-Info')
+     A                                      CA12(12 'Abbrechen')
+     A                                      PAGEUP(25)
+     A                                      PAGEDOWN(26)
+     A                                      CHGINPDFT
+     A*         ##Help Area definition for this screen.
+     A                                      HLPTITLE('Cisco-Wartungen: -
+     A                                      Erfasste Daten')
+     A          H                           HLPARA(3 2 3 64)
+     A                                      HLPPNLGRP('DCA/HOSTNAME' DCAHP)
+     A          H                           HLPARA(6 3 6 46)
+     A                                      HLPPNLGRP('DCA2/MODEL' DCAHP)
+     A          H                           HLPARA(7 3 7 35)
+     A                                      HLPPNLGRP('DCA2/RAM' DCAHP)
+     A          H                           HLPARA(8 3 8 35)
+     A                                      HLPPNLGRP('DCA2/FLASH' DCAHP)
+     A          H                           HLPARA(9 3 9 38)
+     A                                      HLPPNLGRP('DCA2/SERNO' DCAHP)
+     A          H                           HLPARA(10 3 10 80)
+     A                                      HLPPNLGRP('DCA2/VERSION' DCAHP)
+     A          H                           HLPARA(11 3 11 46)
+     A                                      HLPPNLGRP('DCA2/ASA_DM_VER' DCAHP)
+     A          H                           HLPARA(14 3 15 80)
+     A                                      HLPPNLGRP('DCA2/SYSIMG' DCAHP)
+     A          H                           HLPARA(16 3 17 80)
+     A                                      HLPPNLGRP('DCA2/RLDREASON' DCAHP)
+     A          H                           HLPARA(18 3 18 76)
+     A                                      HLPPNLGRP('DCA2/UPTIME' DCAHP)
+     A          H                           HLPARA(19 3 19 32)
+     A                                      HLPPNLGRP('DCA2/CONFREG' DCAHP)
+     A          H                           HLPARA(21 27 21 73)
+     A                                      HLPPNLGRP('DCA2/ASA_FOVER' DCAHP)
+     A          H                           HLPARA(22 74 22 77)
+     A                                      HLPPNLGRP('DCA2/END' DCAHP)
+     A          H                           HLPARA(23 1 23 80)
+     A                                      HLPPNLGRP('DCA/FKEYS' DCAHP)
+     A*         ##End of definitions. Here be real screen elements.
+     A                                  1 24'Cisco-Wartungen: Erfasste Daten'
+     A                                      DSPATR(HI)
+     A                                  3  2'Hostname  . . . . . . . . .'
+     A                                      DSPATR(HI)
+     A            HOSTNAME  R           3 31REFFLD(HOSTNAME HSTPF)
+     A                                      COLOR(TRQ)
+     A                                  5  2'Hardware' DSPATR(HI)
+     A                                  6  3'Modell . . . . . . . . . .'
+     A            MODEL     R           6 31
+     A  49                              6 56'End of Support!' COLOR(RED)
+     A                                  7  3'RAM  . . . . . . . . . . .'
+     A            RAM       R     Y     7 32EDTCDE(1)
+     A                                  7 38'MB'
+     A                                  8  3'Flash  . . . . . . . . . .'
+     A            FLASH     R     Y     8 31EDTCDE(1)
+     A                                  8 38'MB'
+     A                                  9  3'Seriennummer . . . . . . .'
+     A            SERNO     R           9 31
+     A                                 11  2'Software' DSPATR(HI)
+     A                                 12  3'Version  . . . . . . . . .'
+     A            VERSION   R          12 31
+     A  50                             12 56'Upd.' COLOR(TRQ)
+     A  50        VER_SOLL  R          12 61REFFLD(VERSION) COLOR(TRQ)
+     A  51                             13  3'ASDM-Version . . . . . . .'
+     A  51        ASA_DM_VERR          13 31
+     A                                 14  3'OS-Image . . . . . . . . .'
+     A            SYSIMG    R        B 14 31CNTFLD(50) DSPATR(PR)
+     A  52                             16  3'Reload Reason  . . . . . .'
+     A  52        RLD$REASONR        B 16 31CNTFLD(50) DSPATR(PR)
+     A  53                                  COLOR(RED)
+     A                                 18  3'Uptime . . . . . . . . . .'
+     A            UPTIME    R          18 31
+     A                                 19  3'Config-Register  . . . . .'
+     A            CONFREG   R          19 31
+     A  54                             21 31'Achtung!'
+     A                                      COLOR(YLW) DSPATR(RI)
+     A  54                             21 40'Host ist Teil eines Failover--
+     A                                      Clusters!'
+     A                                 22 74'Ende' DSPATR(HI)
+     A                                 23  2'F3=Verlassen   F10=Vlan-Info   -
+     A                                      F12=Abbrechen'
+     A                                      COLOR(BLU)
+     A* ------------------------------------------------------------------------
+     A* Vlan Subfile -----------------------------------------------------------
+     A          R MAINSFL                   SFL
+     A*         ##Pull values from the table definition itself...
+     A            VLAN      R     Y  O 11  2EDTCDE(3) REFFLD(VLAN VLANPF)
+     A            DESCR     R        O 11  8REFFLD(DESCR VLANPF)
+     A* Subfile Control Screen -------------------------------------------------
+     A          R MAINCTL                   SFLCTL(MAINSFL)
+     A                                      WINDOW(2 37 20 39 *NOMSGLIN)
+     A                                      WDWTITLE((*TEXT 'Vlan-Konfigura-
+     A                                      tion') *CENTER (*COLOR GRN))
+     A*                                   ##Command Key definitions.
+     A                                      CA03(03 'Verlassen')
+     A                                      CA12(12 'Abbrechen')
+     A*                                   ##Basic Settings for subfile ctrl.
+     A                                      OVERLAY
+     A                                      SFLSIZ(14)
+     A                                      SFLPAG(7)
+     A  31                                  SFLDSP
+     A  32                                  SFLDSPCTL
+     A  33                                  SFLCLR
+     A  34                                  SFLEND(*MORE)
+     A*         ##Help Area definition for this screen.
+     A                                      HLPTITLE('Vlan-Konfiguration')
+     A          H                           HLPARA(3 1 3 39)
+     A                                      HLPPNLGRP('VLAN/VTPDOM' DCAHP)
+     A          H                           HLPARA(4 1 4 39)
+     A                                      HLPPNLGRP('VLAN/VTPMODE' DCAHP)
+     A          H                           HLPARA(5 1 5 39)
+     A                                      HLPPNLGRP('VLAN/VTPVERS' DCAHP)
+     A          H                           HLPARA(6 1 6 39)
+     A                                      HLPPNLGRP('VLAN/VTPPRUNE' DCAHP)
+     A          H                           HLPARA(*CNST 1)
+     A                                      HLPPNLGRP('VLAN/VLAN' DCAHP)
+     A          H                           HLPARA(*CNST 2)
+     A                                      HLPPNLGRP('VLAN/NAME' DCAHP)
+     A          H                           HLPARA(11 1 18 39)
+     A                                      HLPPNLGRP('VLAN/SFLDTA' DCAHP)
+     A            SFLRCDNBR      2S 0H
+     A*         ##End of definitions. Here be real screen elements.
+     A                                  2  1'VTP Konfiguration' DSPATR(HI)
+     A                                  3  2'Domain  . . .'
+     A            VTP_DOMAINR           3 16
+     A                                  4  2'Mode  . . . .'
+     A            VTP_MODE  R           4 16
+     A                                  5  2'Version . . .'
+     A            VTP_VERS  R           5 16EDTCDE(1)
+     A  55                              6  2'Pruning . . .'
+     A  55N56                           6 16'Nein'
+     A  55 56                           6 16'Ja'
+     A                                  8  1'Lokale Vlan-Liste' DSPATR(HI)
+     A                                 10  4'ID' DSPATR(HI) HLPID(1)
+     A                                 10  8'Name' DSPATR(HI) HLPID(2)
+     A* Footer of the form -----------------------------------------------------
+     A* A subfile control record may contain elements above or below the actual
+     A* subfile, but not both.
+     A          R MAINBTM                   WINDOW(MAINCTL)
+     A                                      HLPTITLE('Vlan-Konfiguration')
+     A          H                           HLPARA(*RCD)
+     A                                      HLPPNLGRP('VLAN/SFLBTM' DCAHP)
+     A                                 20  2'F1=Hilfe  -
+     A                                      F3=Verlassen  -
+     A                                      F12=Abbrechen'
+     A                                      COLOR(BLU)
+     A* No data instead of SFL -------------------------------------------------
+     A          R MAINND                    WINDOW(MAINCTL)
+     A                                      OVERLAY
+     A                                      HLPTITLE('Vlan-Konfiguration')
+     A          H                           HLPARA(*RCD)
+     A                                      HLPPNLGRP('VLAN/SFLND' DCAHP)
+     A                                 11  2'(Keine Vlans gefunden.)'
+     A* For vim ----------------------------------------------------------------
+     A* vim: syntax=dds colorcolumn=81 autoindent noignorecase

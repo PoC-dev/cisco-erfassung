@@ -1,0 +1,238 @@
+.* This file is part of cisco-erfassung, an application conglomerate for
+.*  management of Cisco devices on AS/400, i5/OS and IBM i.
+.*
+.* This is free software; you can redistribute it and/or modify it under the
+.*  terms of the GNU General Public License as published by the Free Software
+.*  Foundation; either version 2 of the License, or (at your option) any later
+.*  version.
+.*
+.* It is distributed in the hope that it will be useful, but WITHOUT ANY
+.*  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+.*  FOR PARTICULAR PURPOSE. See the GNU General Public License for more details.
+.*
+.* You should have received a copy of the GNU General Public License along with
+.*  it; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
+.*  Suite 330, Boston, MA 02111-1307 USA or get it at
+.*  http://www.gnu.org/licenses/gpl.html
+.*
+:PNLGRP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='GLOBAL'.OS-Geräte-Zuordnungen
+:P.Diese Applikation ermöglicht die Stammdatenpflege der gewünschten
+Firmware-Versionen abhängig von Attributen des jeweiligen Gerätes.
+:UL.
+:LI.Modell
+:LI.RAM
+:LI.Flash
+:EUL.
+:P.Cisco hat(te) unterschiedliche Empfehlungen für unterschiedlich ausgerüstete
+Varianten des gleichen Modells.
+:P.Die Cisco-Wartungsverwaltung ist eine Sammlung von Applikationen zur
+Verwaltung von Cisco- und auf Kommandozeilenebene kompatiblen Geräten. Eine
+Funktionsübersicht findet sich in der Hilfefunktion im Hauptmenü.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='MAIN/SFLOPTS'.Auswahloptionen
+:XH3.Auswahloptionen
+:P.Für die Liste gültige Auswahl-Werte, welche in der Spalte :HP1.Opt:EHP1.
+eingegeben werden können:
+:PARML.
+:PT.2=Ändern
+:PD.Markierte Einträge können in einer gesonderten Bildschirmanzeige individuell
+angepasst werden.
+:PT.3=Duplizieren
+:PD.Markierte Einträge können in einer gesonderten Bildschirmanzeige individuell
+angepasst werden. Diese werden allerdings als neuer Datensatz gespeichert. Es
+darf daher keine Dublette eines bereits existierenden Satzes angelegt werden.
+:PT.4=Löschen
+:PD.Markierte Einträge werden zum Löschen vorgemerkt. In einer weiteren
+Bildschirmanzeige kann dieser Vorgang bestätigt oder abgebrochen werden.
+:PT.5=Anzeigen
+:PD.Wie Option 2, allerdings können keine Änderungen durchgeführt werden.
+:PT.6=Version ersetzen
+:PD.Die Version für diesen und alle weiteren Datensätze mit der gleichen Version
+soll durch eine andere Version ersetzt werden.
+:NOTE.Dies ändert auch unselektierte Datensätze.:ENOTE.
+:EPARML.
+:NOTE.Ein Datensatz kann nur von einer Arbeitsstation gleichzeitig bearbeitet
+werden. Ist ein Datensatz bereits durch einen anderen Benutzer gesperrt, wird
+dieser auf der anfragenden Arbeitsstation nur zum Betrachten geöffnet.
+Änderungen sind nicht möglich. Der Anwender sollte aus diesem Grund vermeiden,
+Datensätze nur zur Einsicht mit Opt :HP1.2=Ändern:EHP1. zu öffnen. Die Benutzung
+von Opt :HP1.5=Anzeigen:EHP1. ist vorteilhafter, da sie es anderen Bedienern
+ermöglicht, den Datensatz zu ändern, weil der Benutzer den Datensatz dann nicht
+unnötigerweise zum Bearbeiten gesperrt hat.
+:ENOTE.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='SFLHDR/OPT'.Spalte Opt
+:XH3.Spalte Opt
+:P.In dieser Spalte eine Auswahlziffer eingegeben, um den Datensatz zum einen zu
+Selektieren und zum anderen vorzugeben, was das System mit diesem Satz tun soll.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='SFLHDR/VERSION'.Spalte Version
+:XH3.Spalte Version
+:P.Hier wird die einem Datensatz zugrundeliegende OS-Version angezeigt.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='SFLHDR/MODEL'.Spalte Modell
+:XH3.Spalte Modell
+:P.Hier wird das einem Datensatz zugrundeliegende Gerätemodell angezeigt.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='SFLHDR/RAM'.Spalte RAM
+:XH3.Spalte RAM
+:P.Hier wird die einem Datensatz zugrundeliegende Menge an Arbeitsspeicher (RAM)
+angezeigt.
+:NOTE.Bei neueren Geräten ist dieser Wert nicht zwingend gleich der physikalisch
+verbauten Menge an Speicher. Im Zweifelsfall sollte die Herstellerdokumentation
+zu Rate gezogen werden.:ENOTE.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='SFLHDR/FLASH'.Spalte Flash
+:XH3.Spalte Flash
+:P.Hier wird die einem Datensatz zugrundeliegende Menge an Festwertspeicher
+(Flash, zum Ablegen der Firmware, etc.) angezeigt.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='SFLHDR/EOS'.Spalte EOS
+:XH3.Spalte EOS
+:P.Hier wird das optionale Datum der herstellerseitigen Abkündügung (EOS, End of
+Service) angezeigt.
+:NOTE.Liegt das Datum in der Vergangenheit, wird es rot eingefärbt.:ENOTE.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='MAIN/SFLDTA'.Datenbereich
+:XH3.Datenbereich
+:P.Hier sind einige Datensätze aus der Gesamtheit aller vorhandenen Datensätze
+sichtbar. Änderungen können nicht direkt vorgenommen werden. Dazu sind die
+bereits erwähnten Selektionen in der Opt-Spalte da.
+:NOTE.Die Opt-Selektionen werden über Scrollgrenzen hinweg beibehalten.
+:ENOTE.
+:P.Eine Anzeige am rechten unteren Ende des scrollbaren Bereichs macht darauf
+aufmerksam, wenn die Liste der dargestellten Datensätze am Ende angekommen ist
+und keine weiteren Datensätze mehr vorhanden sind.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='MAIN/SFLBTM'.Funktionstasten
+:XH3.Funktionstasten
+:PARML.
+:PT.F1=Hilfe
+:PD.Ruft die cursorpositionsabhängige Hilfefunktion auf.
+:PT.F3=Verlassen
+:PD.Beendet die Listenansicht und gibt die Kontrolle an das vorherige Menü
+zurück.
+:PT.F5=Aktualisieren
+:PD.Forciert einen Neuaufbau des dargestellten Listenausschnittes aus der
+Datenbank.
+:PT.F6=Neu
+:PD.Ruft die Bildschirmanzeige zum Hinzufügen eines neuen Datensatzes auf.
+:PT.F11=Sortierung
+:PD.Jeder Druck auf diese Taste schaltet zur jeweils nächsten Spalte als
+Sortierschlüssel. Die momentan aktive Sortierfolge ist durch die unterstrichene
+Spaltenüberschrift erkennbar.
+:PC.Standardmäßig wird anhand der Spalte :HP1.Version:EHP1. sortiert.
+:PT.F12=Abbrechen
+:PD.Beendet die momentan aufgerufene Funktion und kehrt zur vorherigen Anzeige
+zurück.
+:EPARML.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='MAIN/SFLND'.Keine Datensätze zum Anzeigen
+:XH3.Keine Datensätze zum Anzeigen
+:P.Diese Anzeige wird dann eingeblendet, wenn keine Datensätze für die
+Listendarstellung gefunden werden konnten.
+:P.Dies kann in einer leeren Datenbankdatei begründet sein.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='MAIN/RPLVER'.Version ersetzen
+:XH3.Version ersetzen
+:P.In diesem Fenster kann im Feld "Nach Version" eine neue Versionsnummer
+eingegeben werden. Damit werden :HP1.alle:EHP1. Datensätze von "Von Version" mit
+Version "Nach Verssion" überschrieben.
+:NOTE.Dies dient der einfacheren Pflege nach Updates seitens des Herstellers. In
+der Praxis werden in der überwiegenden Anzahl der Fälle die Versionsnummern für
+alle vorhandenen Plattformen auf einmal aktualisiert.:ENOTE.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DETAIL/MODE'.Modus
+:XH3.Modus
+:P.In diesem Bereich wird ausgegeben, in welchem Modus die Datenfelder derzeit
+dargestellt werden:
+:PARML.
+:PT.Neuen Eintrag erfassen
+:PD.Falls F6=Neu gewählt wurde, sind alle Datenfelder leer und zum Ausfüllen
+bereit. Falls Opt :HP1.3=Duplizieren:EHP1. gewählt wurde, werden die Werte vom
+markierten Datensatz übernommen, damit nur Änderungen eingetragen werden müssen.
+Das Betätigen der Eingabetaste legt einen neuen Datensatz an.
+:PT.Eintrag ändern
+:PD.Die vorhandenen Werte des Datensatzes werden angezeigt, damit diese
+korrigiert werden können.
+:PT.Eintrag anzeigen
+:PD.Die vorhandenen Werte des Datensatzes werden ohne Änderungsmöglichkeiten
+angezeigt.
+:EPARML.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DETAIL/OPTIONS'.Tätigkeiten
+:XH3.Tätigkeiten
+:P.Hier kann der Anwender sehen, welche Tätigkeit er im derzeitigen Modus
+durchführen kann.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DFIELD/VERSION'.Version
+:XH3.Version
+:P.Hier wird die einem Datensatz zugrundeliegende OS-Version eingetragen.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DFIELD/MODEL'.Modell
+:XH3.Modell
+:P.Hier wird das einem Datensatz zugrundeliegende Gerätemodell eingetragen.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DFIELD/RAM'.RAM
+:XH3.RAM
+:P.Hier wird die einem Datensatz zugrundeliegende Menge an Arbeitsspeicher (RAM)
+eingetragen.
+:NOTE.Bei neueren Geräten ist dieser Wert nicht zwingend gleich der physikalisch
+verbauten Menge an Speicher. Im Zweifelsfall sollte die Herstellerdokumentation
+zu Rate gezogen werden.:ENOTE.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DFIELD/FLASH'.Flash
+:XH3.Flash
+:P.Hier wird die einem Datensatz zugrundeliegende Menge an Festwertspeicher
+(Flash, zum Ablegen der Firmware, etc.) eingetragen.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DFIELD/EOS'.EOS
+:XH3.EOS
+:P.Hier wird das optionale Datum der herstellerseitigen Abkündügung (EOS, End of
+Service) eingetragen.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DFIELD/CHANGED'.Geändert
+:XH3.Geändert
+:P.In diesem Feld wird automatisch der Zeitpunkt der letzten Änderung des
+Datensatzes hinterlegt.
+:NOTE.Dieses Feld kann nicht manuell geändert werden, da Änderungen an den Daten
+programmatisch erfasst werden.:ENOTE.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DETAIL/FKEYS'.Funktionstasten
+:XH3.Funktionstasten
+:PARML.
+:PT.F1=Hilfe
+:PD.Ruft die cursorpositionsabhängige Hilfefunktion auf.
+:PT.F3=Verlassen
+:PD.Beendet die Detailansicht und gibt die Kontrolle an das vorherige Menü
+zurück.
+:PT.F12=Abbrechen
+:PD.Beendet die momentan aufgerufene Funktion und kehrt zur vorherigen Anzeige
+zurück.
+:EPARML.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:EPNLGRP.
+.* vim: ft=pnlgrp textwidth=80 colorcolumn=81

@@ -1,0 +1,182 @@
+.* CRTMNU MENU(CMDCISCO) TYPE(*UIM) SRCFILE(SOURCES) INCFILE(QGPL/MENUUIM) CURLIB(*MNULIB)
+:PNLGRP.
+.*
+:VAR           NAME=zmenu.
+.* Keylist definition ----------------------------------------------------------
+:KEYL          NAME=menufkeys
+               HELP=fkeyhlp.
+.IM            #FUNCKEYS
+:EKEYL.
+.* Menu Panel definition -------------------------------------------------------
+:PANEL         NAME=menu
+               HELP=help00
+               KEYL=menufkeys
+               PANELID=zmenu
+               .Cisco Wartungsverwaltung
+:MENU          depth='*'
+               scroll=yes.
+:TOPINST       .Auswahlmöglichkeiten:
+:MENUGRP.Stammdaten und Listen
+:MENUI         OPTION=1
+               HELP=help01
+               ACTION='CMD CALL PGM(*CURLIB/HSTPG)'
+               .Mit Geräten und Erfassungsdaten arbeiten
+:MENUI         OPTION=2
+               HELP=help02
+               ACTION='CMD CALL PGM(*CURLIB/SERNOPG)'
+               .Globale Seriennummersuche
+:EMENUGRP.
+:MENUGRP.Aktualisierungsvorbereitung
+:MENUI         OPTION=10
+               HELP=help10
+               ACTION='CMD CALL PGM(*CURLIB/OSMRPTPG)'
+               .Mit OS-Geräte-Zuordnungsabweichungen arbeiten
+:MENUI         OPTION=11
+               HELP=help11
+               ACTION='CMD CALL PGM(*CURLIB/OSMATCHPG)'
+               .Mit OS-Geräte-Zuordnungen arbeiten
+:MENUI         OPTION=12
+               HELP=help12
+               ACTION='CMD CALL PGM(*CURLIB/ACMATCHPG)'
+               .Mit Anyconnect-Zuordnungen arbeiten
+:EMENUGRP.
+:MENUGRP.Reports
+:MENUI         OPTION=20
+               HELP=help20
+               ACTION='CMD CALL PGM(*CURLIB/RPTPRTPG) PARM(RPTUPDTEPG)'
+               .Report zu anstehenden OS- und Anyconnect Aktualisierungen
+:MENUI         OPTION=21
+               HELP=help21
+               ACTION='CMD CALL PGM(*CURLIB/RPTPRTPG) PARM(RPTUPTIMPG)'
+               .Report zu Uptimes
+:EMENUGRP.
+:EMENU.
+:CMDLINE       SIZE=long.Auswahl oder Befehl
+:EPANEL.
+.* Help Texts ------------------------------------------------------------------
+:HELP NAME=help00.Cisco Wartungsverwaltung - Allgemeiner Hilfetext
+:XH3.Über die Wartungsverwaltung
+:P.Die Wartungsverwaltung ist gedacht zur Verwaltung von Geräten mit
+Kommandozeilen-Bedienung welche weitestgehend kompatibel ist mit der
+Kommandozeile für Cisco IOS. Dies inkludiert
+:UL.
+:LI.Cisco IOS basierte Geräte, inkl. IOS XE und XR,
+:LI.Cisco ASA Firewalls,
+:LI.Cisco Nexus Switches,
+:LI.Manche Switches von HP,
+:LI.Manche Geräte von Ubiquity,
+:LI.Möglicherweise weitere.
+:EUL.
+:P.Die Wartungsverwaltung ist zweigeteilt in
+:UL.
+:LI.Ein Perl-Script, was mit Hilfe von Perl-Modulen via Remote-Login Daten auf
+den Geräten erfasst, und diese via ODBC in die Datenbankdateien auf der AS/400
+schreibt,
+:LI.Datenbankdateien und Frontendprogramme auf AS/400 Basis (5250).
+:EUL.
+:P.Verwaltung bedeutet im engeren Sinne, dass
+:UL.
+:LI.automatische Sicherungen der aktuellen Konfiguration angefertig und in eine
+Quellcodeversionsverwaltung (CVS, git) eingepflegt werden,
+:LI.verschiedene Daten automatisch erhoben und in Datenbanktabellen eingefügt
+werden, um die Übersicht über den Gerätebestand zu erhöhen. Dazu gehört z. B.
+auch das Management von Firmwareupdates.
+:EUL.
+:H4.Perl-Script
+:P.Ein Perl Script läuft zyklisch z. B. unter Linux via Cron, holt sich über
+ODBC die Logindaten der Geräte, meldet sich an und setzt folgende Kommandos ab:
+:UL.
+:LI.show version
+:LI.show inventory
+:LI.show startup-config für IOS, bzw. more system:running-config für ASAs
+:LI.show failover (für ASAs)
+:EUL.
+:P.Aus den Ausgaben werden Informationen extrahiert und in die Datenbanktabellen
+eingefügt.
+:P.Ein Sonderfall ist die Konfiguration. Diese wird nicht nur in einer
+DB-Tabelle hinterlegt, sondern auch in ein Revisionsverwaltungssystem
+eingespeist (CVS oder git, wahlweise), sodass Änderungen zeitlich
+nachvollziehbar werden.
+:P.Genauere Anweisungen zur korrekten Konfiguration der Endgeräte sind
+:LINK PERFORM='DSPHELP CONFIG CISCOHP'.hier:ELINK. dokumentiert.
+:H4.Datenbankdateien und Frontendprogramme
+:P.Logindaten und andere Stammdaten werden per 5250 Screens eingepflegt, während
+die automatisch ausgelesenen Daten nur zum Einsehen präsentiert werden.
+:H4.Bedienungsabläufe
+:P.Im ersten Schritt werden die Geräte und ihre Zugangsdaten in die Stammdaten
+eingepflegt (1). Weiterhin empfiehlt es sich, die aktuellen Anyconnect-Versionen
+zu hinterlegen (12). Danach wird ein Erfassungslauf des Linux-Scripts gestartet,
+um die Datenbanktabellen mit Informationen zu füllen.
+:P.Nun kann anhand der Zuordnungsabweichungen (10) und der Empfehlungen der
+Hersteller die jeweils aktuelle Softwareversion eingepflegt werden (11, 12).
+:NOTE.Es gibt keine Funktion zur automatischen Kontrolle der
+Zuordnungsabweichungen von Anyconnect, da diese letztendlich unabhängig von der
+Hardware (ASA) sind, sondern nur relevant für die Clients.:ENOTE.
+:P.Nun kann mit Hilfe von (20) festgestellt werden, welche Geräte Updates
+benötigen.
+.IM #MENUUSGH
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME=help01.Auswahl 1 - Hilfetext
+:XH3.Auswahl 1. Mit Geräten und Erfassungsdaten arbeiten
+:P.Diese Auswahl treffen, um Stammdaten einzupflegen, als auch automatisch
+erfasste Informationen zu einem Gerät abzurufen.
+:EHELP.
+.*
+:HELP NAME=help02.Auswahl 2 - Hilfetext
+:XH3.Auswahl 2. Globale Seriennummersuche
+:P.Diese Auswahl treffen, um im automatisch erfassten :HP1.show inventory:EHP1.
+nach einer Serinnummer zu suchen und das zugehörige Gerät und dessen Komponente
+ausfindig zu machen.
+:EHELP.
+.*
+:HELP NAME=help10.Auswahl 10 - Hilfetext
+:XH3.Auswahl 10. Mit OS-Geräte-Zuordnungsabweichungen arbeiten
+:P.Diese Auswahl treffen, um den Bestand an aktuell automatisch eingelesenen
+Geräten mit manuell gepflegten, gewünschten Softwareversionen abzugleichen.
+Genauer ermöglicht diese Funktion
+:UL.
+:LI.das Löschen von Einträgen, für die es keine Geräte (mehr) gibt,
+:LI.das Übernehmen von Gerätedaten für die es keine hinterlegte Softwareversion
+gibt.
+:EUL.
+:EHELP.
+.*
+:HELP NAME=help11.Auswahl 11 - Hilfetext
+:XH3.Auswahl 11. Mit OS-Geräte-Zuordnungen arbeiten
+:P.Diese Auswahl treffen, um den Bestand an gewünschten Softwareversionen
+manuell zu bearbeiten. Quellen hierzu sind im Regelfall die Websites der
+Hersteller.
+:NOTE.Hier kann ein Verfallsdatum für eine gegebene Kombination aus Soft- und
+Hardware hinterlegt werden. Dies ermöglicht eine einfachere Identifikation von
+Geräten, deren Herstellerunterstützung abgelaufen ist.:ENOTE.
+:EHELP.
+.*
+:HELP NAME=help12.Auswahl 12 - Hilfetext
+:XH3.Auswahl 12. Mit Anyconnect-Zuordnungen arbeiten
+:P.Diese Auswahl treffen, um den Bestand an gewünschten Anyconnect-Versionen und
+deren zugeordnete Installationsplattformen zu bearbeiten.
+:EHELP.
+.*
+:HELP NAME=help20.Auswahl 20 - Hilfetext
+:XH3.Auswahl 20. Report zu anstehenden OS- und Anyconnect Aktualisierungen
+:P.Diese Auswahl treffen, um eine Liste der Geräte auszugeben, für welche
+:UL.
+:LI.die installierte Softwareversion von der gewünschten Softwareversion
+abweicht,
+:LI.die installierte Anyconnect-Version von der gewünschten Anyconnect-Version
+abweicht.
+:EUL.
+:P.Die Liste wird auf dem Standarddrucker ausgedruckt.
+:EHELP.
+.*
+:HELP NAME=help21.Auswahl 21 - Hilfetext
+:XH3.Auswahl 22. Report zu Uptimes
+:P.Diese Auswahl treffen, um eine Liste der Geräte und ihrer Uptimes auszugeben.
+Die Liste wird auf dem Standarddrucker ausgedruckt.
+:EHELP.
+.*
+.IM #FUNCKEYSH
+.* -----------------------------------------------------------------------------
+:EPNLGRP.
+.* vim: ft=pnlgrp textwidth=80

@@ -1,0 +1,361 @@
+.* This file is part of cisco-erfassung, an application conglomerate for
+.*  management of Cisco devices on AS/400, i5/OS and IBM i.
+.*
+.* This is free software; you can redistribute it and/or modify it under the
+.*  terms of the GNU General Public License as published by the Free Software
+.*  Foundation; either version 2 of the License, or (at your option) any later
+.*  version.
+.*
+.* It is distributed in the hope that it will be useful, but WITHOUT ANY
+.*  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+.*  FOR PARTICULAR PURPOSE. See the GNU General Public License for more details.
+.*
+.* You should have received a copy of the GNU General Public License along with
+.*  it; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
+.*  Suite 330, Boston, MA 02111-1307 USA or get it at
+.*  http://www.gnu.org/licenses/gpl.html
+.*
+:PNLGRP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='GLOBAL'.Gerätestammdaten
+:P.Diese Applikation ermöglicht die Stammdatenpflege der zu erfassenden
+Cisco-Geräte, als auch das Einsehen von automatisch erfassten Detaildaten.
+:P.Die Cisco-Wartungsverwaltung ist eine Sammlung von Applikationen zur
+Verwaltung von Cisco- und auf Kommandozeilenebene kompatiblen Geräten. Eine
+Funktionsübersicht findet sich in der Hilfefunktion im Hauptmenü.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='MAIN/POSTO'.Listenanfang bei
+:XH3.Listenanfang bei
+:P.Hier können die Anfangsbuchstaben des Hostnamens eingegeben werden. Ein Druck
+auf die Eingabetaste positioniert den Listenausschnitt zur ersten (teilweisen)
+textuellen Übereinstimmung.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='MAIN/SFLOPTS'.Auswahloptionen
+:XH3.Auswahloptionen
+:P.Für die Liste gültige Auswahl-Werte, welche in der Spalte :HP1.Opt:EHP1.
+eingegeben werden können:
+:PARML.
+:PT.2=Ändern
+:PD.Markierte Einträge können in einer gesonderten Bildschirmanzeige individuell
+angepasst werden.
+:PT.3=Kopieren
+:PD.Markierte Einträge können in einer gesonderten Bildschirmanzeige individuell
+angepasst werden. Diese werden allerdings als jeweils neuer Datensatz
+gespeichert. Es darf daher keine Dublette eines bereits existierenden Satzes
+angelegt werden.
+:PT.4=Löschen
+:PD.Markierte Einträge werden zum Löschen vorgemerkt. In einer weiteren
+Bildschirmanzeige kann dieser Vorgang bestätigt oder abgebrochen werden.
+:PT.5=Details
+:PD.Allgemeine, automatisch erfasste Detaildaten werden für markierte Einträge
+angezeigt.
+:PT.7=Show running-configuration
+:PD.Die zuletzt erfasste Konfiguration wird für markierte Einträge angezeigt.
+:PT.8=Show version
+:PD.Die zuletzt erfasste Ausgabe von Show version wird für markierte Einträge
+angezeigt.
+:PT.9=Show inventory
+:PD.Die zuletzt erfasste Ausgabe von Show Inventory wird für markierte Einträge
+angezeigt.
+:EPARML.
+:NOTE.Ein Datensatz kann nur von einer Arbeitsstation gleichzeitig bearbeitet
+werden. Ist ein Datensatz bereits durch einen anderen Benutzer gesperrt, wird
+dieser auf der anfragenden Arbeitsstation nur zum Betrachten geöffnet.
+Änderungen sind nicht möglich. Der Anwender sollte aus diesem Grund vermeiden,
+Datensätze nur zur Einsicht mit Opt :HP1.2=Ändern:EHP1. zu öffnen. Die Benutzung
+von Opt :HP1.5=Anzeigen:EHP1. ist vorteilhafter, da sie es anderen Bedienern
+ermöglicht, den Datensatz zu ändern, weil der Benutzer den Datensatz dann nicht
+unnötigerweise zum Bearbeiten gesperrt hat.
+:ENOTE.
+:P.Datensätze werden durch Farbhervorhebungen zusätzlich kenntlich gemacht:
+:PARML.
+:PT.Blau
+:PD.Die automatische Erfassung ist für diesen Eintrag ausgeschaltet. Dadurch
+könnten keine automatisch erfassten Datensätze vorhanden sein. Eine manuelle
+Erfassung durch Aufruf des Erfassung-Scripts mit dem Namen des Eintrags startet
+in jedem Fall eine Erfassung.
+:PT.Türkis
+:PD.Die automatische Erfassung ist für diesen Eintrag eingeschaltet, aber bisher
+wurden keine Daten erfasst. Dies kann daran liegen, dass das Erfassung-Script
+seit Hinzufügen des Eintrags nicht lief, oder die Zugangsdaten für den Eintrag
+falsch sind.
+:PT.Rot
+:PD.Die automatische Erfassung ist für diesen Eintrag eingeschaltet, aber die
+letzte Erfassung liegt länger als drei Tage zurück. Dies kann daran liegen,
+dass das Erfassung-Script keinen Zugriff auf das Gerät hat (offline), das Script
+bisher nicht lief, oder die Zugangsdaten für den Eintrag falsch sind.
+:EPARML.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='MAIN/START'.Beginn-Indikator
+:XH3.Beginn-Indikator
+:P.Diese Anzeige wird dann eingeblendet, wenn die Anzeige am ersten Datensatz
+angekommen ist und daher keine vorigen Datensätze mehr aufgerufen werden können.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='SFLHDR/OPT'.Spalte Opt
+:XH3.Spalte Opt
+:P.In diese Spalte eine Auswahlziffer eingegeben, um den Datensatz zum einen zu
+Selektieren und zum anderen vorzugeben, was das System mit diesem Satz tun soll.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='SFLHDR/HOSTNAME'.Spalte Hostname
+:XH3.Spalte Hostname
+:P.Hier wird der Host- bzw. DNS-Name (FQDN, Fully Qualified Domain Name) eines
+Datensatzes angezeigt.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='SFLHDR/SERVTYP'.Spalte Typ
+:XH3.Spalte Typ
+:P.Hier wird der Gerätetyp eines Datensatzes angezeigt.
+:P.Je nach Gerätetyp werden im Script für die automatische Erfassung andere
+Befehle aufgerufen, die für den jeweiligen Gerätetyp passend sind.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='MAIN/SFLDTA'.Datenbereich
+:XH3.Datenbereich
+:P.Hier sind einige Datensätze aus der Gesamtheit aller vorhandenen Datensätze
+sichtbar. Änderungen können nicht direkt vorgenommen werden. Dazu sind die
+bereits erwähnten Selektionen in der Opt-Spalte da.
+:NOTE.Die Opt-Selektionen gehen beim Scrollen verloren!
+:ENOTE.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='MAIN/END'.Ende-Indikator
+:XH3.Ende-Indikator
+:P.Diese Anzeige macht darauf aufmerksam, wenn die Liste der dargestellten
+Datensätze am Ende angekommen ist und keine weiteren Datensätze mehr vorhanden
+sind.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='MAIN/SFLBTM'.Funktionstasten
+:XH3.Funktionstasten
+:PARML.
+:PT.F1=Hilfe
+:PD.Ruft die cursorpositionsabhängige Hilfefunktion auf.
+:PT.F3=Verlassen
+:PD.Beendet die Listenansicht und gibt die Kontrolle an das vorherige Menü
+zurück.
+:PT.F5=Aktualisieren
+:PD.Forciert einen Neuaufbau des dargestellten Listenausschnittes aus der
+Datenbank.
+:PT.F6=Neu
+:PD.Ruft die Bildschirmanzeige zum Hinzufügen eines neuen Datensatzes auf.
+:PT.F12=Abbrechen
+:PD.Beendet die momentan aufgerufene Funktion und kehrt zur vorherigen Anzeige
+zurück.
+:EPARML.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='MAIN/SFLND'.Keine Datensätze zum Anzeigen
+:XH3.Keine Datensätze zum Anzeigen
+:P.Diese Anzeige wird dann eingeblendet, wenn keine Datensätze für die
+Listendarstellung gefunden werden konnten.
+:P.Dies kann in einer leeren Datenbankdatei begründet sein.
+:EHELP.
+.* -----------------------------------------------------------------------------
+.* -----------------------------------------------------------------------------
+:HELP NAME='DETAIL/MODE'.Modus
+:XH3.Modus
+:P.In diesem Bereich wird ausgegeben, in welchem Modus die Datenfelder derzeit
+dargestellt werden:
+:PARML.
+:PT.Neuen Eintrag erfassen
+:PD.Falls F6=Neu gewählt wurde, sind alle Datenfelder leer und zum Ausfüllen
+bereit. Falls Opt :HP1.3=Kopieren:EHP1. gewählt wurde, werden die Werte vom
+markierten Datensatz übernommen, damit nur Änderungen eingetragen werden müssen.
+Das Betätigen der Eingabetaste legt einen neuen Datensatz an.
+:PT.Eintrag ändern
+:PD.Die vorhandenen Werte des Datensatzes werden angezeigt, damit diese
+korrigiert werden können.
+:EPARML.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DETAIL/OPTIONS'.Tätigkeiten
+:XH3.Tätigkeiten
+:P.Hier kann der Anwender sehen, welche Tätigkeit er im derzeitigen Modus
+durchführen kann.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DETAIL/GENERAL'.Allgemein
+:XH3.Allgemein
+:P.Im folgenden Abschnitt können allgemeine, ein Gerät betreffende Informationen
+hinterlegt werden.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DFIELD/HOSTNAME'.Hostname
+:XH3.Hostname
+:P.In diesem Feld wird der Host- bzw. DNS-Name (FQDN, Fully Qualified Domain
+Name) eines Gerätes hinterlegt.
+:P.Falls ein Host nicht über einen Standardport erreichbar ist, muss nach dem
+Hostnamen ein Doppelpunkt (:) und dann der gewünschte Port angefügt werden.
+Standardports sind:
+:UL.
+:LI.22 für ssh
+:LI.23 für telnet
+:EUL.
+:P.Dieses Feld dient als Primärschlüssel. Daher kann ein Name nur einmal in der
+Datenbank erfasst werden. Es darf nicht leer sein.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DETAIL/ACCESS'.Zugriff
+:XH3.Zugriff
+:P.Im folgenden Abschnitt können ein Gerät betreffende Informationen zum Zugriff
+auf dieses Gerät hinterlegt werden.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DFIELD/SERVTYP'.Typ
+:XH3.Typ
+:P.Verschiedene Gerätetypen verwenden leicht andere Befehle, um an bestimmte
+Daten heranzukommen, oder die Ausgaben sind unterschiedlich und müssen daher
+individuell interpretiert werden.
+:P.Der Typ gibt an, um welche Art von Gerät es sich handelt und wird hier
+hinterlegt.
+:P.Gültige Werte sind:
+:PARML.
+:PT.IOS
+:PD.Alle Geräte mit Cisco IOS und deren Abkömmlinge IOS XE und IOS XR. Das
+schließt ein:
+:UL.
+:LI.Router
+:LI.Switches
+:LI.Autonomous Access Points
+:EUL.
+:PT.ASA
+:PD.Cisco ASA inklusive Cisco FirePower mit ASA-Image.
+:EPARML.
+:P.Dieses Feld darf nicht leer sein.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DFIELD/CONN'.Zugriffsmethode
+:XH3.Zugriffsmethode
+:P.Hier wird hinterlegt, über welches Protokoll ein Gerät kontaktiert wird.
+:P.Gültige Werte sind:
+:UL.
+:LI.ssh, standardmäßig über Port 22, verschlüsselte Verbindung
+:LI.telnet, standardmäßig über Port 23, Klartextverbindung
+:EUL.
+:P.Dieses Feld darf nicht leer sein.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DFIELD/USERNAME'.Benutzer
+:XH3.Benutzer
+:P.Hier wird der Benutzer hinterlegt, der beim Login auf das Gerät zur
+Authentifizierung verwendet werden soll.
+:P.Ein Benutzername ist über telnet als Zugriffsmethode abhängig von der
+Gerätekonfiguration und daher optional.
+:NOTE.Für die Zugriffsmethode :HP1.ssh:EHP1. muss der Benutzername zwingend
+angegeben werden.
+:ENOTE.
+:P.Genauere Anweisungen zur korrekten Konfiguration sind :LINK
+PERFORM='DSPHELP CONFIG CISCOHP'.hier:ELINK. dokumentiert.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DFIELD/PASSWD'.Passwort
+:XH3.Passwort
+:P.Hier wird das zum o. g. Benutzer gehörige Passwort hinterlegt.
+:P.Dieses Feld darf nicht leer sein.
+:P.Genauere Anweisungen zur korrekten Konfiguration sind :LINK
+PERFORM='DSPHELP CONFIG CISCOHP'.hier:ELINK. dokumentiert.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DFIELD/ENABLE'.Enable-Secret
+:XH3.Enable-Secret
+:P.Hier wird das zum o. g. Benutzer gehörige Enable-Passwort hinterlegt.
+:P.Dieses Feld darf nur benutzt werden, wenn nach dem erfolgreichen Login eine
+Hochstufung des Benutzers auf die maximale Privilegienstufe notwendig ist, um
+alle Befehle der automatischen Erfassung fehlerfrei auszuführen.
+:P.Genauere Anweisungen zur korrekten Konfiguration sind :LINK
+PERFORM='DSPHELP CONFIG CISCOHP'.hier:ELINK. dokumentiert.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DFIELD/DCA'.Automatische Erfassung
+:XH3.Automatische Erfassung
+:P.Hier kann angegeben werden, ob das Gerät im Rahmen eines normalen
+Erfassungslaufs kontaktiert wird, oder übersprungen.
+:P.Dies ist nützlich, wenn ein Gerät nur sporadisch erreichbar ist und
+Fehlermeldungen des Cronjobs auf Linuxseite vermieden werden sollen.
+:NOTE.Wenn das Erfassungscript auf Linuxseite mit dem Hostnamen eines Eintrags
+als Parameter gestartet wird, wird in jedem Fall versucht, das Gerät zu
+erfassen, unabhängig von der Einstellung der automatischen Erfassung.
+:ENOTE.
+:P.Es handelt sich um ein Einzelwertauswahlfeld. Gültige Werte sind:
+:UL.
+:LI.1 = Nein, keine automatische Erfassung durchführen; der Eintrag wird in der
+Listendarstellung in blauer Farbe hervorgehoben
+:LI.2 = Ja, automatische Erfassung durchführen
+:EUL.
+:P.Dieses Feld darf nicht leer sein.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DFIELD/IGNORE'.Ignoriere Updates
+:XH3.Ignoriere Updates
+:P.Für bestimmte Fälle kann es notwendig sein, keine Aktualisierungen auf einem
+Gerät durchzuführen. Dies kann durch das Unterdrücken des Reports für die beiden
+Softwarekategorien vereinfacht werden.
+:UL.
+:LI.OS
+:LI.Anyconnect
+:EUL.
+:NOTE.Es wird empfohlen, das Kommentarfeld für eine Begründung der ausgesetzten
+Aktualisierungen zu nutzen.
+:ENOTE.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DFIELD/UPD_IGN'.OS
+:XH3.OS
+:P.Hier kann angegeben werden, ob das Gerät bei verfügbaren Aktualisierungen für
+das Basisbetriebssystem im Aktualisierungsreport gelistet oder ignoriert wird.
+:NOTE.Unabhängig von dieser Einstellung wird in der Detailansicht der erfassten
+Daten immer ausgegeben, ob ein Update verfügbar ist.
+:ENOTE.
+:P.Es handelt sich um ein Einzelwertauswahlfeld. Gültige Werte sind:
+:UL.
+:LI.1 = Nein, verfügbare Aktualisierungen nicht ignorieren
+:LI.2 = Ja, verfügbare Aktualisierungen ignorieren
+:EUL.
+:P.Dieses Feld darf nicht leer sein.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DFIELD/ACU_IGN'.Ignoriere Anyconnect-Updates
+:XH3.Ignoriere Anyconnect-Updates
+:P.Hier kann angegeben werden, ob das Gerät bei verfügbaren Aktualisierungen
+für Cisco Anyconnect im Aktualisierungsreport gelistet oder ignoriert wird.
+:P.Es handelt sich um ein Einzelwertauswahlfeld. Gültige Werte sind:
+:UL.
+:LI.1 = Nein, verfügbare Aktualisierungen nicht ignorieren
+:LI.2 = Ja, verfügbare Aktualisierungen ignorieren
+:EUL.
+:P.Dieses Feld darf nicht leer sein.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DFIELD/COMMT'.Bemerkung
+:XH3.Bemerkung
+:P.Hier kann eine Bemerkung für das entsprechende Gerät hinterlegt werden, wie
+z. B.
+:UL.
+:LI.Gründe für eine auf :HP1.Nein:EHP1. gesetzte automatische Erfassung,
+:LI.Einschränkungen wann im Rahmen von OS-Updates ein Reload und dadurch
+verursachter Ausfall tolerierbar ist,
+:LI.der Ort, wo das Gerät genau zu finden ist.
+:EUL.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DETAIL/FKEYS'.Funktionstasten
+:XH3.Funktionstasten
+:PARML.
+:PT.F1=Hilfe
+:PD.Ruft die cursorpositionsabhängige Hilfefunktion auf.
+:PT.F3=Verlassen
+:PD.Beendet die Detailansicht und gibt die Kontrolle an das vorherige Menü
+zurück.
+:PT.F12=Abbrechen
+:PD.Beendet die momentan aufgerufene Funktion und kehrt zur vorherigen Anzeige
+zurück.
+:EPARML.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:EPNLGRP.
+.* vim: ft=pnlgrp textwidth=80 colorcolumn=81

@@ -1,0 +1,68 @@
+     A* This file is part of cisco-erfassung, an application conglomerate for
+     A*  management of Cisco devices on AS/400, i5/OS and IBM i.
+     A*
+     A* This is free software; you can redistribute it and/or modify it
+     A*  under the terms of the GNU General Public License as published by the
+     A*  Free Software Foundation; either version 2 of the License, or (at your
+     A*  option) any later version.
+     A*
+     A* It is distributed in the hope that it will be useful, but WITHOUT
+     A*  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+     A*  FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+     A*  for more details.
+     A*
+     A* You should have received a copy of the GNU General Public License along
+     A*  with it; if not, write to the Free Software Foundation, Inc., 59
+     A*  Temple Place, Suite 330, Boston, MA 02111-1307 USA or get it at
+     A*  http://www.gnu.org/licenses/gpl.html
+     A*
+     A* Equivalent SQL ---------------------------------------------------------
+     A*
+     A* SELECT osmatchpf.version, osmatchpf.model,
+     A*     osmatchpf.ram, osmatchpf.flash, osmatchpf.id
+     A*   FROM osmatchpf
+     A*   LEFT JOIN dcapf ON (
+     A*     osmatchpf.model = dcapf.model AND
+     A*     osmatchpf.flash = dcapf.flash AND
+     A*     osmatchpf.ram = dcapf.ram
+     A*   )
+     A*   WHERE IFNULL(dcapf.model, 'NIL') = 'NIL' AND
+     A*     IFNULL(dcapf.ram, -1) = -1 AND
+     A*     IFNULL(dcapf.flash, -1) = -1
+     A*   ORDER BY osmatchpf.model, osmatchpf.version,
+     A*     osmatchpf.ram, osmatchpf.flash
+     A*
+     A* Globals ----------------------------------------------------------------
+     A                                      DYNSLT
+     A                                      JDFTVAL
+     A* Record Format Name -----------------------------------------------------
+     A          R ORPHANS                   JFILE(OSMATCHPF DCAPF)
+     A          J                           JOIN(OSMATCHPF DCAPF)
+     A                                      JFLD(FLASH FLASH)
+     A                                      JFLD(MODEL MODEL)
+     A                                      JFLD(RAM RAM)
+     A* Data fields ------------------------------------------------------------
+     A* Rename is given the *source* field name!
+     A            ID                        JREF(1)
+     A            VERS_IST                  JREF(2) RENAME(VERSION)
+     A            VERS_SOLL                 JREF(1) RENAME(VERSION)
+     A            FLASH_IST                 JREF(2) RENAME(FLASH)
+     A            FLASH_SOLL                JREF(1) RENAME(FLASH)
+     A            MODEL_IST                 JREF(2) RENAME(MODEL)
+     A            MODEL_SOLL                JREF(1) RENAME(MODEL)
+     A            RAM_IST                   JREF(2) RENAME(RAM)
+     A            RAM_SOLL                  JREF(1) RENAME(RAM)
+     A* Key field(s) -----------------------------------------------------------
+     A* Beware, key fields are required to be in the first referenced JFILE!
+     A          K MODEL_SOLL
+     A          K VERS_SOLL
+     A          K FLASH_SOLL
+     A          K RAM_SOLL
+     A* Select/Omit ------------------------------------------------------------
+     A          S FLASH_IST                 COMP(EQ 0)
+     A            MODEL_IST                 COMP(EQ '                    ')
+     A            RAM_IST                   COMP(EQ 0)
+     A            VERS_IST                  COMP(EQ '                    ')
+     A          O                           ALL
+     A* For vim ----------------------------------------------------------------
+     A* vim: syntax=dds colorcolumn=81 autoindent noignorecase

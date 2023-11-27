@@ -1,0 +1,93 @@
+.* This file is part of cisco-erfassung, an application conglomerate for
+.*  management of Cisco devices on AS/400, i5/OS and IBM i.
+.*
+.* This is free software; you can redistribute it and/or modify it under the
+.*  terms of the GNU General Public License as published by the Free Software
+.*  Foundation; either version 2 of the License, or (at your option) any later
+.*  version.
+.*
+.* It is distributed in the hope that it will be useful, but WITHOUT ANY
+.*  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+.*  FOR PARTICULAR PURPOSE. See the GNU General Public License for more details.
+.*
+.* You should have received a copy of the GNU General Public License along with
+.*  it; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
+.*  Suite 330, Boston, MA 02111-1307 USA or get it at
+.*  http://www.gnu.org/licenses/gpl.html
+.*
+:PNLGRP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='GLOBAL'.Geräte-Inventar
+:P.Diese Applikation ermöglicht das Einsehen von mittels Show Inventory
+erfassten Daten.
+:P.Die Cisco-Wartungsverwaltung ist eine Sammlung von Applikationen zur
+Verwaltung von Cisco- und auf Kommandozeilenebene kompatiblen Geräten. Eine
+Funktionsübersicht findet sich in der Hilfefunktion im Hauptmenü.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='MAIN/HOSTNAME'.Hostname
+:XH3.Hostname
+:P.Hier wird der zugrundeliegende Host- bzw. DNS-Name (FQDN, Fully Qualified
+Domain Name) der derzeit angezeigten Liste ausgegeben.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='SFL/NAME'.Name
+:XH3.Name
+:P.In diesem Bereich wird der Name einer Komponente aus Show Inventory
+dargestellt.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='SFL/DESCR'.Beschreibung
+:XH3.Beschreibung
+:P.In diesem Bereich wird die Beschreibung einer Komponente aus Show Inventory
+dargestellt.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='SFL/PID'.PID
+:XH3.PID
+:P.In diesem Bereich wird die PID (Product Identification) einer Komponente aus
+Show Inventory dargestellt.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='SFL/VID'.VID
+:XH3.VID
+:P.In diesem Bereich wird die VID einer Komponente aus Show Inventory dargestellt.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='SFL/SERNO'.Serial
+:XH3.Serial
+:P.In diesem Bereich wird die Seriennummer einer Komponente aus Show Inventory
+dargestellt.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='MAIN/SFLDTA'.Datenbereich
+:XH3.Datenbereich
+:P.In diesem Bereich werden weitere Datensätze dargestellt. Detaillierte Hilfe
+zu den Datensätzen werden nur für den ersten Satz zu Verfügung gestellt.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='MAIN/SFLBTM'.Funktionstasten
+:XH3.Funktionstasten
+:PARML.
+:PT.F1=Hilfe
+:PD.Ruft die cursorpositionsabhängige Hilfefunktion auf.
+:PT.F3=Verlassen
+:PD.Beendet die momentan aufgerufene Funktion und kehrt zur vorherigen Anzeige
+zurück.
+:PT.F5=Aktualisieren
+:PD.Forciert einen Neuaufbau des dargestellten Listenausschnittes aus der
+Datenbank.
+:PT.F12=Abbrechen
+:PD.Beendet die momentan aufgerufene Funktion und kehrt zur vorherigen Anzeige
+zurück.
+:EPARML.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='MAIN/SFLND'.Keine Datensätze zum Anzeigen
+:XH3.Keine Datensätze zum Anzeigen
+:P.Diese Anzeige wird dann eingeblendet, wenn keine Datensätze für die
+Listendarstellung gefunden werden konnten.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:EPNLGRP.
+.* vim: ft=pnlgrp textwidth=80 colorcolumn=81
