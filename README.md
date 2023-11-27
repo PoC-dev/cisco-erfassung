@@ -25,7 +25,7 @@ A huge thank you goes to [Mathias Peter IT-Systemhaus](https://www.mathpeter.com
 We agreed on this "light" version of the application to be released as OpenSource, and a non-public, more complete version for our internal use, featuring:
 - customer numbers,
 - further device flags,
-- update audit trails when doing a "maintenance run",
+- audit trails for individual tasks when doing a "maintenance run",
 - and more.
 
 Contact me if you're interested. This version will be available for a fee.
