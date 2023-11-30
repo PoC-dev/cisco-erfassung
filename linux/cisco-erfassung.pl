@@ -1109,7 +1109,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
 
             # Config usually ends with a fixed string, so we can check if the obtained configuration is complete.
             if ( ($wartungstyp eq 'IOS' || $wartungstyp eq 'UBI') && $show_config[-1] ne "end" ) {
-                syslog(LOG_NOTICE, "%s: Config: enexpected end of startup-config: '%s', skipping configuration handling",
+                syslog(LOG_NOTICE, "%s: Config: Unexpected end of startup-config: '%s', skipping configuration handling",
                     $hostnameport, $show_config[-1]);
                 next;
             } elsif ( $wartungstyp eq 'ASA' && $show_config[-1] ne ": end" ) {
@@ -1419,7 +1419,7 @@ if ( $do_scm == 1 ) {
                             # - file list from checkout
                             unlink($scmtmp . '/' . $file);
                             if ( $use_git == 0 ) {
-                                $retval = system( 'cd ' . $scmtmp . ' && cvs delete ' . $file);
+                                $retval = system( 'cd ' . $scmtmp . ' && cvs -Q delete ' . $file);
                             } else {
                                 $retval = system( 'cd ' . $scmtmp . ' && git rm -q ' . $file);
                             }
