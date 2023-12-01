@@ -474,6 +474,12 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
             '-re', '^.*\#\s?$'
         );
 
+        # Handle Connection timeouts properly?
+        if ( ! defined($pat) ) {
+            syslog(LOG_WARNING, "%s: timeout while waiting for command line prompt, skipping", $hostnameport);
+            next;
+        }
+
         # Handle enabling of the user.
         if ( $pat == 1 ) {
             if ( $enable ) {
