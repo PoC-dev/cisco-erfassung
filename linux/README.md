@@ -9,7 +9,7 @@ In addition, the retrieved configurations will be maintained in either *CVS* or 
 
 **Note:** Git support seems to misbehave in strange ways and is currently considered broken. Help in tracking down the issue is highly welcome!
 
-This Perl script has been tested under Linux only, because it has quite some module dependencies. In theory, it should be possible to install the necessary modules and run the script in PASE on IBM i.
+This Perl script has been tested under Linux only, because it has quite some module dependencies, and my machine is too old and slow to make serious use of PASE. In theory, it should be possible to install perl along with the necessary modules and run the script in PASE on IBM i.
 
 **Note:** The script assumes a configured and functioning ODBC connection to the AS/400 machine. Setup of this is beyond the scope of this document.
 
@@ -22,7 +22,7 @@ Next, you should install the required perl modules. For Debian systems, this is:
 apt-get install libdbi-perl libdbd-odbc-perl libexpect-perl libtimedate-perl
 ```
 
-The script spawns external programs through *Expect*. Currently *ssh* and *telnet* are supported connection options. You need a command line ssh and telnet client installed, respectively.
+The script spawns external programs through *Expect* to connect and fake-interactively steer devices. Currently *ssh* and *telnet* are supported connection options. You need a command line ssh and telnet client installed, respectively.
 
 ## Running.
 Before running this script, you need to prepare the AS/400 environment. Refer to [the documentation](../as400/README.md) to finish preparation.
@@ -44,7 +44,7 @@ If no devices (hostnames) are given, all hosts found in the database are handled
 
 **Note:** Logging is done almost entirely via syslog, facility *user*, unless you're using debug-mode.
 
-If the script runs without issues, I recommend to run it at least daily.
+If the script runs without issues, I recommend to run it at least daily from *cron*, etc.
 
 ----
-2023-11-27 poc@pocnet.net
+2023-12-02 poc@pocnet.net
