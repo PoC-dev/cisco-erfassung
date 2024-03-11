@@ -69,24 +69,6 @@ von Opt :HP1.5=Anzeigen:EHP1. ist vorteilhafter, da sie es anderen Bedienern
 ermöglicht, den Datensatz zu ändern, weil der Benutzer den Datensatz dann nicht
 unnötigerweise zum Bearbeiten gesperrt hat.
 :ENOTE.
-:P.Datensätze werden durch Farbhervorhebungen zusätzlich kenntlich gemacht:
-:PARML.
-:PT.Blau
-:PD.Die automatische Erfassung ist für diesen Eintrag ausgeschaltet. Dadurch
-könnten keine automatisch erfassten Datensätze vorhanden sein. Eine manuelle
-Erfassung durch Aufruf des Erfassung-Scripts mit dem Namen des Eintrags startet
-in jedem Fall eine Erfassung.
-:PT.Türkis
-:PD.Die automatische Erfassung ist für diesen Eintrag eingeschaltet, aber bisher
-wurden keine Daten erfasst. Dies kann daran liegen, dass das Erfassung-Script
-seit Hinzufügen des Eintrags nicht lief, oder die Zugangsdaten für den Eintrag
-falsch sind.
-:PT.Rot
-:PD.Die automatische Erfassung ist für diesen Eintrag eingeschaltet, aber die
-letzte Erfassung liegt länger als drei Tage zurück. Dies kann daran liegen,
-dass das Erfassung-Script keinen Zugriff auf das Gerät hat (offline), das Script
-bisher nicht lief, oder die Zugangsdaten für den Eintrag falsch sind.
-:EPARML.
 :EHELP.
 .* -----------------------------------------------------------------------------
 :HELP NAME='MAIN/START'.Beginn-Indikator
@@ -121,6 +103,24 @@ sichtbar. Änderungen können nicht direkt vorgenommen werden. Dazu sind die
 bereits erwähnten Selektionen in der Opt-Spalte da.
 :NOTE.Die Opt-Selektionen gehen beim Scrollen verloren!
 :ENOTE.
+:P.Datensätze werden durch Farbhervorhebungen zusätzlich kenntlich gemacht:
+:PARML.
+:PT.Blau
+:PD.Die automatische Erfassung ist für diesen Eintrag ausgeschaltet. Dadurch
+könnten keine automatisch erfassten Datensätze vorhanden sein. Eine manuelle
+Erfassung durch Aufruf des Erfassung-Scripts mit dem Namen des Eintrags startet
+in jedem Fall eine Erfassung.
+:PT.Türkis
+:PD.Die automatische Erfassung ist für diesen Eintrag eingeschaltet, aber bisher
+wurden keine Daten erfasst. Dies kann daran liegen, dass das Erfassung-Script
+seit Hinzufügen des Eintrags nicht lief, oder die Zugangsdaten für den Eintrag
+falsch sind.
+:PT.Rot
+:PD.Die automatische Erfassung ist für diesen Eintrag eingeschaltet, aber die
+letzte Erfassung liegt länger als drei Tage zurück. Dies kann daran liegen,
+dass das Erfassung-Script keinen Zugriff auf das Gerät hat (offline), das Script
+bisher nicht lief, oder die Zugangsdaten für den Eintrag falsch sind.
+:EPARML.
 :EHELP.
 .* -----------------------------------------------------------------------------
 :HELP NAME='MAIN/END'.Ende-Indikator
