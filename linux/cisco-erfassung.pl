@@ -38,7 +38,7 @@ my $giturl = $config->{'giturl'};
 # ----------------------------------------------------------------------------------------------------------------------------------
 
 # General vars.
-my ($cnh, $scmdestfile, $scmtmp, $dbh, $dirfh, $do_scm, $do_scm_add, $do_orphans, $do_setnull, $fh, $file, $hostname,
+my ($cleanup, $cnh, $scmdestfile, $scmtmp, $dbh, $dirfh, $do_scm, $do_scm_add, $do_orphans, $do_setnull, $fh, $file, $hostname,
     $hostport, $inv_have_line_name, $inv_have_line_pid, $num_entries, $param, $prv_cfupddb, $retval, $setnull_field,
     $show_config_command, $showverfeature, $sth_select_hosts, $test_db, $tmpline, $to_clean_pf, $try_loop_string, $use_git,
     @beforeLinesArray, @cnh_parms, @errtyp, @filelist, @lines, @params, @setnull_fields, @show_config, @show_version, @time_tm,
@@ -102,8 +102,10 @@ if ( defined($options{h}) || $retval != 1 ) {
 
 # Enable debug mode.
 if ( defined($options{d}) ) {
+    $cleanup = 1;
     openlog("cisco-erfassung", "perror,pid", "user");
 } else {
+    $cleanup = 0;
     openlog("cisco-erfassung", "pid", "user");
     # Omit debug messages by default.
     # FIXME: What is the correct way to handle this with symbolic names?
@@ -260,7 +262,7 @@ if ( defined($dbh->errstr) ) {
 
 # Prepare work dir for CVS/git.
 if ( $do_scm == 1 ) {
-    $scmtmp = tempdir( CLEANUP => 1 );
+    $scmtmp = tempdir( CLEANUP => $cleanup );
     syslog(LOG_DEBUG, "SCM: prepare work dir '%s'", $scmtmp);
     if ( $use_git == 1 ) {
         $retval = system('cd ' . $scmtmp . '&& git clone -q ' . $giturl );
@@ -288,6 +290,10 @@ if ( $do_scm == 1 ) {
         } else {
             $scmtmp = sprintf("%s/%s", $scmtmp, $cvsproject);
         }
+    }
+    if ( ! -d $scmtmp ) {
+        syslog(LOG_NOTICE, "SCM: could not find local checkout directory '%s', skipping scm functions", $scmtmp);
+        $do_scm = 0;
     }
 }
 
@@ -1457,9 +1463,12 @@ if ( $do_scm == 1 ) {
         if ( $retval != 0 ) {
             syslog(LOG_NOTICE, "SCM: error %d while committing, continuing anyway", $retval);
         }
+        syslog(LOG_DEBUG, "SCM: push changes");
         $retval = system( 'cd ' . $scmtmp . ' && git push -q >/dev/null 2>&1');
         $retval = ($retval >> 8);
-        if ( $retval != 0 ) {
+        if ( $retval == 0 ) {
+            syslog(LOG_DEBUG, "SCM: git push successful");
+        } else {
             syslog(LOG_NOTICE, "SCM: error %d while pushing, continuing anyway", $retval);
         }
     }
