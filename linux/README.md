@@ -7,7 +7,12 @@ The script and example configuration file are meant for automatic inventorizatio
 
 In addition, the retrieved configurations will be maintained in either *CVS* or *git* change tracking systems. Setup and usage of change tracking systems is beyond the scope of this document.
 
-**Note:** Git support seems to misbehave in strange ways and is currently considered broken. Help in tracking down the issue is highly welcome!
+**Note:** Git support **requires** ssh session multiplexing to be disabled for the git repository host for pull/push. This can be achieved by adding the following stanza to your *~/.ssh/config*:
+```
+host scmhost
+  ControlMaster no
+  ControlPersist no
+```
 
 This Perl script has been tested under Linux only, because it has quite some module dependencies, and my machine is too old and slow to make serious use of PASE. In theory, it should be possible to install perl along with the necessary modules and run the script in PASE on IBM i.
 
@@ -47,4 +52,4 @@ If no devices (hostnames) are given, all hosts found in the database are handled
 If the script runs without issues, I recommend to run it at least daily from *cron*, etc.
 
 ----
-2023-12-02 poc@pocnet.net
+2024-03-12 poc@pocnet.net
