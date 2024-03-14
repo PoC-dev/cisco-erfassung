@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # This is to be manually incremented on each "publish".
-my $versionstring = '2024-03-13.00';
+my $versionstring = '2024-03-14.00';
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -262,7 +262,7 @@ if ( defined($dbh->errstr) ) {
 
 # Prepare work dir for CVS/git.
 if ( $do_scm == 1 ) {
-    $scmtmp = tempdir( "cisco-erfassung-XXXXXX", CLEANUP => $cleanup );
+    $scmtmp = tempdir( "/tmp/cisco-erfassung-XXXXXX", CLEANUP => $cleanup );
     syslog(LOG_DEBUG, "SCM: prepare work dir '%s'", $scmtmp);
     if ( $use_git == 1 ) {
         $retval = system('cd ' . $scmtmp . '&& git clone -q ' . $giturl );
