@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # This is to be manually incremented on each "publish".
-my $versionstring = '2024-03-14.00';
+my $versionstring = '2024-03-24.00';
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -109,7 +109,7 @@ if ( defined($options{d}) ) {
     openlog("cisco-erfassung", "pid", "user");
     # Omit debug messages by default.
     # FIXME: What is the correct way to handle this with symbolic names?
-    setlogmask(6);
+    setlogmask(127);
 }
 # Test database connection and exit.
 if ( defined($options{t}) ) {
