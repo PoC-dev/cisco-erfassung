@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # This is to be manually incremented on each "publish".
-my $versionstring = '2024-03-24.00';
+my $versionstring = '2024-03-24.01';
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -157,7 +157,7 @@ if ( $do_scm == 1 ) {
 if ( $test_db == 1 ) {
     printf("Connecting to database...\n");
 }
-syslog(LOG_INFO, "Init: Connecting to database");
+syslog(LOG_DEBUG, "Init: Connecting to database");
 $dbh = DBI->connect($odbc_dsn, $odbc_user, $odbc_pass, {PrintError => 0, LongTruncOk => 1});
 if ( ! defined($dbh) ) {
     if ( $test_db == 1 ) {
@@ -402,10 +402,10 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
        $hostport = undef;
     }
     if ( defined($hostport) ) {
-        syslog(LOG_INFO, "Host loop: connect %s: port %d using %s, wartungstyp %s", $hostname, $hostport, $conn_method,
+        syslog(LOG_DEBUG, "Host loop: connect %s: port %d using %s, wartungstyp %s", $hostname, $hostport, $conn_method,
                 $wartungstyp);
     } else {
-        syslog(LOG_INFO, "Host loop: connect %s: using %s, wartungstyp %s", $hostname, $conn_method, $wartungstyp);
+        syslog(LOG_DEBUG, "Host loop: connect %s: using %s, wartungstyp %s", $hostname, $conn_method, $wartungstyp);
     }
 
 
