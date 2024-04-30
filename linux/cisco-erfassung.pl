@@ -102,10 +102,10 @@ if ( defined($options{h}) || $retval != 1 ) {
 
 # Enable debug mode.
 if ( defined($options{d}) ) {
-    $cleanup = 1;
+    $cleanup = 0;
     openlog("cisco-erfassung", "perror,pid", "user");
 } else {
-    $cleanup = 0;
+    $cleanup = 1;
     openlog("cisco-erfassung", "pid", "user");
     # Omit debug messages by default.
     # FIXME: What is the correct way to handle this with symbolic names?
