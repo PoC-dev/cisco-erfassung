@@ -437,17 +437,16 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
         $cnh->log_stdout(0);
         $cnh->exp_internal(0);
 
-        # Expect with timeout 30, @match-patterns.
         # FIXME: Maybe do this in a loop until we have a defined $pat?
         ($pat, $err, $match, $before, $after) = $cnh->expect(30, '-re',
-            '(\S+ )?[Pp]assword:', 'Are you sure you want to continue connecting (yes/no)?',
-            'Are you sure you want to continue connecting (yes/no/[fingerprint])?',
+            '(\S+ )?[Pp]assword:',
+            'Are you sure you want to continue connecting \(yes/no(/\[fingerprint\])?\)\?',
             '% Authorization failed\.');
         if ( ! defined($err) ) {
-            if ( $pat == 2 || $pat == 3 ) {
+            if ( $pat eq 2 ) {
                 $cnh->send("yes\n");
                 $cnh->expect(10, '-re', '(\S+ )?[Pp]assword:');
-            } elsif ( $pat == 4 ) {
+            } elsif ( $pat eq 3 ) {
                 syslog(LOG_WARNING, "%s: failed local authorization, skipping", $hostnameport);
                 next;
             }
@@ -459,9 +458,9 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
         next;
     }
 
-    # If we can't log in, skip any further processing for that host.
+    # If we can't log in, skip further processing for that host.
     if ( $err ) {
-        syslog(LOG_WARNING, "%s: expect error %s encountered when spawning %s, skipping", $hostnameport, $conn_method, $err);
+        syslog(LOG_WARNING, "%s: expect error %s encountered when spawning %s, skipping", $hostnameport, $err, $conn_method);
         next;
     }
 
@@ -487,7 +486,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
         }
 
         # Handle enabling of the user.
-        if ( $pat == 1 ) {
+        if ( $pat eq 1 ) {
             if ( $enable ) {
                 $cnh->send("enable\n");
                 $cnh->expect(5, '-re', '^\s*Password: \s?$');
@@ -1542,6 +1541,11 @@ END {
     }
     if ( $dbh ) {
         $dbh->disconnect;
+    }
+
+    if (defined($cnh) ) {
+        $cnh->send("exit\n");
+        $cnh->soft_close();
     }
 
     closelog;
