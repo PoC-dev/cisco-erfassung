@@ -133,7 +133,7 @@
      A                                      HLPPNLGRP('DCA2/RLDREASON' DCAHP)
      A          H                           HLPARA(18 3 18 76)
      A                                      HLPPNLGRP('DCA2/UPTIME' DCAHP)
-     A          H                           HLPARA(19 3 19 32)
+     A          H                           HLPARA(19 3 19 34)
      A                                      HLPPNLGRP('DCA2/CONFREG' DCAHP)
      A          H                           HLPARA(21 27 21 73)
      A                                      HLPPNLGRP('DCA2/ASA_FOVER' DCAHP)
