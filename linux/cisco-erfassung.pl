@@ -1457,10 +1457,14 @@ if ( $do_scm == 1 ) {
             syslog(LOG_NOTICE, "SCM: error %d while committing, continuing anyway", $retval);
         }
     } else {
-        $retval = system( 'cd ' . $scmtmp . ' && git commit -q -m "Automatic Cisco-Config-Backup" >/dev/null 2>&1');
-        $retval = ($retval >> 8);
-        if ( $retval != 0 ) {
-            syslog(LOG_NOTICE, "SCM: error %d while committing, continuing anyway", $retval);
+       if ((system( 'cd ' . $scmtmp . ' && git diff --quiet --cached --exit-code >/dev/null 2>&1') >> 8) == 1) {
+            $retval = system( 'cd ' . $scmtmp . ' && git commit -q -m "Automatic Cisco-Config-Backup" >/dev/null 2>&1');
+            $retval = ($retval >> 8);
+            if ( $retval != 0 ) {
+                syslog(LOG_NOTICE, "SCM: error %d while committing, continuing anyway", $retval);
+            }
+        } else {
+            syslog(LOG_DEBUG, "SCM: No changes, nothing to commit");
         }
         syslog(LOG_DEBUG, "SCM: push changes");
         $retval = system( 'cd ' . $scmtmp . ' && git push -q >/dev/null 2>&1');
