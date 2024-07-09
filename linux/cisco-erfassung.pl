@@ -1498,8 +1498,6 @@ if ( $do_orphans == 1 ) {
 
 # Uncommited changes after this point will be rolled back implicitly when closing the connection.
 
-syslog(LOG_DEBUG, "Finished, cleaning up");
-
 # Further cleanup is handled by the END block implicitly.
 END {
     # $scmtmp housekeeping is done automatically through tempdir( CLEANUP => 1 );
