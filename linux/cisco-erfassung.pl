@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # This is to be manually incremented on each "publish".
-my $versionstring = '2024-03-24.01';
+my $versionstring = '2024-07-09.01';
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
