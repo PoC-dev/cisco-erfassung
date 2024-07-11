@@ -4,7 +4,6 @@ This directory contains a text-based full-screen application derived from parts 
 This document is part of the Cisco device management solution, to be found on [GitHub](https://github.com/PoC-dev/cisco-erfassung) - see there for further details. Its content is subject to the [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) license, also known as *Attribution-ShareAlike 4.0 International*.
 
 ## Introduction.
-
 The application collection in here is meant for
 - maintaining a master file of Cisco components, with accompanying login credentials,
 - maintaining master files of desired software versions for said components,
@@ -50,7 +49,6 @@ The help panel groups have no dependencies and can be compiled independent of an
 **Note:** The main menu cannot be compiled with option 14. You can find the correct compile command at the beginning of CMDCISCO.
 
 ## Journal the database tables for commitment control.
-
 Commitment control is a way to collect multiple database changes, and either apply them completely or not. This assures a consistent state of all the database tables in question.
 
 Commitment control requires tables to be journaled. Create the journal related objects and start the journalling process.
@@ -70,4 +68,8 @@ go cmdcisco
 
 **Note:** Extensive online help (in German language) is provided. Please read the initial help text in the main menu (by pressing `F1`) to get started quickly.
 
-2023-11-27 poc@pocnet.net
+## Known bugs
+- Delete confirmation in OS-to-device association is empty
+- Found duplicate records in OS-to-device association (with different IDs). How could that happen?
+
+2024-07-11 poc@pocnet.net
