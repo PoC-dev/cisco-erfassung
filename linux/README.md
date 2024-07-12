@@ -51,5 +51,10 @@ If no devices (hostnames) are given, all hosts found in the database are handled
 
 If the script runs without issues, I recommend to run it at least daily from *cron*, etc.
 
+## Bugs and enhancement ideas.
+- Parse configuration headers and emit message when running-config age > startup-config age: No `wr` done.
+  - Set related new flag in database?
+- Use startup-config timestamp for deriving true configuration change timestamp, not date of last script run.
+
 ----
 2024-03-12 poc@pocnet.net
