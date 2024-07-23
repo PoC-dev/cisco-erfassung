@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # This is to be manually incremented on each "publish".
-my $versionstring = '2024-07-09.01';
+my $versionstring = '2024-07-24.00';
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -440,7 +440,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
         # FIXME: Maybe do this in a loop until we have a defined $pat?
         ($pat, $err, $match, $before, $after) = $cnh->expect(30, '-re',
             '(\S+ )?[Pp]assword:',
-            'Are you sure you want to continue connecting \(yes/no(/\[fingerprint\])?\)\?',
+            'Are you sure you want to continue connecting',
             '% Authorization failed\.');
         if ( ! defined($err) ) {
             if ( $pat eq 2 ) {
