@@ -135,10 +135,13 @@
      A*         ##Pull values from the table definition itself...
      A            VERSION$  R        O  7  7REFFLD(MAINSFL/VERSION$ *SRC)
      A            MODEL     R        O  7 28
-     A            RAM       R     Y  O  7 42EDTCDE(1)
-     A                                  7 48'MB'
-     A            FLASH     R     Y  O  7 52EDTCDE(1)
-     A                                  7 59'MB'
+     A            RAM       R     Y  O  7 50EDTCDE(1)
+     A                                  7 56'MB'
+     A            FLASH     R     Y  O  7 60EDTCDE(1)
+     A                                  7 67'MB'
+     A            EOS       R     L  O  7 71DATFMT(*ISO)
+     A  36                                  DSPATR(ND)
+     A  37                                  COLOR(RED)
      A            ID        R        H
      A* Subfile Control Screen -------------------------------------------------
      A          R DLTCTL                    SFLCTL(DLTSFL)
@@ -179,8 +182,9 @@
      A                                  6  2'Opt' DSPATR(HI) HLPID(1)
      A                                  6  7'Version' DSPATR(HI)
      A                                  6 28'Modell' DSPATR(HI)
-     A                                  6 44'RAM' DSPATR(HI)
-     A                                  6 53'Flash' DSPATR(HI)
+     A                                  6 52'RAM' DSPATR(HI)
+     A                                  6 61'Flash' DSPATR(HI)
+     A                                  6 71'EOS' DSPATR(HI)
      A* Footer of the form -----------------------------------------------------
      A* A subfile control record may contain elements above or below the actual
      A* subfile, but not both.
