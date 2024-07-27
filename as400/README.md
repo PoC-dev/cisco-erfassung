@@ -68,16 +68,4 @@ go cmdcisco
 
 **Note:** Extensive online help (in German language) is provided. Please read the initial help text in the main menu (by pressing `F1`) to get started quickly.
 
-## Known bugs
-Duplicate records in *osmatchpf* result in trouble on checking for updateable hosts. Revealing issue is: IOS XE updates change obtained values for flash and RAM on affected hosts. `Osmrptpg` shows duplicate values in the "missing" list for yet unknown reasons.
-
-Duplicate in this context means: There are non-unique records for any combination of Version, Model, RAM, and Flash. The *id* is just used for easier access to individual records.
-
-For now, the user is required to not allow duplicates in this table manually.
-
-Countermeasures planned:
-- Eliminate the error leading to duplicate records in the *missing* section of `osmrptpg`.
-- Write/Update records in *osmatchpf* through a LF with proper key fields, and *unique* flag.
-- Find a way on XE machines to obtain the real values from the hardware and not what the partly virtualized OS sees.
-
 2024-07-24 poc@pocnet.net

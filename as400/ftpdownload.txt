@@ -26,6 +26,7 @@ get CISCO/SOURCES.INVDF invdf.dds
 get CISCO/SOURCES.INVHP invhp.pnlgrp
 get CISCO/SOURCES.INVPF invpf.dds
 get CISCO/SOURCES.INVPG invpg.rpgle
+get CISCO/SOURCES.OSMATCHWLF osmatchwlf.dds
 get CISCO/SOURCES.OSMATCH1LF osmatch1lf.dds
 get CISCO/SOURCES.OSMATCH2LF osmatch2lf.dds
 get CISCO/SOURCES.OSMATCH3LF osmatch3lf.dds

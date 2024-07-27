@@ -1,4 +1,4 @@
-     HCOPYRIGHT('Patrik Schindler <poc@pocnet.net>, 2023-11-23')
+     HCOPYRIGHT('Patrik Schindler <poc@pocnet.net>, 2024-07-27')
      H*
      H* This file is part of cisco-erfassung, an application conglomerate for
      H*  management of Cisco devices on AS/400, i5/OS and IBM i.
@@ -59,7 +59,7 @@
      F* Restriction of RPG.
      F*
      F* Main/primary file, used mainly for writing into.
-     FOSMATCHPF UF A E           K DISK
+     FOSMATCHWLFUF A E           K DISK
      F*
      F* For quick find of maximum ID.
      FOSMATCHMAXIF   E           K DISK    USROPN
@@ -85,6 +85,12 @@
      D*
      D* File Error status variable to track READ/WRITE/UPDATE/DELETE.
      DFSTAT            S              5S 0
+     D*
+     D* Intermediate save point for elimitating duplicates ending up in the SFL.
+     DFLASH_PRV        S                   LIKE(FLASH_IST) INZ
+     DMODEL_PRV        S                   LIKE(MODEL_IST) INZ
+     DRAM_PRV          S                   LIKE(RAM_IST) INZ
+     DVERS_PRV         S                   LIKE(VERS_IST) INZ
      D*
      D***************************************************************************
      C* Start the main loop: Write SFLCTL and wait for keypress to read.
@@ -391,6 +397,14 @@
      C                   LEAVE
      C                   ENDIF
      C*
+     C* Skip records with duplicate field values.
+     C     FLASH_IST     IFEQ      FLASH_PRV
+     C     MODEL_IST     ANDEQ     MODEL_PRV
+     C     RAM_IST       ANDEQ     RAM_PRV
+     C     VERS_IST      ANDEQ     VERS_PRV
+     C                   ITER
+     C                   ENDIF
+     C*
      C* Reset opt to blank.
      C                   MOVE      *BLANK        OPT
      C*
@@ -405,6 +419,13 @@
      C                   ENDIF
      C*
      C                   WRITE     MISSSFL
+     C*
+     C* Copy data for next run.
+     C                   MOVE      FLASH_IST     FLASH_PRV
+     C                   MOVE      MODEL_IST     MODEL_PRV
+     C                   MOVE      RAM_IST       RAM_PRV
+     C                   MOVE      VERS_IST      VERS_PRV
+     C*
      C                   ENDDO
      C*
      C* Loop ended. Display the subfile- and subfile control records or
@@ -481,8 +502,8 @@
      C*
      C* Delete if record found. If not, silently ignore. Has probably been
      C*  deleted from someone else, meanwhile.
-     C     ID            DELETE(E) OSMATCHTBL
-     C                   EVAL      FSTAT=%STATUS(OSMATCHPF)
+     C     ID            DELETE(E) WRITEMATCH
+     C                   EVAL      FSTAT=%STATUS(OSMATCHWLF)
      C*
      C     FSTAT         IFGT      *ZERO
      C                   MOVE      *ON           *IN98
@@ -595,8 +616,8 @@
      C                   MOVEL     STAMP         CHANGED
      C*
      C* Write record.
-     C                   WRITE(E)  OSMATCHTBL
-     C                   EVAL      FSTAT=%STATUS(OSMATCHPF)
+     C                   WRITE(E)  WRITEMATCH
+     C                   EVAL      FSTAT=%STATUS(OSMATCHWLF)
      C*
      C     FSTAT         IFGT      *ZERO
      C                   MOVE      *ON           *IN98

@@ -26,6 +26,7 @@ put invdf.dds CISCO/SOURCES.INVDF
 put invhp.pnlgrp CISCO/SOURCES.INVHP
 put invpf.dds CISCO/SOURCES.INVPF
 put invpg.rpgle CISCO/SOURCES.INVPG
+put osmatchwlf.dds CISCO/SOURCES.OSMATCHWLF
 put osmatch1lf.dds CISCO/SOURCES.OSMATCH1LF
 put osmatch2lf.dds CISCO/SOURCES.OSMATCH2LF
 put osmatch3lf.dds CISCO/SOURCES.OSMATCH3LF
@@ -81,6 +82,7 @@ quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(INVDF) SRCTYPE(DSPF) TEXT('DCA list 
 quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(INVHP) SRCTYPE(PNLGRP) TEXT('DCA list of show inventory')
 quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(INVPF) SRCTYPE(PF) TEXT('DCA list of show inventory')
 quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(INVPG) SRCTYPE(RPGLE) TEXT('DCA list of show inventory')
+quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(OSMATCHWLF) SRCTYPE(LF) TEXT('Recommended OS versions: Write LF (DUP)')
 quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(OSMATCH1LF) SRCTYPE(LF) TEXT('Recommended OS versions master file: SFL by ver')
 quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(OSMATCH2LF) SRCTYPE(LF) TEXT('Recommended OS versions master file: SFL by model')
 quote rcmd CHGPFM FILE(IBMDOCS/SOURCES) MBR(OSMATCH3LF) SRCTYPE(LF) TEXT('Recommended OS versions master file: SFL by RAM')
