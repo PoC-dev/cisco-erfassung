@@ -23,6 +23,8 @@ use Sys::Syslog;
 # LOG_INFO for regular messages for exceptions
 # LOG_DEBUG for context in what we're doing currently
 
+# FIXME: Harmonize appearance of syslog output.
+
 # ----------------------------------------------------------------------------------------------------------------------------------
 
 # How to access the database
@@ -203,8 +205,17 @@ if ( defined($dbh->errstr) ) {
     syslog(LOG_ERR, "SQL preparation error in: %s", $dbh->errstr);
     die;
 }
-# FIXME: Replace this with ASA and IOS config timestamps.
 my $sth_update_dcapf_cfupddb = $dbh->prepare("UPDATE dcapf SET cfupddb=? WHERE hostname=?");
+if ( defined($dbh->errstr) ) {
+    syslog(LOG_ERR, "SQL preparation error in: %s", $dbh->errstr);
+    die;
+}
+my $sth_update_dcapf_cfsavd_cfupdt = $dbh->prepare("UPDATE dcapf SET cfsavd=?, cfupdt=? WHERE hostname=?");
+if ( defined($dbh->errstr) ) {
+    syslog(LOG_ERR, "SQL preparation error in: %s", $dbh->errstr);
+    die;
+}
+my $sth_update_dcapf_cfsavd = $dbh->prepare("UPDATE dcapf SET cfsavd=? WHERE hostname=?");
 if ( defined($dbh->errstr) ) {
     syslog(LOG_ERR, "SQL preparation error in: %s", $dbh->errstr);
     die;
@@ -480,9 +491,9 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
     # If we have a valid connection handle, continue talking to the device.
     if ( $cnh ) {
         # Clear vars from previous iteration.
-        $asa_dm_ver = $asa_fover = $cfupddb = $confreg = $flash = $model = $ram = $reload_reason = $serno = $stamp = $sysimg =
-            $uptime = $uptime_min = $version = $vtp_domain = $vtp_mode = $vtp_prune = $vtp_vers = $inv_name = $inv_descr =
-            $inv_pid = $inv_vid = $inv_serno = $ac_type = $ac_ver = $vlan_descr = $vlan_no = undef;
+        $asa_dm_ver = $asa_fover = $cfupddb = $cfsavd = $cfupdt =  $confreg = $flash = $model = $ram = $reload_reason = $serno =
+            $stamp = $sysimg = $uptime = $uptime_min = $version = $vtp_domain = $vtp_mode = $vtp_prune = $vtp_vers = $inv_name =
+            $inv_descr = $inv_pid = $inv_vid = $inv_serno = $ac_type = $ac_ver = $vlan_descr = $vlan_no = undef;
 
         # Common I/O for both telnet and ssh.
         ($pat, $err, $match, $before, $after) = $cnh->expect(5,
@@ -947,6 +958,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                     syslog(LOG_NOTICE, "%s: show version (save cfupddb): SQL fetch error in: %s", $hostnameport, $dbh->errstr);
                 } else {
                     # A very crude workaround. If the field is NULL we're getting just NULLs back instead of undef().
+                    # FIXME: If a record exists and field is NULL, we fail to detect this reliably. Rework with proper IFNULL query.
                     if ( ! $prv_cfupddb =~ /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}.\d{6}$/ ) {
                         syslog(LOG_DEBUG, "%s: show version (save cfupddb): '%s' is not a timestamp", $hostnameport, $prv_cfupddb);
                         undef($prv_cfupddb);
@@ -1254,7 +1266,14 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                         $cfsavd = $time_formatter->format_datetime($time_dtf);
                         syslog(LOG_DEBUG, "%s: Gather config timestamps from ASA config found '%s'", $hostnameport, $cfsavd);
 
-                        # FIXME: Actually write data.
+                        # Actually write data.
+                        $sth_update_dcapf_cfsavd->execute($cfsavd, $hostnameport);
+                        if ( defined($dbh->errstr) ) {
+                            syslog(LOG_NOTICE, "%s: Gather config timestamps from ASA config: SQL execution error in: %s",
+                                $hostnameport, $dbh->errstr);
+                        }
+
+                        # Spare some loop iterations.
                         last;
                     }
                 }
@@ -1416,8 +1435,10 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
 
                         if ( $stamp_type eq 'run' ) {
                             $cfupdt = $time_formatter->format_datetime($time_dtf);
+                            syslog(LOG_DEBUG, "%s: Gather config timestamps found run='%s'", $hostnameport, $cfupdt);
                         } elsif ( $stamp_type eq 'sav' ) {
                             $cfsavd = $time_formatter->format_datetime($time_dtf);
+                            syslog(LOG_DEBUG, "%s: Gather config timestamps found saved='%s'", $hostnameport, $cfsavd);
                         }
                     }
 
@@ -1428,8 +1449,13 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                 }
 
                 if ( defined($cfupdt) && defined($cfsavd) ) {
-                    # FIXME: Actually insert data.
-                    syslog(LOG_DEBUG, "%s: Gather config timestamps found run='%s', saved='%s'", $hostnameport, $cfupdt, $cfsavd);
+                    # Actually insert data.
+                    $sth_update_dcapf_cfsavd_cfupdt->execute($cfsavd, $cfupdt, $hostnameport);
+                    if ( defined($dbh->errstr) ) {
+                        syslog(LOG_NOTICE, "%s: config timestamps: SQL execution error in: %s", $hostnameport, $dbh->errstr);
+                    }
+                } else {
+                    syslog(LOG_NOTICE, "%s: config timestamps: could not extract both run and sav timestamp", $hostnameport);
                 }
             } else {
                 syslog(LOG_NOTICE, "%s: config timestamps: expect error %s encountered while trying 'show running-config', skipping",
@@ -1619,6 +1645,12 @@ END {
     }
     if ( $sth_update_dcapf_cfupddb ) {
         $sth_update_dcapf_cfupddb->finish;
+    }
+    if ( $sth_update_dcapf_cfsavd_cfupdt ) {
+        $sth_update_dcapf_cfsavd_cfupdt->finish;
+    }
+    if ( $sth_update_dcapf_cfsavd ) {
+        $sth_update_dcapf_cfsavd->finish;
     }
     if ( $sth_update_dcapf_setasafailover ) {
         $sth_update_dcapf_setasafailover->finish;
