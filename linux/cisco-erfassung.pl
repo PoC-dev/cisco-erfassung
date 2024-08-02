@@ -140,6 +140,8 @@ if ( defined($options{o}) ) {
     $do_orphans = 1;
 }
 
+syslog(LOG_INFO, "Startup: our version is '%s'", $versionstring);
+
 # Use git instead of default CVS?
 if ( $do_scm == 1 ) {
     if ( defined($giturl) && ! defined($cvsproject) ) {
