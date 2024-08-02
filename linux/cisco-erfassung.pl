@@ -550,6 +550,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
             @show_version = split("\n", $before);
             foreach $line (@show_version) {
                 # Remove CR only for parsing into the database.
+                # FIXME: Harmonize this. We probably have this in too many places instead of one centralized.
                 $line =~ tr/\015//d;
 
                 # FIXME: How can we make these lines shorter to fit in 132 chars?
@@ -1378,6 +1379,9 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                 # Loop through lines.
                 @beforeLinesArray = split("\n", $before);
                 foreach $line (@beforeLinesArray) {
+                    # Remove CR only for parsing into the database.
+                    $line =~ tr/\015//d;
+
                     if ( $line =~ /^Failover (On|Off)\s*$/ ) {
                         if ( $1 eq "On" ) {
                             $sth_update_dcapf_setasafailover->execute('1', $hostnameport);
@@ -1386,7 +1390,6 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                         }
                         if ( defined($dbh->errstr) ) {
                             syslog(LOG_NOTICE, "%s: ASA failover: SQL execution error in: %s", $hostnameport, $dbh->errstr);
-                            $dbh->do("rollback");
                         }
                         last;
                     }
@@ -1394,7 +1397,6 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
             } else {
                 syslog(LOG_NOTICE, "%s: ASA failover: expect error %s encountered while trying 'show failover', skipping",
                         $hostnameport, $err);
-                $dbh->do("rollback");
             }
         }
 
