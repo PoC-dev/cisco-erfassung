@@ -1395,7 +1395,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                     }
                 }
             } else {
-                syslog(LOG_NOTICE, "%s: ASA failover: expect error %s encountered while trying 'show failover', skipping",
+                syslog(LOG_NOTICE, "%s: ASA failover: expect error %s encountered while trying 'show failover'",
                         $hostnameport, $err);
             }
         }
