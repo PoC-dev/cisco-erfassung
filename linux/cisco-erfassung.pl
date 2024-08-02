@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # This is to be manually incremented on each "publish".
-my $versionstring = '2024-07-24.00';
+my $versionstring = '2024-08-02.00';
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -11,6 +11,7 @@ use warnings;
 use DBI;
 use Expect; # https://metacpan.org/pod/release/RGIERSIG/Expect-1.15/Expect.pod
 use Date::Format;
+use DateTime::Format::Strptime;
 use File::Temp qw/ tempdir /;
 use Getopt::Std;
 use Sys::Syslog;
@@ -40,9 +41,9 @@ my $giturl = $config->{'giturl'};
 # General vars.
 my ($cleanup, $cnh, $scmdestfile, $scmtmp, $dbh, $dirfh, $do_scm, $do_scm_add, $do_orphans, $do_setnull, $fh, $file, $hostname,
     $hostport, $inv_have_line_name, $inv_have_line_pid, $num_entries, $param, $prv_cfupddb, $retval, $setnull_field,
-    $show_config_command, $showverfeature, $sth_select_hosts, $test_db, $tmpline, $to_clean_pf, $try_loop_string, $use_git,
-    @beforeLinesArray, @cnh_parms, @errtyp, @filelist, @lines, @params, @setnull_fields, @show_config, @show_version, @time_tm,
-    @to_clean_pfs, @try_loop_strings
+    $show_config_command, $showverfeature, $stamp_type, $sth_select_hosts, $test_db,  $tmpline, $time_dtf, $time_formatter,
+    $time_parser, $to_clean_pf, $try_loop_string, $use_git, @beforeLinesArray, @cnh_parms, @errtyp, @filelist, @lines, @params,
+    @setnull_fields, @show_config, @show_version, @time_tm, @to_clean_pfs, @try_loop_strings
 );
 
 my $errcount = 0;
@@ -57,7 +58,7 @@ my ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp);
 my ($lineno, $line);
 
 # Vars from dcapf. Also see handler if $do_setnull == 1!
-my ( $asa_dm_ver, $asa_fover, $cfupddb, $confreg, $flash, $model, $ram, $reload_reason, $serno, $stamp,
+my ( $asa_dm_ver, $asa_fover, $cfsavd, $cfupdt, $cfupddb, $confreg, $flash, $model, $ram, $reload_reason, $serno, $stamp,
     $sysimg, $uptime, $uptime_min, $version, $vtp_domain, $vtp_mode, $vtp_prune, $vtp_vers);
 
 # Vars from invpf.
@@ -202,6 +203,7 @@ if ( defined($dbh->errstr) ) {
     syslog(LOG_ERR, "SQL preparation error in: %s", $dbh->errstr);
     die;
 }
+# FIXME: Replace this with ASA and IOS config timestamps.
 my $sth_update_dcapf_cfupddb = $dbh->prepare("UPDATE dcapf SET cfupddb=? WHERE hostname=?");
 if ( defined($dbh->errstr) ) {
     syslog(LOG_ERR, "SQL preparation error in: %s", $dbh->errstr);
@@ -257,6 +259,15 @@ if ( defined($dbh->errstr) ) {
     syslog(LOG_ERR, "SQL preparation error in: %s", $dbh->errstr);
     die;
 }
+
+
+# Prepare reusable timestamp formatting.
+$time_parser = DateTime::Format::Strptime->new(
+    pattern => "%T %Z %a %b %d %Y",
+);
+$time_formatter = DateTime::Format::Strptime->new(
+    pattern => "%Y-%m-%d-%H.%M.%S.000000",
+);
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -402,10 +413,10 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
        $hostport = undef;
     }
     if ( defined($hostport) ) {
-        syslog(LOG_DEBUG, "Host loop: connect %s: port %d using %s, wartungstyp %s", $hostname, $hostport, $conn_method,
+        syslog(LOG_DEBUG, "Host loop: Connect %s: port %d using %s, wartungstyp %s", $hostname, $hostport, $conn_method,
                 $wartungstyp);
     } else {
-        syslog(LOG_DEBUG, "Host loop: connect %s: using %s, wartungstyp %s", $hostname, $conn_method, $wartungstyp);
+        syslog(LOG_DEBUG, "Host loop: Connect %s: using %s, wartungstyp %s", $hostname, $conn_method, $wartungstyp);
     }
 
 
@@ -516,7 +527,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
         # ----------------------------------------------------------------------
 
         # Show Version and parse output of it.
-        syslog(LOG_DEBUG, "%s: handle 'show version'", $hostnameport);
+        syslog(LOG_DEBUG, "%s: Handle 'show version'", $hostnameport);
         $cnh->send("show version\n");
         ($pat, $err, $match, $before, $after) = $cnh->expect(5, '-re', $prompt_re);
 
@@ -612,10 +623,10 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
 
             # --------------------------
 
-            syslog(LOG_DEBUG, "%s: show version: updating raw data in database", $hostnameport);
+            syslog(LOG_DEBUG, "%s: Show version: Updating raw data in database", $hostnameport);
             $sth_delete_cfgverpf->execute($hostnameport, 'ver');
             if ( defined($dbh->errstr) ) {
-                syslog(LOG_NOTICE, "%s: show version: SQL execution error in: %s", $hostnameport, $dbh->errstr);
+                syslog(LOG_NOTICE, "%s: Show version: SQL execution error in: %s", $hostnameport, $dbh->errstr);
                 $dbh->do("rollback");
             } else {
                 # Delete first line 'show version'.
@@ -623,6 +634,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
 
                 $lineno = 0;
                 foreach $line (@show_version) {
+                    # Remove CR only for parsing into the database.
                     $line =~ tr/\015//d;
 
                     # Gracefully handle empty lines.
@@ -1104,6 +1116,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
         if ( $wartungstyp eq 'ASA' ) {
             $show_config_command = "more system:running-config";
         } else {
+            # It's much easier to get hold of startup configuration than running-config, especially on older devices.
             $show_config_command = "show startup-config";
         }
         syslog(LOG_DEBUG, "%s: Handle '%s'", $hostnameport, $show_config_command);
@@ -1146,6 +1159,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
             } else {
                 $lineno = 0;
                 foreach $line (@show_config) {
+                    # Remove CR only for parsing into the database.
                     $line =~ tr/\015//d;
 
                     # Gracefully handle empty lines.
@@ -1191,14 +1205,18 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                 $dbh->do("rollback");
             } else {
                 foreach $line (@show_config) {
-                    if ( $wartungstyp eq 'IOS' && $line =~ /^crypto vpn anyconnect flash:\/webvpn\/anyconnect-(\S+)-([\d.]+)(-webdeploy)?-k9\.pkg sequence \d+$/ ) {
+                    # Remove CR only for parsing into the database.
+                    $line =~ tr/\015//d;
+
+                    if ( $wartungstyp eq 'IOS' &&
+                            $line =~ /^crypto vpn anyconnect flash:\/webvpn\/anyconnect-(\S+)-([\d.]+)(-webdeploy)?-k9\.pkg sequence \d+$/ ) {
                         syslog(LOG_DEBUG, "%s: Anyconnect: Found '%s'", $hostnameport, $line);
                         if ( defined($1) && defined($2) ) {
                             $ac_type = $1;
                             $ac_ver = $2;
                         }
                     } elsif ( $wartungstyp eq 'ASA' &&
-                        $line =~ /^\s*anyconnect image disk0:\/anyconnect-(\S+)-([\d.]+)(-webdeploy)?-k9\.pkg \d+$/ ) {
+                            $line =~ /^\s*anyconnect image disk0:\/anyconnect-(\S+)-([\d.]+)(-webdeploy)?-k9\.pkg \d+$/ ) {
                         syslog(LOG_DEBUG, "%s: Anyconnect: Found '%s'", $hostnameport, $line);
                         if ( defined($1) && defined($2) ) {
                             $ac_type = $1;
@@ -1217,6 +1235,28 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
 
                     # Don't carry over to the next loop iteration.
                     $ac_type = $ac_ver = undef;
+                }
+            }
+
+            # --------------------------
+
+            # Parse ASA Timestamp into cfsavd. Uses existing configuration data in @show_config.
+            if ( $wartungstyp eq 'ASA' ) {
+                syslog(LOG_DEBUG, "%s: Gather config timestamps from ASA config", $hostnameport);
+
+                # Look for timestamp lines.
+                foreach $line (@show_config) {
+                    # Remove CR only for parsing into the database.
+                    $line =~ tr/\015//d;
+
+                    if ( $line =~ /^: Written by \S+ at (\d{2}:\d{2}:\d{2})\.\d{3} (\S+ \S{3} \S{3} \d{1,2} \d{4})$/ ) {
+                        $time_dtf = $time_parser->parse_datetime($1 . ' ' . $2);
+                        $cfsavd = $time_formatter->format_datetime($time_dtf);
+                        syslog(LOG_DEBUG, "%s: Gather config timestamps from ASA config found '%s'", $hostnameport, $cfsavd);
+
+                        # FIXME: Actually write data.
+                        last;
+                    }
                 }
             }
 
@@ -1298,7 +1338,6 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                         $hostnameport, $scmdestfile);
                 }
             }
-
         } else {
             syslog(LOG_NOTICE, "%s: config: expect error %s encountered while trying '%s', skipping",
                 $hostnameport, $err, $show_config_command);
@@ -1342,6 +1381,64 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
 
         # ----------------------------------------------------------------------
 
+        # Parse IOS Timestamps into cfupdt, cfsavd.
+        if ( $wartungstyp eq 'IOS' ) {
+            syslog(LOG_DEBUG, "%s: Gather config timestamps with 'show running-config' on IOS", $hostnameport);
+            $cnh->send("show running-config\n");
+
+            ($pat, $err, $match, $before, $after) = $cnh->expect(5, '-re', $prompt_re);
+            if ( ! defined($err) ) {
+                # Filter nasty (un)printables.
+                # Note: We have no logic for information input spanning multiple lines. Thus we can filter out CR.
+                $before =~ tr/\000-\010|\013-\037|\177-\377//d;
+                @show_config = split("\n", $before);
+
+                # Config usually ends with a fixed string, so we can check if the obtained configuration is complete.
+                if ( $show_config[-1] ne "end" ) {
+                    syslog(LOG_NOTICE, "%s: config timestamps: Unexpected end of running-config: '%s', skipping timestamp handling",
+                        $hostnameport, $show_config[-1]);
+                    next;
+                }
+
+                # Look for timestamp lines.
+                foreach $line (@show_config) {
+                    if ( $line =~ /^! Last configuration change at (\d{2}:\d{2}:\d{2} \S+ \S{3} \S{3} \d{1,2} \d{4}) by \S+$/ ) {
+                        $stamp_type = 'run';
+                    } elsif ( $line =~ /^! NVRAM config last updated at (\d{2}:\d{2}:\d{2} \S+ \S{3} \S{3} \d{1,2} \d{4}) by \S+$/ ) {
+                        $stamp_type = 'sav';
+                    } else {
+                        undef($stamp_type);
+                    }
+
+                    # Safety checks and fill final variables.
+                    if ( defined ($stamp_type) && defined ($1) ) {
+                        $time_dtf = $time_parser->parse_datetime($1);
+
+                        if ( $stamp_type eq 'run' ) {
+                            $cfupdt = $time_formatter->format_datetime($time_dtf);
+                        } elsif ( $stamp_type eq 'sav' ) {
+                            $cfsavd = $time_formatter->format_datetime($time_dtf);
+                        }
+                    }
+
+                    # Spare some loop iterations.
+                    if ( defined($cfupdt) && defined($cfsavd) ) {
+                        last;
+                    }
+                }
+
+                if ( defined($cfupdt) && defined($cfsavd) ) {
+                    # FIXME: Actually insert data.
+                    syslog(LOG_DEBUG, "%s: Gather config timestamps found run='%s', saved='%s'", $hostnameport, $cfupdt, $cfsavd);
+                }
+            } else {
+                syslog(LOG_NOTICE, "%s: config timestamps: expect error %s encountered while trying 'show running-config', skipping",
+                    $hostnameport, $err);
+            }
+        }
+
+        # ----------------------------------------------------------------------
+
         syslog(LOG_DEBUG, "%s: Host loop: close connection to device", $hostnameport);
         $cnh->send("exit\n");
         $cnh->soft_close();
@@ -1374,7 +1471,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
             }
 
             # Timestamp fields.
-            @setnull_fields = ('cfupddb');
+            @setnull_fields = ('cfsavd', 'cfupdt', 'cfupddb');
             foreach $setnull_field (@setnull_fields) {
                 $dbh->do("UPDATE dcapf SET $setnull_field=NULL WHERE hostname='$hostnameport' AND \
                     $setnull_field='0001-01-01-00.00.00.000000'");

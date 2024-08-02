@@ -52,10 +52,11 @@ ist für die Erfassung nicht relevant.
 .* -----------------------------------------------------------------------------
 :H3.Kommandozeilen-Beschänkungen
 :P.Die folgenden Konfigurationseinstellungen limitieren die verfügbaren
-Kommandos für Benutzer, der mit Stufe 2 angelegt wurden:
-:XMP.privilege exec level 2 show running-config
+Kommandos für Benutzer, der mit Stufe 2 angelegt wurden auf das notwendige Maß:
+:XMP.privilege exec level 2 dir
+privilege exec level 2 show running-config
 privilege exec level 2 show startup-config
-privilege exec level 2 show:EXMP.
+privilege exec level 2 show version:EXMP.
 :P.Neuere IOS-Versionen haben einen separaten Parameter für den Zugriff auf die
 gesicherte :HP1.startup-config:EHP1.
 :XMP.file privilege 2:EXMP.

@@ -86,16 +86,19 @@ auch das Management von Firmwareupdates.
 :P.Ein Perl Script läuft zyklisch z. B. unter Linux via Cron, holt sich über
 ODBC die Logindaten der Geräte, meldet sich an und setzt folgende Kommandos ab:
 :UL.
-:LI.show version
-:LI.show inventory
-:LI.show startup-config für IOS, bzw. more system:running-config für ASAs
-:LI.show failover (für ASAs)
+:LI.:HP1.show version:EHP1.
+:LI.:HP1.show inventory:EHP1.
+:LI.:HP1.show startup-config:EHP1. für IOS, bzw. :HP1.more system:running-config
+für ASAs:EHP1.
+:LI.:HP1.show failover:EHP1. für ASAs
+:LI.:HP1.show running-config:EHP1. für IOS, um aktuelle Zeitstempel von laufender
+und gesicherter Konfiguratrion zu erhalten
 :EUL.
-:P.Aus den Ausgaben werden Informationen extrahiert und in die Datenbanktabellen
-eingefügt.
+:P.Aus den Ausgaben werden die vorgesehenen Informationen extrahiert und in die
+Datenbanktabellen eingefügt.
 :P.Ein Sonderfall ist die Konfiguration. Diese wird nicht nur in einer
 DB-Tabelle hinterlegt, sondern auch in ein Revisionsverwaltungssystem
-eingespeist (CVS oder git, wahlweise), sodass Änderungen zeitlich
+eingespeist (CVS oder wahlweise git), sodass Änderungen zeitlich
 nachvollziehbar werden.
 :P.Genauere Anweisungen zur korrekten Konfiguration der Endgeräte sind
 :LINK PERFORM='DSPHELP CONFIG CISCOHP'.hier:ELINK. dokumentiert.

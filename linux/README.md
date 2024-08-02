@@ -57,4 +57,4 @@ If the script runs without issues, I recommend to run it at least daily from *cr
 - Use startup-config timestamp for deriving true configuration change timestamp, not date of last script run.
 
 ----
-2024-03-12 poc@pocnet.net
+2024-08-02 poc@pocnet.net

@@ -33,6 +33,8 @@
      A            SYSIMG        80A         ALWNULL
      A            UPTIME        52A         ALWNULL TEXT('Textual uptime')
      A            CFUPDDB         Z         ALWNULL TEXT('Last successful read')
+     A            CFUPDT          Z         ALWNULL TEXT('Device cfg changed')
+     A            CFSAVD          Z         ALWNULL TEXT('Device cfg written')
      A            ASA_DM_VER    20A         ALWNULL TEXT('ASDM version')
      A            VTP_DOMAIN    16A         ALWNULL
      A            VTP_MODE      16A         ALWNULL
