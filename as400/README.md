@@ -68,4 +68,10 @@ go cmdcisco
 
 **Note:** Extensive online help (in German language) is provided. Please read the initial help text in the main menu (by pressing `F1`) to get started quickly.
 
-2024-07-24 poc@pocnet.net
+## ToDo
+Main Host list/master file: HSTDF HSTHP HSTPF HSTPG HSTPOSLF
+- Use transactions for deleting auxiliary table contents
+- Expand error handling for auxiliary table updates
+- When deleting an entry, also delete the corresponding entry in OSMRPTPF.
+
+2024-08-03 poc@pocnet.net
