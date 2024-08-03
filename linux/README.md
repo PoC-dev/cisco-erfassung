@@ -21,7 +21,8 @@ This Perl script has been tested under Linux only, because it has quite some mod
 
 ## Preparation.
 - `cp cisco-config-backuprc /etc`,
-- Edit */etc/cisco-config-backuprc* to reflect your environment.
+- Edit */etc/cisco-config-backuprc* to reflect your environment,
+- Use `chown`/`chmod` commands to make the file readable only by the user intended to run the data acquisition script.
 
 Next, you should install the required perl modules. For Debian systems, this is:
 ```
