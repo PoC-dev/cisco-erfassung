@@ -1,5 +1,7 @@
 This is a collection of scripts and other files to ease handling/updating a more or less large amount of Cisco devices, and some CLI compatibles.
 
+Please read the [NEWS](NEWS.md) for incompatible changes and remedies.
+
 The application is used in two production environments — at least that's what I know for sure — and thus is continuously tested against
 - Cisco IOS and IOS XE devices
   - Routers:

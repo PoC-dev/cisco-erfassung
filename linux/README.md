@@ -2,7 +2,6 @@
 This document is part of the Cisco device management solution, to be found on [GitHub](https://github.com/PoC-dev/cisco-erfassung) - see there for further details. Its content is subject to the [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) license, also known as *Attribution-ShareAlike 4.0 International*.
 
 ## Introduction.
-
 The script and example configuration file are meant for automatic inventorization of Cisco devices according to a master database table on an AS/400 (IBM i) system containing login details.
 
 In addition, the retrieved configurations will be maintained in either *CVS* or *git* change tracking systems. Setup and usage of change tracking systems is beyond the scope of this document.

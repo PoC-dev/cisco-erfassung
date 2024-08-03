@@ -48,6 +48,22 @@ The help panel groups have no dependencies and can be compiled independent of an
 
 **Note:** The main menu cannot be compiled with option 14. You can find the correct compile command at the beginning of CMDCISCO.
 
+### Upgrading
+Sometimes, you want to upgrade the code base to the latest version from github. But there might have been incompatible changes introduced meanwhile. Please read the [NEWS](../NEWS.md) for incompatible changes and remedies.
+
+Apart from this, the safest way to upgrade is to upload/overwrite the members, and follow the above directions to recompile the objects. **There is one notable exception!** No physical files should be just recompiled. If you try, two things might happen:
+- Compilation stops because there are files relating to the PF making it impossible to delete the PF without manual intervention
+- Compilation commences and overwrites the PF and all contained data
+
+Usually this is not what you want. You can *update* a PF in place according to the updated description, though:
+```
+chgpf file(*curlib/mypf) srcfile(*curlib/sources)
+```
+
+If changes will discard existing data, a screen will pop up and warn you. Usually, it's safe to commence the operation by answering `(I)gnore` (possible loss of data). Afterwards, just continue as directed above with the other file types.
+
+**Note:** `chgpf` also retains journaling status of files, so no action needed on upgrade.
+
 ## Journal the database tables for commitment control.
 Commitment control is a way to collect multiple database changes, and either apply them completely or not. This assures a consistent state of all the database tables in question.
 
