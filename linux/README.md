@@ -1,5 +1,7 @@
+This file describes the necessary steps to successfully run the data acquisition script.
+
 ## License.
-This document is part of the Cisco device management solution, to be found on [GitHub](https://github.com/PoC-dev/cisco-erfassung) - see there for further details. Its content is subject to the [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) license, also known as *Attribution-ShareAlike 4.0 International*.
+This document is part of the Cisco device management solution, to be found on [GitHub](https://github.com/PoC-dev/cisco-erfassung). Its content is subject to the [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) license, also known as *Attribution-ShareAlike 4.0 International*. The project itself is subject to the GNU Public License version 2.
 
 ## Introduction.
 The script and example configuration file are meant for automatic inventorization of Cisco devices according to a master database table on an AS/400 (IBM i) system containing login details.
@@ -28,6 +30,8 @@ apt-get install libdbi-perl libdbd-odbc-perl libexpect-perl libtimedate-perl
 
 The script spawns external programs through *Expect* to connect and fake-interactively steer devices. Currently *ssh* and *telnet* are supported connection options. You need a command line ssh and telnet client installed, respectively.
 
+Next, consult [README-devices-requirements](README-devices-requirements.md) to learn about the data acquisition process and recommended changes on the devices in question.
+
 ## Running.
 Before running this script, you need to prepare the AS/400 environment. Refer to [the documentation](../as400/README.md) to finish preparation.
 
@@ -55,4 +59,5 @@ If the script runs without issues, I recommend to run it at least daily from *cr
 - Use date/time functions from one module and not two.
 
 ----
+
 2024-08-03 poc@pocnet.net

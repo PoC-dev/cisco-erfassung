@@ -1,7 +1,7 @@
 This directory contains a text-based full-screen application derived from parts of my [AS/400 Subfile Template](https://github.com/PoC-dev/as400-sfltemplates), and the accompanying table definitions for the script one directory up.
 
 ## License.
-This document is part of the Cisco device management solution, to be found on [GitHub](https://github.com/PoC-dev/cisco-erfassung) - see there for further details. Its content is subject to the [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) license, also known as *Attribution-ShareAlike 4.0 International*.
+This document is part of the Cisco device management solution, to be found on [GitHub](https://github.com/PoC-dev/cisco-erfassung). Its content is subject to the [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) license, also known as *Attribution-ShareAlike 4.0 International*. The project itself is subject to the GNU Public License version 2.
 
 ## Introduction.
 The application collection in here is meant for
@@ -51,11 +51,11 @@ The help panel groups have no dependencies and can be compiled independent of an
 ### Upgrading
 Sometimes, you want to upgrade the code base to the latest version from github. But there might have been incompatible changes introduced meanwhile. Please read the [NEWS](../NEWS.md) for incompatible changes and remedies.
 
-Apart from this, the safest way to upgrade is to upload/overwrite the members, and follow the above directions to recompile the objects. **There is one notable exception!** No physical files should be just recompiled. If you try, two things might happen:
-- Compilation stops because there are files relating to the PF making it impossible to delete the PF without manual intervention
+Apart from this, the easiest way to upgrade is to upload/overwrite the source members, and follow the above directions to recompile the objects. **There is one notable exception!** No physical files should be just recompiled. If you try, two things might happen:
+- Compilation stops because there are files relating to the PF, making it impossible to delete the PF without manual intervention
 - Compilation commences and overwrites the PF and all contained data
 
-Usually this is not what you want. You can *update* a PF in place according to the updated description, though:
+Usually this is not what you want. You **can** *update* a PF in place according to the updated description, though:
 ```
 chgpf file(*curlib/mypf) srcfile(*curlib/sources)
 ```
@@ -89,5 +89,7 @@ Main Host list/master file: HSTDF HSTHP HSTPF HSTPG HSTPOSLF
 - Use transactions for deleting auxiliary table contents
 - Expand error handling for auxiliary table updates
 - When deleting an entry, also delete the corresponding entry in OSMRPTPF.
+
+----
 
 2024-08-03 poc@pocnet.net
