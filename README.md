@@ -39,7 +39,7 @@ First, read the already mentioned READMEs for both parts. Roughly, you need to
 
 **Note:** Extensive online help (in German language) is provided in the AS/400 part. Please read the initial help text in the main menu (by pressing `F1`) to get started quickly.
 
-Consult [README-devices-requirements](README-devices-requirements.md) to learn about the data acquisition process and recommended changes on the devices in question.
+Consult [README-devices-requirements](linux/README-devices-requirements.md) to learn about the data acquisition process and recommended changes on the devices in question.
 
 ## Acknowledgements.
 A huge thank you goes to [Mathias Peter IT-Systemhaus](https://www.mathpeter.com), my current employer who allowed me to spend part of my work time on this project.
