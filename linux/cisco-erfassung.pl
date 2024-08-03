@@ -1170,8 +1170,9 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                     syslog(LOG_ERR, "%s: config: skipping host because of earlier errors", $hostnameport);
                     $dbh->do("rollback");
                     last;
+                } else {
+                    syslog(LOG_DEBUG, "%s: config: saved %d lines of  configuration to database", $hostnameport, $lineno);
                 }
-                # FIXME: Insert debug how many lines have been handled.
             }
             @lines = ();
 
