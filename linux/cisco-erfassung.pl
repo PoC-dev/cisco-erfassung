@@ -1586,9 +1586,6 @@ END {
     if ( $sth_insert_invpf ) {
         $sth_insert_invpf->finish;
     }
-    if ( $sth_select_cfstamp_dcapf ) {
-        $sth_select_cfstamp_dcapf->finish;
-    }
     if ( $sth_delete_dcapf ) {
         $sth_delete_dcapf->finish;
     }
