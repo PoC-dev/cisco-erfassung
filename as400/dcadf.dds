@@ -54,10 +54,12 @@
      A                                      HLPPNLGRP('DCA1/ACU_IGN' DCAHP)
      A          H                           HLPARA(15 2 16 52)
      A                                      HLPPNLGRP('DCA1/COMMT' DCAHP)
-     A          H                           HLPARA(18 3 18 80)
+     A          H                           HLPARA(19 3 19 80)
      A                                      HLPPNLGRP('DCA1/STAMP' DCAHP)
-     A          H                           HLPARA(19 3 19 46)
-     A                                      HLPPNLGRP('DCA1/CFUPDDB' DCAHP)
+     A          H                           HLPARA(20 3 20 46)
+     A                                      HLPPNLGRP('DCA1/CFUPDT' DCAHP)
+     A          H                           HLPARA(21 3 21 80)
+     A                                      HLPPNLGRP('DCA1/CFSAVD' DCAHP)
      A          H                           HLPARA(22 70 22 80)
      A                                      HLPPNLGRP('DCA1/MORE' DCAHP)
      A          H                           HLPARA(23 1 23 80)
@@ -94,10 +96,14 @@
      A                                 18  2'Zeitstempel' DSPATR(HI)
      A                                 19  3'Erfassung  . . . . . . . .'
      A            STAMP$        16A    19 31
-     A  47                             19 54'Erfassung älter als 3 Tage!'
+     A  47                             19 53'Erfassung älter als 3 Tage!'
      A                                      COLOR(RED)
-     A  48                             20  3'Cfg-Änderung . . . . . . .'
-     A  48        CFUPDDB$      16A    20 31
+     A  48                             20  3'Cfg Geändert (run) . . . .'
+     A  48        CFUPDT$       16A    20 31
+     A  49                             21  3'Cfg Gesichert (save) . . .'
+     A  49        CFSAVD$       16A    21 31
+     A  50                             21 53'Älter als run, wr vergessen!'
+     A                                      COLOR(RED)
      A                                 22 70'Weitere ...' DSPATR(HI)
      A                                 23  2'F3=Verlassen   F10=Vlan-Info   -
      A                                      F12=Abbrechen'
@@ -151,7 +157,7 @@
      A                                  5  2'Hardware' DSPATR(HI)
      A                                  6  3'Modell . . . . . . . . . .'
      A            MODEL     R           6 31
-     A  49                              6 56'End of Support!' COLOR(RED)
+     A  51                              6 56'End of Support!' COLOR(RED)
      A                                  7  3'RAM  . . . . . . . . . . .'
      A            RAM       R     Y     7 32EDTCDE(1)
      A                                  7 38'MB'
@@ -163,22 +169,22 @@
      A                                 11  2'Software' DSPATR(HI)
      A                                 12  3'Version  . . . . . . . . .'
      A            VERSION   R          12 31
-     A  50                             12 56'Upd.' COLOR(TRQ)
-     A  50        VER_SOLL  R          12 61REFFLD(VERSION) COLOR(TRQ)
-     A  51                             13  3'ASDM-Version . . . . . . .'
-     A  51        ASA_DM_VERR          13 31
+     A  52                             12 56'Upd.' COLOR(TRQ)
+     A  52        VER_SOLL  R          12 61REFFLD(VERSION) COLOR(TRQ)
+     A  53                             13  3'ASDM-Version . . . . . . .'
+     A  53        ASA_DM_VERR          13 31
      A                                 14  3'OS-Image . . . . . . . . .'
      A            SYSIMG    R        B 14 31CNTFLD(50) DSPATR(PR)
-     A  52                             16  3'Reload Reason  . . . . . .'
-     A  52        RLD$REASONR        B 16 31CNTFLD(50) DSPATR(PR)
-     A  53                                  COLOR(RED)
+     A  54                             16  3'Reload Reason  . . . . . .'
+     A  54        RLD$REASONR        B 16 31CNTFLD(50) DSPATR(PR)
+     A  55                                  COLOR(RED)
      A                                 18  3'Uptime . . . . . . . . . .'
      A            UPTIME    R          18 31
      A                                 19  3'Config-Register  . . . . .'
      A            CONFREG   R          19 31
-     A  54                             21 31'Achtung!'
+     A  56                             21 31'Achtung!'
      A                                      COLOR(YLW) DSPATR(RI)
-     A  54                             21 40'Host ist Teil eines Failover--
+     A  56                             21 40'Host ist Teil eines Failover--
      A                                      Clusters!'
      A                                 22 74'Ende' DSPATR(HI)
      A                                 23  2'F3=Verlassen   F10=Vlan-Info   -
@@ -231,9 +237,9 @@
      A            VTP_MODE  R           4 16
      A                                  5  2'Version . . .'
      A            VTP_VERS  R           5 16EDTCDE(1)
-     A  55                              6  2'Pruning . . .'
-     A  55N56                           6 16'Nein'
-     A  55 56                           6 16'Ja'
+     A  57                              6  2'Pruning . . .'
+     A  57N58                           6 16'Nein'
+     A  57 58                           6 16'Ja'
      A                                  8  1'Lokale Vlan-Liste' DSPATR(HI)
      A                                 10  4'ID' DSPATR(HI) HLPID(1)
      A                                 10  8'Name' DSPATR(HI) HLPID(2)

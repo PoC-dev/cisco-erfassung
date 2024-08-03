@@ -1,4 +1,4 @@
-     HCOPYRIGHT('Patrik Schindler <poc@pocnet.net>, 2023-11-22')
+     HCOPYRIGHT('Patrik Schindler <poc@pocnet.net>, 2024-08-03')
      H*
      H* This file is part of cisco-erfassung, an application conglomerate for
      H*  management of Cisco devices on AS/400, i5/OS and IBM i.
@@ -43,15 +43,16 @@
      H*     45: UPD_IGN = 1
      H*     46: ACU_IGN = 1
      H*     47: Show red 'Erfassung too old' warning.
-     H*     48: Show CFUPDDB field (if not NULL).
-     H*     49: Show red 'End of Support!' warning.
-     H*     50: Show VER_SOLL/Update if version is different to given version.
-     H*     51: Show ASDM version (if not NULL).
-     H*     52: Show reload reason (if not NULL).
-     H*     53: Color reload reason red, so it indicates error.
-     H*     54: Show string if failover is present.
-     H*     55: Show VTP pruning (if not NULL).
-     H*     56: VTP_PRUNING = 1
+     H*     48: Show CFSAVD field (if not NULL).
+     H*     49: Show CFUPDT field (if not NULL).
+     H*     51: Show red 'End of Support!' warning.
+     H*     52: Show VER_SOLL/Update if version is different to given version.
+     H*     53: Show ASDM version (if not NULL).
+     H*     54: Show reload reason (if not NULL).
+     H*     55: Color reload reason red, so it indicates error.
+     H*     56: Show string if failover is present.
+     H*     57: Show VTP pruning (if not NULL).
+     H*     58: VTP_PRUNING = 1
      H*     60: Show DSPREC Form 2 instead of 1.
      H*- Other Error Handling:
      H*     71: CHAIN found no records in hosts
@@ -171,15 +172,29 @@
      C                   MOVE      *OFF          *IN46
      C                   ENDIF
      C*
-     C* Show cfchanged depending on availability.
-     C                   IF        NOT %NULLIND(CFUPDDB)
-     C     16            SUBST     CFUPDDB:1     CFUPDDB$
-     C     '.':':'       XLATE     CFUPDDB$      CFUPDDB$
-     C     '-':' '       XLATE     CFUPDDB$:11   CFUPDDB$
+     C* Show cfupdt depending on availability.
+     C                   IF        NOT %NULLIND(CFUPDT)
+     C     16            SUBST     CFUPDT:1      CFUPDT$
+     C     '.':':'       XLATE     CFUPDT$       CFUPDT$
+     C     '-':' '       XLATE     CFUPDT$:11    CFUPDT$
      C                   MOVE      *ON           *IN48
      C                   ELSE
      C                   MOVE      *OFF          *IN48
      C                   ENDIF
+     C*
+     C* Show cfsavd depending on availability.
+     C                   IF        NOT %NULLIND(CFSAVD)
+     C     16            SUBST     CFSAVD:1      CFSAVD$
+     C     '.':':'       XLATE     CFSAVD$       CFSAVD$
+     C     '-':' '       XLATE     CFSAVD$:11    CFSAVD$
+     C                   MOVE      *ON           *IN49
+     C                   ELSE
+     C                   MOVE      *OFF          *IN49
+     C                   ENDIF
+     C*
+     C* FIXME: Implement timestamp diff between CFUPDT and CFSAVD.
+     C*        If CFSAVD < CFUPDT, set IN50.
+     C*        Handle field(s) being NULL gracefully.
      C*------------------------------------------
      C* Display for page two.
      C*----------------------------
@@ -193,9 +208,9 @@
      C     DT_NOW        SUBDUR    DT_DB         DT_RESULT:*D
      C* If date difference is greater than 0...
      C     DT_RESULT     IFGT      *ZERO
-     C                   MOVE      *ON           *IN49
+     C                   MOVE      *ON           *IN51
      C                   ELSE
-     C                   MOVE      *OFF          *IN49
+     C                   MOVE      *OFF          *IN51
      C                   ENDIF
      C*
      C                   ENDIF
@@ -203,33 +218,33 @@
      C* Check if the found OS version is equal to the current version. If not,
      C*  we have an update to show.
      C     VERSION       IFNE      N_VERSION
-     C                   MOVE      *ON           *IN50
+     C                   MOVE      *ON           *IN52
      C                   MOVE      N_VERSION     VER_SOLL
      C                   ELSE
-     C                   MOVE      *OFF          *IN50
+     C                   MOVE      *OFF          *IN52
      C                   ENDIF
      C*
      C                   ENDIF
      C*----------------------------
      C                   IF        NOT %NULLIND(ASA_DM_VER)
-     C                   MOVE      *ON           *IN51
+     C                   MOVE      *ON           *IN53
      C                   ELSE
-     C                   MOVE      *OFF          *IN51
+     C                   MOVE      *OFF          *IN53
      C                   ENDIF
      C*
      C                   IF        NOT %NULLIND(RLD$REASON)
-     C                   MOVE      *ON           *IN52
+     C                   MOVE      *ON           *IN54
      C                   ELSE
-     C                   MOVE      *OFF          *IN52
+     C                   MOVE      *OFF          *IN54
      C                   ENDIF
      C*
      C* If reload was due to some error, color field.
-     C     'error'       SCAN      RLD$REASON:1                           53
-     C     'Critical'    SCAN      RLD$REASON:1                           53
-     C     'fault'       SCAN      RLD$REASON:1                           53
+     C     'error'       SCAN      RLD$REASON:1                           55
+     C     'Critical'    SCAN      RLD$REASON:1                           55
+     C     'fault'       SCAN      RLD$REASON:1                           55
      C*
      C* This numeric A, so we can use it directly.
-     C                   MOVE      ASA_FOVER     *IN54
+     C                   MOVE      ASA_FOVER     *IN56
      C*
      C*-------------------------------------------------------------------------
      C* Now, show forms as desired. This is a crude multipage-form workaround.
@@ -314,11 +329,11 @@
      C*
      C* Ouput VTP Pruning status.
      C                   IF        NOT %NULLIND(VTP_PRUNE)
-     C                   MOVE      *ON           *IN55
+     C                   MOVE      *ON           *IN57
      C* This numeric A, so we can use it directly.
-     C                   MOVE      VTP_PRUNE     *IN56
+     C                   MOVE      VTP_PRUNE     *IN58
      C                   ELSE
-     C                   MOVE      *OFF          *IN55
+     C                   MOVE      *OFF          *IN57
      C                   ENDIF
      C*
      C* Display the subfile- and subfile control records, or indicate an empty

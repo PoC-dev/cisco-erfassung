@@ -44,10 +44,12 @@ Funktionsübersicht findet sich in der Hilfefunktion im Hauptmenü.
 Domain Name) des derzeit angezeigten Texts ausgegeben.
 :EHELP.
 .* -----------------------------------------------------------------------------
-:HELP NAME='MAIN/CFUPDDB'.Erfassung
-:XH3.Erfassung
-:P.Hier wird der Zeitstempel der letzten erfassten Konfigurationsänderung
-ausgegeben.
+:HELP NAME='MAIN/CFUPDDB'.Cfg-Speicherungs-Zeitstempel
+:XH3.Cfg-Speicherungs-Zeitstempel
+:P.Hier wird der Zeitpunkt des letzten Speicherns der Konfigurations auf dem
+lokalen Festwertspeicher des Endgeräts angezeigt. Dies ist auch der Stand der
+Konfiguration die derzeit angezeigt wird.
+:P.Der Zeitstempel wird aus der :HP1.running-config:EHP1. ausgelesen.
 :NOTE.Die Ausgabe des Erfassungs-Zeitstempels erfolgt nur für die Darstellung
 der Konfiguration, nicht aber für Show Version.:ENOTE.
 :EHELP.

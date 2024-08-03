@@ -106,8 +106,7 @@
      A                                  5 70'Anzahl:'
      A            DBRCDCNT$      2Y 0   5 78EDTCDE(1)
      A                                  6  3'2=Ändern   3=Kopieren   4=Löschen-
-     A                                         5=Details   7=Show running--
-     A                                      configuration'
+     A                                         5=Details   7=Show configuration'
      A                                      COLOR(BLU)
      A                                  7  3'8=Show version   9=Show inventory'
      A                                      COLOR(BLU)

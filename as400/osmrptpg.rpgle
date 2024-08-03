@@ -1,4 +1,4 @@
-     HCOPYRIGHT('Patrik Schindler <poc@pocnet.net>, 2024-07-27')
+     HCOPYRIGHT('Patrik Schindler <poc@pocnet.net>, 2024-08-02')
      H*
      H* This file is part of cisco-erfassung, an application conglomerate for
      H*  management of Cisco devices on AS/400, i5/OS and IBM i.
@@ -59,6 +59,8 @@
      F* Restriction of RPG.
      F*
      F* Main/primary file, used mainly for writing into.
+     FOSMATCHPF UF A E           K DISK
+     F* Secondary File for preventing duplicate records.
      FOSMATCHWLFUF A E           K DISK
      F*
      F* For quick find of maximum ID.
@@ -502,8 +504,8 @@
      C*
      C* Delete if record found. If not, silently ignore. Has probably been
      C*  deleted from someone else, meanwhile.
-     C     ID            DELETE(E) WRITEMATCH
-     C                   EVAL      FSTAT=%STATUS(OSMATCHWLF)
+     C     ID            DELETE(E) OSMATCHTBL
+     C                   EVAL      FSTAT=%STATUS(OSMATCHPF)
      C*
      C     FSTAT         IFGT      *ZERO
      C                   MOVE      *ON           *IN98

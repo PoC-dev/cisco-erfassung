@@ -1,4 +1,4 @@
-     HCOPYRIGHT('Patrik Schindler <poc@pocnet.net>, 2023-10-19')
+     HCOPYRIGHT('Patrik Schindler <poc@pocnet.net>, 2024-08-03')
      H*
      H* This file is part of cisco-erfassung, an application conglomerate for
      H*  management of Cisco devices on AS/400, i5/OS and IBM i.
@@ -98,10 +98,10 @@ B02  C     *IN71         IFEQ      *ON
 X02  C                   ELSE
      C* -----------------
      C* Found a record. Further handling: Prettyprint stamp, show field.
-B03  C                   IF        NOT %NULLIND(CFUPDDB)
-     C     16            SUBST     CFUPDDB:1     CFUPDDB$
-     C     '.':':'       XLATE     CFUPDDB$      CFUPDDB$
-     C     '-':' '       XLATE     CFUPDDB$:11   CFUPDDB$
+B03  C                   IF        NOT %NULLIND(CFSAVD)
+     C     16            SUBST     CFSAVD:1      CFSAVD$
+     C     '.':':'       XLATE     CFSAVD$       CFSAVD$
+     C     '-':' '       XLATE     CFSAVD$:11    CFSAVD$
      C                   MOVE      *ON           *IN41
      C* -----------------
 X03  C                   ELSE

@@ -138,13 +138,18 @@ wird eine Warnmeldung eingeblendet. Empfohlenerweise sollte das
 Erfassungs-Script daher mindestens alle zwei Tage, besser täglich laufen.:ENOTE.
 :EHELP.
 .* -----------------------------------------------------------------------------
-:HELP NAME='DCA1/CFUPDDB'.Cfg-Änderungs-Zeitstempel
+:HELP NAME='DCA1/CFUPDT'.Cfg-Änderungs-Zeitstempel
 :XH3.Cfg-Änderungs-Zeitstempel
 :P.Hier wird der Zeitpunkt der letzten Konfigurationsänderung angezeigt.
-:P.Eine Konfigurationsänderung wird festgestellt, indem das
-Versionskontrollsystem für die Konfigurationsablage auf Differenzen zur
-vorherigen Version ("commit") abgefragt wird. Gibt es Änderungen, wird dieser
-Zeitstempel aktualisiert.
+:P.Der Zeitstempel wird aus der :HP1.running-config:EHP1. ausgelesen.
+:NOTE.ASA hat keine Möglichkeit, diesen Zeitstempel anzuzeigen.:ENOTE.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DCA1/CFSAVD'.Cfg-Speicherungs-Zeitstempel
+:XH3.Cfg-Speicherungs-Zeitstempel
+:P.Hier wird der Zeitpunkt des letzten Speicherns der Konfigurations auf dem
+lokalen Festwertspeicher des Endgeräts angezeigt.
+:P.Der Zeitstempel wird aus der :HP1.running-config:EHP1. ausgelesen.
 :EHELP.
 .* -----------------------------------------------------------------------------
 :HELP NAME='DCA1/MORE'.Bedienhinweis: Weitere...

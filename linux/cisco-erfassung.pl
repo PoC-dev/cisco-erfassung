@@ -42,7 +42,7 @@ my $giturl = $config->{'giturl'};
 
 # General vars.
 my ($cleanup, $cnh, $scmdestfile, $scmtmp, $dbh, $dirfh, $do_scm, $do_scm_add, $do_orphans, $do_setnull, $fh, $file, $hostname,
-    $hostport, $inv_have_line_name, $inv_have_line_pid, $num_entries, $param, $prv_cfupddb, $retval, $setnull_field,
+    $hostport, $inv_have_line_name, $inv_have_line_pid, $num_entries, $param, $retval, $setnull_field,
     $show_config_command, $showverfeature, $stamp_type, $sth_select_hosts, $test_db,  $tmpline, $time_dtf, $time_formatter,
     $time_parser, $to_clean_pf, $try_loop_string, $use_git, @beforeLinesArray, @cnh_parms, @errtyp, @filelist, @lines, @params,
     @setnull_fields, @show_config, @show_version, @time_tm, @to_clean_pfs, @try_loop_strings
@@ -60,7 +60,7 @@ my ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp);
 my ($lineno, $line);
 
 # Vars from dcapf. Also see handler if $do_setnull == 1!
-my ( $asa_dm_ver, $asa_fover, $cfsavd, $cfupdt, $cfupddb, $confreg, $flash, $model, $ram, $reload_reason, $serno, $stamp,
+my ( $asa_dm_ver, $asa_fover, $cfsavd, $cfupdt, $confreg, $flash, $model, $ram, $reload_reason, $serno, $stamp,
     $sysimg, $uptime, $uptime_min, $version, $vtp_domain, $vtp_mode, $vtp_prune, $vtp_vers);
 
 # Vars from invpf.
@@ -191,11 +191,6 @@ if ( defined($dbh->errstr) ) {
     die;
 }
 
-my $sth_select_cfstamp_dcapf = $dbh->prepare("SELECT cfupddb FROM dcapf WHERE hostname=?");
-if ( defined($dbh->errstr) ) {
-    syslog(LOG_ERR, "SQL preparation error in: %s", $dbh->errstr);
-    die;
-}
 my $sth_delete_dcapf = $dbh->prepare("DELETE FROM dcapf WHERE hostname=?");
 if ( defined($dbh->errstr) ) {
     syslog(LOG_ERR, "SQL preparation error in: %s", $dbh->errstr);
@@ -203,11 +198,6 @@ if ( defined($dbh->errstr) ) {
 }
 my $sth_insert_dcapf = $dbh->prepare("INSERT INTO dcapf (confreg, flash, hostname, model, ram, serno, stamp, sysimg, uptime, \
     uptime_min, version, asa_dm_ver, rld\$reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-if ( defined($dbh->errstr) ) {
-    syslog(LOG_ERR, "SQL preparation error in: %s", $dbh->errstr);
-    die;
-}
-my $sth_update_dcapf_cfupddb = $dbh->prepare("UPDATE dcapf SET cfupddb=? WHERE hostname=?");
 if ( defined($dbh->errstr) ) {
     syslog(LOG_ERR, "SQL preparation error in: %s", $dbh->errstr);
     die;
@@ -493,7 +483,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
     # If we have a valid connection handle, continue talking to the device.
     if ( $cnh ) {
         # Clear vars from previous iteration.
-        $asa_dm_ver = $asa_fover = $cfupddb = $cfsavd = $cfupdt =  $confreg = $flash = $model = $ram = $reload_reason = $serno =
+        $asa_dm_ver = $asa_fover = $cfsavd = $cfupdt =  $confreg = $flash = $model = $ram = $reload_reason = $serno =
             $stamp = $sysimg = $uptime = $uptime_min = $version = $vtp_domain = $vtp_mode = $vtp_prune = $vtp_vers = $inv_name =
             $inv_descr = $inv_pid = $inv_vid = $inv_serno = $ac_type = $ac_ver = $vlan_descr = $vlan_no = undef;
 
@@ -951,32 +941,6 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
             }
 
 
-            # Prior to deletion, we need to save the config timestamp. Note: There might not be a record yet (new host).
-            $sth_select_cfstamp_dcapf->execute($hostnameport);
-            if ( defined($dbh->errstr) ) {
-                syslog(LOG_NOTICE, "%s: show version (save cfupddb): SQL execution error in: %s", $hostnameport, $dbh->errstr);
-            } else {
-                ($prv_cfupddb) = $sth_select_cfstamp_dcapf->fetchrow;
-                if ( defined($dbh->errstr) ) {
-                    syslog(LOG_NOTICE, "%s: show version (save cfupddb): SQL fetch error in: %s", $hostnameport, $dbh->errstr);
-                } else {
-                    # A very crude workaround. If the field is NULL we're getting just NULLs back instead of undef().
-                    # FIXME: If a record exists and field is NULL, we fail to detect this reliably. Rework with proper IFNULL query.
-                    if ( ! $prv_cfupddb =~ /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}.\d{6}$/ ) {
-                        syslog(LOG_DEBUG, "%s: show version (save cfupddb): '%s' is not a timestamp", $hostnameport, $prv_cfupddb);
-                        undef($prv_cfupddb);
-                    }
-                }
-            }
-
-            # Check for wrong timestamp.
-            if ( defined($prv_cfupddb) ) {
-                syslog(LOG_DEBUG, "%s: SCM: prior config save timestamp '%s'", $hostnameport, $prv_cfupddb);
-            } else {
-                syslog(LOG_DEBUG, "%s: SCM: prior config save timestamp is undefined (NULL in DB)", $hostnameport);
-            }
-
-
             # Delete old entry in database.
             $sth_delete_dcapf->execute($hostnameport);
             if ( defined($dbh->errstr) ) {
@@ -1207,6 +1171,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                     $dbh->do("rollback");
                     last;
                 }
+                # FIXME: Insert debug how many lines have been handled.
             }
             @lines = ();
 
@@ -1337,24 +1302,6 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                     }
                     $retval = ($retval >> 8);
                     syslog(LOG_DEBUG, "%s: SCM: diff return value: %s", $hostnameport, $retval);
-                    
-                    # Only update timestamp if configuration has actually changed, or there is no prior timestamp (\0).
-                    if ( $retval eq 1 ) {
-                        # Fortunately, both cvs and git behave the same, regarding the return value.
-                        syslog(LOG_DEBUG, "%s: SCM: New and old files are different, update config timestamp", $hostnameport);
-                        $sth_update_dcapf_cfupddb->execute($stamp, $hostnameport);
-                    } elsif ( ! defined($prv_cfupddb) ) {
-                        syslog(LOG_DEBUG, "%s: SCM: Prior update config timestamp is undefined, use new", $hostnameport);
-                        $sth_update_dcapf_cfupddb->execute($stamp, $hostnameport);
-                    } elsif ( defined($prv_cfupddb) ) {
-                        syslog(LOG_DEBUG, "%s: SCM: Preserving prior timestamp '%s'", $hostnameport, $prv_cfupddb);
-                        $sth_update_dcapf_cfupddb->execute($prv_cfupddb, $hostnameport);
-                    } else {
-                        syslog(LOG_DEBUG, "%s: SCM: Error %d while checking diff", $hostnameport, $retval);
-                    }
-                    if ( defined($dbh->errstr) ) {
-                        syslog(LOG_NOTICE, "%s: SCM: SQL execution error in: %s, continuing anyway", $hostnameport, $dbh->errstr);
-                    }
                 } else {
                     syslog(LOG_NOTICE, "%s: SCM: Could not open destination file '%s' for writing, skipping update",
                         $hostnameport, $scmdestfile);
@@ -1501,7 +1448,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
             }
 
             # Timestamp fields.
-            @setnull_fields = ('cfsavd', 'cfupdt', 'cfupddb');
+            @setnull_fields = ('cfsavd', 'cfupdt');
             foreach $setnull_field (@setnull_fields) {
                 $dbh->do("UPDATE dcapf SET $setnull_field=NULL WHERE hostname='$hostnameport' AND \
                     $setnull_field='0001-01-01-00.00.00.000000'");
@@ -1646,9 +1593,6 @@ END {
     }
     if ( $sth_insert_dcapf ) {
         $sth_insert_dcapf->finish;
-    }
-    if ( $sth_update_dcapf_cfupddb ) {
-        $sth_update_dcapf_cfupddb->finish;
     }
     if ( $sth_update_dcapf_cfsavd_cfupdt ) {
         $sth_update_dcapf_cfsavd_cfupdt->finish;

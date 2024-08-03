@@ -31,7 +31,6 @@
      A*   ORDER BY dcapf.model, dcapf.version,
      A*     dcapf.ram, dcapf.flash
      A*
-     A*
      A* Globals ----------------------------------------------------------------
      A                                      DYNSLT
      A                                      JDFTVAL
