@@ -16,9 +16,9 @@ The application is used in two production environments — at least that's what 
 - Cisco ASA running software version 9.x
 - Cisco IOS and IOS XE devices
   - Routers:
-    - classic IOS ranging from 2500s running 12.0, 2600s running IOS 12.3, 870, 1700 running 12.4, 880, c880, 2900 running 15.x
+    - classic IOS ranging from 2500s running 11.2 and 12.0, 2600s running IOS 12.3, 870, 1700 running 12.4, 880, c880, 2900 running 15.x
     - 1100 and ISR4K running IOS XE 17.x
-  - Switches: A very broad range covering
+  - Switches:
     - classic IOS ranging from version 12.1 (Cat 2950) to 15.2 (Cat 2960, 3560, 3750)
     - IOS XE 16 and 17 on Cat 3850 and Cat 9300
   - WiFi:
