@@ -56,16 +56,12 @@
 .* Help Texts ------------------------------------------------------------------
 :HELP NAME=help00.Cisco Wartungsverwaltung - Allgemeiner Hilfetext
 :XH3.Über die Wartungsverwaltung
-:P.Die Wartungsverwaltung ist gedacht zur Verwaltung von Geräten mit
-Kommandozeilen-Bedienung welche weitestgehend kompatibel ist mit der
-Kommandozeile für Cisco IOS. Dies inkludiert
+:P.Die Cisco-Wartungsverwaltung ist eine Sammlung aus Programmen, um Cisco-
+als auch auf Kommandozeilenebene kompatible Geräte zu verwalten.
+:P.Die Hauptfunktionalitäten sind
 :UL.
-:LI.Cisco IOS basierte Geräte, inkl. IOS XE und XR,
-:LI.Cisco ASA Firewalls,
-:LI.Cisco Nexus Switches,
-:LI.Manche Switches von HP,
-:LI.Manche Geräte von Ubiquity,
-:LI.Möglicherweise weitere.
+:LI.Extrahieren von generischen Daten der Geräte,
+:LI.Extrahieren der Konfiguration der Geräte für Wiederherstellungszwecke.
 :EUL.
 :P.Die Wartungsverwaltung ist zweigeteilt in
 :UL.
@@ -74,37 +70,47 @@ den Geräten erfasst, und diese via ODBC in die Datenbankdateien auf der AS/400
 schreibt,
 :LI.Datenbankdateien und Frontendprogramme auf AS/400 Basis (5250).
 :EUL.
-:P.Verwaltung bedeutet im engeren Sinne, dass
-:UL.
-:LI.automatische Sicherungen der aktuellen Konfiguration angefertig und in eine
-Quellcodeversionsverwaltung (CVS, git) eingepflegt werden,
-:LI.verschiedene Daten automatisch erhoben und in Datenbanktabellen eingefügt
-werden, um die Übersicht über den Gerätebestand zu erhöhen. Dazu gehört z. B.
-auch das Management von Firmwareupdates.
-:EUL.
-:H4.Perl-Script
-:P.Ein Perl Script läuft zyklisch z. B. unter Linux via Cron, holt sich über
-ODBC die Logindaten der Geräte, meldet sich an und setzt folgende Kommandos ab:
-:UL.
-:LI.:HP1.show version:EHP1.
-:LI.:HP1.show inventory:EHP1.
-:LI.:HP1.show startup-config:EHP1. für IOS, bzw. :HP1.more system:running-config
-für ASAs:EHP1.
-:LI.:HP1.show failover:EHP1. für ASAs
-:LI.:HP1.show running-config:EHP1. für IOS, um aktuelle Zeitstempel von laufender
-und gesicherter Konfiguratrion zu erhalten
-:EUL.
-:P.Aus den Ausgaben werden die vorgesehenen Informationen extrahiert und in die
-Datenbanktabellen eingefügt.
+:H4.Perl Script
+:P.Das Perl Script läuft zyklisch z. B. unter Linux via Cron, holt sich über
+ODBC die Logindaten der Geräte und steuert die Geräte, um deren Daten zu
+erfassen.  Aus den Ausgaben werden die vorgesehenen Informationen extrahiert und
+in die Datenbanktabellen eingefügt.
 :P.Ein Sonderfall ist die Konfiguration. Diese wird nicht nur in einer
 DB-Tabelle hinterlegt, sondern auch in ein Revisionsverwaltungssystem
-eingespeist (CVS oder wahlweise git), sodass Änderungen zeitlich
-nachvollziehbar werden.
-:P.Genauere Anweisungen zur korrekten Konfiguration der Endgeräte sind
-:LINK PERFORM='DSPHELP CONFIG CISCOHP'.hier:ELINK. dokumentiert.
-:H4.Datenbankdateien und Frontendprogramme
-:P.Logindaten und andere Stammdaten werden per 5250 Screens eingepflegt, während
-die automatisch ausgelesenen Daten nur zum Einsehen präsentiert werden.
+eingespeist (CVS oder wahlweise git), sodass Änderungen zeitlich als auch
+inhaltlich nachvollziehbar werden.
+:H4.Frontendprogramme
+:P.Auf der AS/400-Plattform werden einige Greenscreen-Anwendungen
+bereitgestellt, die nicht nur der Stammdatenerfassung dienen, sondern auch die
+automatisch erfassten Gerätedaten präsentieren. Dazu gehört:
+:UL.
+:LI.Strukturierte Ansicht der analysierten Daten, einschließlich
+VLAN-Konfiguration und :HP1.show inventory:EHP1,
+:LI.Textbetrachter für die erhaltene Konfiguration und Rohausgabe von :HP1.show
+version:EHP1,
+:LI.Suchanwendung für Seriennummern von Geräten und deren einzelnen Komponenten,
+:LI.Wartungsanwendung für eine Liste empfohlener Betriebssystemversionen für
+eine bestimmte Kombination aus Modell, RAM und Flash-Größe,
+:LI.Vergleichsanwendung zum Suchen und Entfernen verwaister und fehlender
+Datensätze in den empfohlenen Betriebssystemversionsdaten,
+:LI.Wartungsanwendung für eine allgemeine Liste empfohlener Cisco
+Anyconnect-Images,
+:LI.Bericht von Geräten mit Nichtübereinstimmungen in Betriebssystem- oder
+Anyconnect-Versionen: Geräte, die ein Upgrade benötigen,
+:LI.Bericht von Geräten nach Betriebszeit, hauptsächlich zum Angeben.
+:EUL.
+:P.Darüber hinaus werden bei der Nutzung der Anwendungen sekundäre Informationen
+berechnet und die angezeigten Daten ggfs. hervorgehoben:
+:UL.
+:LI.wenn eine andere (neuere) verfügbare Betriebssystemversion festgestellt
+wird,
+:LI.wenn erfasste Daten älter als drei Tage sind (ein fest programmierter Wert),
+was auf einen Fehler beim Erreichen des Geräts hinweist,
+:LI.wenn eine ASA angibt, Teil eines Failoverclusters zu sein, um beim
+Upgrade nicht zu vergessen, beide Geräte zu verwalten,
+:LI.wenn für eine bestimmte Betriebssystemversion ein Enddatum für den Support
+festgelegt ist.
+:EUL.
 :H4.Bedienungsabläufe
 :P.Im ersten Schritt werden die Geräte und ihre Zugangsdaten in die Stammdaten
 eingepflegt (1). Weiterhin empfiehlt es sich, die aktuellen Anyconnect-Versionen
@@ -115,8 +121,8 @@ Hersteller die jeweils aktuelle Softwareversion eingepflegt werden (11, 12).
 :NOTE.Es gibt keine Funktion zur automatischen Kontrolle der
 Zuordnungsabweichungen von Anyconnect, da diese letztendlich unabhängig von der
 Hardware (ASA) sind, sondern nur relevant für die Clients.:ENOTE.
-:P.Nun kann mit Hilfe von (20) festgestellt werden, welche Geräte Updates
-benötigen.
+:P.Schlussendlich kann mit Hilfe von (20) festgestellt werden, welche Geräte
+Updates benötigen.
 .IM #MENUUSGH
 :EHELP.
 .* -----------------------------------------------------------------------------

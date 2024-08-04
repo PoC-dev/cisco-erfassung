@@ -15,6 +15,13 @@ privilege exec level 2 show running-config
 
 I'm aware that this can be a lot of work. But with clever shell scripting, copy-paste of configuration snippets, and the use of ssh-keys for device authentication, even changing dozens of devices is done in mere minutes. Both timestamps are optional, and a device not allowing `show running-config` isn't treated as fatal. Just the timestamps won't be obtained. If you add the privilege, a future version will provide optical indication of devices which have a newer *running-config* vs. *startup-config*: Admin has forgotten to issue a `write mem` — a classic.
 
+## 2024-08-04: removed *ciscohp* panel group.
+Instructions for setting up your devices has been moved to [README-devices-requirements](linux/README-devices-requirements.md). Just delete the dangling panel group object and source member:
+```
+dltpnlgrp pnlgrp(ciscohp)
+rmvm file(*curlib/sources) mbr(ciscohp)
+```
+
 ----
 
-2024-08-03 poc@pocnet.net
+2024-08-04 poc@pocnet.net

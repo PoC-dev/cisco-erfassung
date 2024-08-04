@@ -751,6 +751,8 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
         #   which is required for service contracts. Thus we need to deduce the HW serial after parsing of
         #   'show_version' output, put before inserting that data into dcapf.
         # In a way this is thus part of 'show version' - for ASAs, with additional benefits to be seen in invpf.
+        #
+        # Note: IOS 12.0 doesn't know this command.
 
         syslog(LOG_DEBUG, "%s: Handle 'show inventory'", $hostnameport);
         $cnh->send("show inventory\n");
@@ -1372,6 +1374,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                 }
 
                 # Look for timestamp lines.
+                # FIXME: Some devices emit '! No configuration change since last restart'
                 foreach $line (@show_config) {
                     if ( $line =~ /^! Last configuration change at (\d{2}:\d{2}:\d{2} \S+ \S{3} \S{3} \d{1,2} \d{4}) by \S+$/ ) {
                         $stamp_type = 'run';
@@ -1400,6 +1403,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                     }
                 }
 
+                # FIXME: A freshly booted device has not shown "NVRAM config last updated". How to deal with that?
                 if ( defined($cfupdt) && defined($cfsavd) ) {
                     # Actually insert data.
                     $sth_update_dcapf_cfsavd_cfupdt->execute($cfsavd, $cfupdt, $hostnameport);

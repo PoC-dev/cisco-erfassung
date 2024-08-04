@@ -249,16 +249,12 @@ Gerätekonfiguration und daher optional.
 :NOTE.Für die Zugriffsmethode :HP1.ssh:EHP1. muss der Benutzername zwingend
 angegeben werden.
 :ENOTE.
-:P.Genauere Anweisungen zur korrekten Konfiguration sind :LINK
-PERFORM='DSPHELP CONFIG CISCOHP'.hier:ELINK. dokumentiert.
 :EHELP.
 .* -----------------------------------------------------------------------------
 :HELP NAME='DFIELD/PASSWD'.Passwort
 :XH3.Passwort
 :P.Hier wird das zum o. g. Benutzer gehörige Passwort hinterlegt.
 :P.Dieses Feld darf nicht leer sein.
-:P.Genauere Anweisungen zur korrekten Konfiguration sind :LINK
-PERFORM='DSPHELP CONFIG CISCOHP'.hier:ELINK. dokumentiert.
 :EHELP.
 .* -----------------------------------------------------------------------------
 :HELP NAME='DFIELD/ENABLE'.Enable-Secret
@@ -267,8 +263,6 @@ PERFORM='DSPHELP CONFIG CISCOHP'.hier:ELINK. dokumentiert.
 :P.Dieses Feld darf nur benutzt werden, wenn nach dem erfolgreichen Login eine
 Hochstufung des Benutzers auf die maximale Privilegienstufe notwendig ist, um
 alle Befehle der automatischen Erfassung fehlerfrei auszuführen.
-:P.Genauere Anweisungen zur korrekten Konfiguration sind :LINK
-PERFORM='DSPHELP CONFIG CISCOHP'.hier:ELINK. dokumentiert.
 :EHELP.
 .* -----------------------------------------------------------------------------
 :HELP NAME='DFIELD/DCA'.Automatische Erfassung

@@ -1,21 +1,17 @@
-This directory contains a text-based full-screen application derived from parts of my [AS/400 Subfile Template](https://github.com/PoC-dev/as400-sfltemplates), and the accompanying table definitions for the script one directory up.
+This directory contains text-based full-screen applications derived from parts of my [AS/400 Subfile Template](https://github.com/PoC-dev/as400-sfltemplates), and the accompanying table definitions supporting the script in the `../linux` subdirectory.
 
 ## License.
 This document is part of the Cisco device management solution, to be found on [GitHub](https://github.com/PoC-dev/cisco-erfassung). Its content is subject to the [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) license, also known as *Attribution-ShareAlike 4.0 International*. The project itself is subject to the GNU Public License version 2.
 
 ## Introduction.
-The application collection in here is meant for
-- maintaining a master file of Cisco components, with accompanying login credentials,
-- maintaining master files of desired software versions for said components,
-- present automatically derived inventory data,
-- show where updates are necessary through a printed report.
+The application collection in here is meant for supporting the functions listed in the [root directory README](../README.md).
 
-Inventory data is collected through a Perl script having been tested under Linux only (because it has some external module dependencies).
+Data is collected through a Perl script having been tested under Linux only (because it has some external module dependencies).
 
 Please note that the AS/400 UI is currently in German language only.
 
 ## Preparation.
-For details regarding the handling/uploading of the files in this directory, please refer to the README of my above templates project. You need to
+For details regarding the handling/uploading of the files in this directory, please refer to the README of my templates project mentioned above. You need to
 - create a library for the data: `crtlib cisco` in a 5250 session,
 - create a source physical file to contain the sources within said library: `crtsrcpf cisco/sources rcdlen(112)` in a 5250 session,
 - upload the files: `ftp as400-ip < ftpupload.txt` from your host, assumedly Linux.
@@ -42,32 +38,32 @@ The order of types is:
 1. PRTF
 1. RPGLE
 
-**Note:** The print files need certain parameters at compile time. You can find the correct compile command at the beginning of every print file.
+**Note:** The print files need certain parameters at compile time. Do not use 14 for these, but the respective compile command at the beginning of every print file.
 
 The help panel groups have no dependencies and can be compiled independent of any order.
 
 **Note:** The main menu cannot be compiled with option 14. You can find the correct compile command at the beginning of CMDCISCO.
 
-### Upgrading
+### Upgrading from earlier versions.
 Sometimes, you want to upgrade the code base to the latest version from github. But there might have been incompatible changes introduced meanwhile. Please read the [NEWS](../NEWS.md) for incompatible changes and remedies.
 
-Apart from this, the easiest way to upgrade is to upload/overwrite the source members, and follow the above directions to recompile the objects. **There is one notable exception!** No physical files should be just recompiled. If you try, two things might happen:
-- Compilation stops because there are files relating to the PF, making it impossible to delete the PF without manual intervention
-- Compilation commences and overwrites the PF and all contained data
+Apart from this, the easiest way to upgrade is to upload/overwrite the source members, and follow the above directions to recompile the objects. **There is one notable exception! No physical files should be just recompiled.** If you try, one of two things might happen:
+- Compilation stops because there are files relating to the PF, making it impossible to delete the PF without manual intervention,
+- Compilation commences and overwrites the PF and all contained data.
 
 Usually this is not what you want. You **can** *update* a PF in place according to the updated description, though:
 ```
 chgpf file(*curlib/mypf) srcfile(*curlib/sources)
 ```
 
-If changes will discard existing data, a screen will pop up and warn you. Usually, it's safe to commence the operation by answering `(I)gnore` (possible loss of data). Afterwards, just continue as directed above with the other file types.
+This will move the existing file out of the way, create a new file, copy back existing data, adjust journaling accordingly, and delete the old file.
 
-**Note:** `chgpf` also retains journaling status of files, so no action needed on upgrade.
+If changes could result in discarding of existing data, a screen will pop up and warn you. Usually, it's safe to commence the operation by answering `(I)gnore` (possible loss of data). My changes will always be done in a way to not discard important data. Afterwards, just continue as directed above with the other file types.
 
 ## Journal the database tables for commitment control.
 Commitment control is a way to collect multiple database changes, and either apply them completely or not. This assures a consistent state of all the database tables in question.
 
-Commitment control requires tables to be journaled. Create the journal related objects and start the journalling process.
+Commitment control requires tables to be journaled. Create the journal related objects and start the journaling process.
 ```
 crtjrnrcv jrnrcv(cisco00001) threshold(5120)
 crtjrn jrn(ciscojrn) jrnrcv(*curlib/cisco00001) mngrcv(*system) dltrcv(*yes) rcvsizopt(*rmvintent)
@@ -82,10 +78,12 @@ chgcurlib cisco
 go cmdcisco
 ```
 
-**Note:** Extensive online help (in German language) is provided. Please read the initial help text in the main menu (by pressing `F1`) to get started quickly.
+This presents you with a menu from where you can choose the individual applications.
 
-## ToDo
-Main Host list/master file: HSTDF HSTHP HSTPF HSTPG HSTPOSLF
+**Note:** Extensive online help (in German language) is provided. You can access the initial help text in the main menu (by pressing `F1`) to get started quickly.
+
+## ToDo.
+Main Host list/master file: HSTDF HSTHP HSTPF HSTPG HSTPOSLF:
 - Use transactions for deleting auxiliary table contents
 - Expand error handling for auxiliary table updates
 - When deleting an entry, also delete the corresponding entry in OSMRPTPF.

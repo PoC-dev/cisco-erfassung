@@ -10,7 +10,6 @@ get CISCO/SOURCES.CFGVERDF cfgverdf.dds
 get CISCO/SOURCES.CFGVERHP cfgverhp.pnlgrp
 get CISCO/SOURCES.CFGVERPF cfgverpf.dds
 get CISCO/SOURCES.CFGVERPG cfgverpg.rpgle
-get CISCO/SOURCES.CISCOHP ciscohp.pnlgrp
 get CISCO/SOURCES.CMDCISCO cmdcisco.pnlgrp
 get CISCO/SOURCES.DCADF dcadf.dds
 get CISCO/SOURCES.DCAHP dcahp.pnlgrp
