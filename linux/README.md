@@ -64,9 +64,7 @@ If no hostnames are given, all hosts found in the database are handled, if eligi
 If the script runs without issues, I recommend to run it at least daily from *cron*.
 
 ## Bugs and enhancement ideas.
-- Freshly reloaded devices might not output config timestamps in `show run`.
 - Parse configuration headers and emit message when running-config age > startup-config age: No `wr` done.
-- Use date/time functions from one module and not two.
 
 ----
 

@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # This is to be manually incremented on each "publish".
-my $versionstring = '2024-08-04.00';
+my $versionstring = '2024-08-04.01';
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -202,12 +202,12 @@ if ( defined($dbh->errstr) ) {
     syslog(LOG_ERR, "SQL preparation error in: %s", $dbh->errstr);
     die;
 }
-my $sth_update_dcapf_cfsavd_cfupdt = $dbh->prepare("UPDATE dcapf SET cfsavd=?, cfupdt=? WHERE hostname=?");
+my $sth_update_dcapf_cfsavd = $dbh->prepare("UPDATE dcapf SET cfsavd=? WHERE hostname=?");
 if ( defined($dbh->errstr) ) {
     syslog(LOG_ERR, "SQL preparation error in: %s", $dbh->errstr);
     die;
 }
-my $sth_update_dcapf_cfsavd = $dbh->prepare("UPDATE dcapf SET cfsavd=? WHERE hostname=?");
+my $sth_update_dcapf_cfupdt = $dbh->prepare("UPDATE dcapf SET cfupdt=? WHERE hostname=?");
 if ( defined($dbh->errstr) ) {
     syslog(LOG_ERR, "SQL preparation error in: %s", $dbh->errstr);
     die;
@@ -485,7 +485,8 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
         # Clear vars from previous iteration.
         $asa_dm_ver = $asa_fover = $cfsavd = $cfupdt =  $confreg = $flash = $model = $ram = $reload_reason = $serno =
             $stamp = $sysimg = $uptime = $uptime_min = $version = $vtp_domain = $vtp_mode = $vtp_prune = $vtp_vers = $inv_name =
-            $inv_descr = $inv_pid = $inv_vid = $inv_serno = $ac_type = $ac_ver = $vlan_descr = $vlan_no = undef;
+            $inv_descr = $inv_pid = $inv_vid = $inv_serno = $ac_type = $ac_ver = $vlan_descr = $vlan_no, $time_dtf = 
+            $cfsavd = $cfupdt = undef;
 
         # Common I/O for both telnet and ssh.
         ($pat, $err, $match, $before, $after) = $cnh->expect(5,
@@ -536,13 +537,14 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
 
         if ( ! defined($err) ) {
             # Filter nasty (un)printables. Keep CR, so we have array entries for "empty" lines.
+            # Note: 10 = 0xa = 012 = LF
+            #       13 = 0xd = 015 = CR
             $before =~ tr/\000-\010|\013-\014|\016-\037|\177-\377//d;
 
             # See if we can parse the content of $before (containing show version result).
             @show_version = split("\n", $before);
             foreach $line (@show_version) {
-                # Remove CR only for parsing into the database.
-                # FIXME: Harmonize this. We probably have this in too many places.
+                # Remove CR for parsing into the database, but leave it for raw text insert.
                 $line =~ tr/\015//d;
 
                 # FIXME: How can we make these lines shorter to fit in 132 chars?
@@ -694,7 +696,6 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
 
                     if ( ! defined($err) ) {
                         # Filter nasty (un)printables.
-                        # Note: We have no logic for information input spanning multiple lines. Thus we can filter out CR.
                         $before =~ tr/\000-\010|\013-\037|\177-\377//d;
 
                         @beforeLinesArray = split("\n", $before);
@@ -768,8 +769,8 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                 # Set defaults for our parser helpers.
                 $inv_have_line_name = $inv_have_line_pid = 0;
 
-                # Filter nasty (un)printables. Keep CR, so we have array entries for "empty" lines.
-                $before =~ tr/\000-\010|\013-\014|\016-\037|\177-\377//d;
+                # Filter nasty (un)printables.
+                $before =~ tr/\000-\010|\013-\037|\177-\377//d;
 
                 @beforeLinesArray = split("\n", $before);
                 foreach $line (@beforeLinesArray) {
@@ -982,7 +983,6 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
 
             if ( ! defined($err) ) {
                 # Filter nasty (un)printables.
-                # Note: We have no logic for information input spanning multiple lines. Thus we can filter out CR.
                 $before =~ tr/\000-\010|\013-\037|\177-\377//d;
 
                 @beforeLinesArray = split("\n", $before);
@@ -1058,7 +1058,6 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
 
                     if ( ! defined($err) ) {
                         # Filter nasty (un)printables.
-                        # Note: We have no logic for information input spanning multiple lines. Thus we can filter out CR.
                         $before =~ tr/\000-\010|\013-\037|\177-\377//d;
 
                         @beforeLinesArray = split("\n", $before);
@@ -1105,8 +1104,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
 
         ($pat, $err, $match, $before, $after) = $cnh->expect(5, '-re', $prompt_re);
         if ( ! defined($err) ) {
-            # Filter nasty (un)printables.
-            # Note: We have no logic for information input spanning multiple lines. Thus we can filter out CR.
+            # Filter nasty (un)printables. Don't keep CR, because config usually has no empty lines.
             $before =~ tr/\000-\010|\013-\037|\177-\377//d;
             @show_config = split("\n", $before);
 
@@ -1140,10 +1138,10 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
             } else {
                 $lineno = 0;
                 foreach $line (@show_config) {
-                    # Remove CR only for parsing into the database.
+                    # Remove CR for copying config into the database.
                     $line =~ tr/\015//d;
 
-                    # Gracefully handle empty lines.
+                    # Handle long lines.
                     if ( length($line) lt 132 ) {
                         @lines = ( $line );
                     } else {
@@ -1188,7 +1186,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                 $dbh->do("rollback");
             } else {
                 foreach $line (@show_config) {
-                    # Remove CR only for parsing into the database.
+                    # Remove CR for parsing lines.
                     $line =~ tr/\015//d;
 
                     if ( $wartungstyp eq 'IOS' &&
@@ -1223,31 +1221,38 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
 
             # --------------------------
 
-            # Parse ASA Timestamp into cfsavd. Uses existing configuration data in @show_config.
-            if ( $wartungstyp eq 'ASA' ) {
-                syslog(LOG_DEBUG, "%s: Gather config timestamps from ASA config", $hostnameport);
+            # Parse saved configuration timestamp.
+            syslog(LOG_DEBUG, "%s: config saved: looking for timestamp lines in configuration", $hostnameport);
 
-                # Look for timestamp lines.
-                foreach $line (@show_config) {
-                    # Remove CR only for parsing into the database.
-                    $line =~ tr/\015//d;
+            # Look for timestamp lines.
+            foreach $line (@show_config) {
+                # Remove CR for parsing lines.
+                $line =~ tr/\015//d;
 
-                    if ( $line =~ /^: Written by \S+ at (\d{2}:\d{2}:\d{2})\.\d{3} (\S+ \S{3} \S{3} \d{1,2} \d{4})$/ ) {
-                        $time_dtf = $time_parser->parse_datetime($1 . ' ' . $2);
-                        $cfsavd = $time_formatter->format_datetime($time_dtf);
-                        syslog(LOG_DEBUG, "%s: Gather config timestamps from ASA config found '%s'", $hostnameport, $cfsavd);
-
-                        # Actually write data.
-                        $sth_update_dcapf_cfsavd->execute($cfsavd, $hostnameport);
-                        if ( defined($dbh->errstr) ) {
-                            syslog(LOG_NOTICE, "%s: Gather config timestamps from ASA config: SQL execution error in: %s",
-                                $hostnameport, $dbh->errstr);
-                        }
-
-                        # Spare some loop iterations.
-                        last;
-                    }
+                if ( $wartungstyp eq 'ASA' &&
+                        $line =~ /^: Written by \S+ at (\d{2}:\d{2}:\d{2})\.\d{3} (\S+ \S{3} \S{3} \d{1,2} \d{4})$/ ) {
+                    $time_dtf = $time_parser->parse_datetime($1 . ' ' . $2);
+                    syslog(LOG_DEBUG, "%s: config saved: found ASA match '%s %s'", $hostnameport, $1, $2);
+                    last;
+                } elsif ( $wartungstyp eq 'IOS' &&
+                        $line =~ /^! NVRAM config last updated at (\d{2}:\d{2}:\d{2} \S+ \S{3} \S{3} \d{1,2} \d{4}) by \S+$/ ) {
+                    $time_dtf = $time_parser->parse_datetime($1);
+                    syslog(LOG_DEBUG, "%s: config saved: found IOS match '%s'", $hostnameport, $1);
+                    last;
                 }
+            }
+
+            if ( defined($time_dtf) ) {
+                $cfsavd = $time_formatter->format_datetime($time_dtf);
+                syslog(LOG_DEBUG, "%s: config saved: using formatted date '%s'", $hostnameport, $cfsavd);
+
+                # Actually write data.
+                $sth_update_dcapf_cfsavd->execute($cfsavd, $hostnameport);
+                if ( defined($dbh->errstr) ) {
+                    syslog(LOG_NOTICE, "%s: config saved: SQL execution error in: %s", $hostnameport, $dbh->errstr);
+                }
+            } else {
+                syslog(LOG_NOTICE, "%s: config saved: could not extract timestamp", $hostnameport);
             }
 
             # --------------------------
@@ -1331,9 +1336,6 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                 # Loop through lines.
                 @beforeLinesArray = split("\n", $before);
                 foreach $line (@beforeLinesArray) {
-                    # Remove CR only for parsing into the database.
-                    $line =~ tr/\015//d;
-
                     if ( $line =~ /^Failover (On|Off)\s*$/ ) {
                         if ( $1 eq "On" ) {
                             $sth_update_dcapf_setasafailover->execute('1', $hostnameport);
@@ -1354,21 +1356,20 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
 
         # ----------------------------------------------------------------------
 
-        # Parse IOS Timestamps into cfupdt, cfsavd.
+        # Parse IOS running config change timestamp.
         if ( $wartungstyp eq 'IOS' ) {
-            syslog(LOG_DEBUG, "%s: Gather config timestamps with 'show running-config' on IOS", $hostnameport);
+            syslog(LOG_DEBUG, "%s: config changed: looking for timestamp lines in 'show running-config'", $hostnameport);
             $cnh->send("show running-config\n");
 
             ($pat, $err, $match, $before, $after) = $cnh->expect(5, '-re', $prompt_re);
             if ( ! defined($err) ) {
                 # Filter nasty (un)printables.
-                # Note: We have no logic for information input spanning multiple lines. Thus we can filter out CR.
                 $before =~ tr/\000-\010|\013-\037|\177-\377//d;
                 @show_config = split("\n", $before);
 
                 # Config usually ends with a fixed string, so we can check if the obtained configuration is complete.
                 if ( $show_config[-1] ne "end" ) {
-                    syslog(LOG_NOTICE, "%s: config timestamps: Unexpected end of running-config: '%s', skipping timestamp handling",
+                    syslog(LOG_NOTICE, "%s: config changed: unexpected end of running-config: '%s', skipping timestamp handling",
                         $hostnameport, $show_config[-1]);
                     next;
                 }
@@ -1376,48 +1377,38 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                 # Look for timestamp lines.
                 foreach $line (@show_config) {
                     if ( $line =~ /^! Last configuration change at (\d{2}:\d{2}:\d{2} \S+ \S{3} \S{3} \d{1,2} \d{4}) by \S+$/ ) {
-                        $stamp_type = 'run';
-                    } elsif ( $line =~ /^! NVRAM config last updated at (\d{2}:\d{2}:\d{2} \S+ \S{3} \S{3} \d{1,2} \d{4}) by \S+$/ ) {
-                        $stamp_type = 'sav';
+                        $time_dtf = $time_parser->parse_datetime($1);
+                        $cfupdt = $time_formatter->format_datetime($time_dtf);
+                        syslog(LOG_DEBUG, "%s: config changed: using formatted date '%s'", $hostnameport, $cfupdt);
                     } elsif ( $line =~ /^! No configuration change since last restart$/ ) {
                         # Classic IOS only.
-                        syslog(LOG_DEBUG, "%s: No configuration change since last restart", $hostnameport);
-                    } else {
-                        undef($stamp_type);
-                    }
-
-                    # Safety checks and fill final variables.
-                    if ( defined ($stamp_type) && defined ($1) ) {
-                        $time_dtf = $time_parser->parse_datetime($1);
-
-                        if ( $stamp_type eq 'run' ) {
-                            $cfupdt = $time_formatter->format_datetime($time_dtf);
-                            syslog(LOG_DEBUG, "%s: Gather config timestamps found run='%s'", $hostnameport, $cfupdt);
-                        } elsif ( $stamp_type eq 'sav' ) {
-                            $cfsavd = $time_formatter->format_datetime($time_dtf);
-                            syslog(LOG_DEBUG, "%s: Gather config timestamps found saved='%s'", $hostnameport, $cfsavd);
+                        syslog(LOG_DEBUG,
+                            "%s: config changed: no configuration change since last restart, using saved configuration stamp",
+                                $hostnameport);
+                        if ( defined($cfsavd) ) {
+                            $cfupdt = $cfsavd;
                         }
                     }
-
-                    # Spare some loop iterations.
-                    if ( defined($cfupdt) && defined($cfsavd) ) {
-                        last;
-                    }
                 }
 
-                # FIXME: A freshly booted device has not shown "NVRAM config last updated". How to deal with that?
-                # Proposal: We could extract the last saved date from startup config and set running config to the same value.
-                if ( defined($cfupdt) && defined($cfsavd) ) {
-                    # Actually insert data.
-                    $sth_update_dcapf_cfsavd_cfupdt->execute($cfsavd, $cfupdt, $hostnameport);
+                # A freshly booted XE device might not show "NVRAM config last updated". Use saved timestamp.
+                if ( ! defined($cfupdt) ) {
+                    syslog(LOG_NOTICE, "%s: config changed: no running-config stamp found, using saved configuration stamp",
+                        $hostnameport);
+                    $cfupdt = $cfsavd;
+                }
+
+                # Actually insert data.
+                if ( defined($cfupdt) ) {
+                    $sth_update_dcapf_cfupdt->execute($cfupdt, $hostnameport);
                     if ( defined($dbh->errstr) ) {
-                        syslog(LOG_NOTICE, "%s: config timestamps: SQL execution error in: %s", $hostnameport, $dbh->errstr);
+                        syslog(LOG_NOTICE, "%s: config changed: SQL execution error in: %s", $hostnameport, $dbh->errstr);
                     }
                 } else {
-                    syslog(LOG_NOTICE, "%s: config timestamps: could not extract both run and sav timestamp", $hostnameport);
+                    syslog(LOG_NOTICE, "%s: config changed: could not extract timestamp", $hostnameport);
                 }
             } else {
-                syslog(LOG_NOTICE, "%s: config timestamps: expect error %s encountered while trying 'show running-config', skipping",
+                syslog(LOG_NOTICE, "%s: config changed: expect error %s encountered while trying 'show running-config', skipping",
                     $hostnameport, $err);
             }
         }
@@ -1599,11 +1590,11 @@ END {
     if ( $sth_insert_dcapf ) {
         $sth_insert_dcapf->finish;
     }
-    if ( $sth_update_dcapf_cfsavd_cfupdt ) {
-        $sth_update_dcapf_cfsavd_cfupdt->finish;
-    }
     if ( $sth_update_dcapf_cfsavd ) {
         $sth_update_dcapf_cfsavd->finish;
+    }
+    if ( $sth_update_dcapf_cfupdt ) {
+        $sth_update_dcapf_cfupdt->finish;
     }
     if ( $sth_update_dcapf_setasafailover ) {
         $sth_update_dcapf_setasafailover->finish;
