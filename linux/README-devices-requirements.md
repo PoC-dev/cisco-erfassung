@@ -58,6 +58,7 @@ privilege exec level 2 dir
 file privilege 2
 ```
 
+#### Older releases.
 Releases between 12.1 and 15.2(2)T do not support `file privilege`. Ignore this parameter for those. Later releases use this parameter to allow access to files, such as *startup-config*.
 
 IOS 12.0 does not support `secret` for usernames. Use `password` instead:
@@ -65,12 +66,12 @@ IOS 12.0 does not support `secret` for usernames. Use `password` instead:
 username backup privilege 2 password 0 secretsecret
 ```
 
-IOS 11.2 doesn't know about
+IOS 11.2 does not support
 - `aaa authorization console`,
 - `dir`
 - `privilege level`.
 
-Thus you must provide an enable password in the master data to reach enable mode, and use the implicitly allowed `show` commands.
+Thus you must provide an enable password in the master data to reach enable mode. The implicitly allowed `show` commands work anyway.
 
 ----
 
