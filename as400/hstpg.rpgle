@@ -1,4 +1,4 @@
-     HCOPYRIGHT('Patrik Schindler <poc@pocnet.net>, 2023-11-23')
+     HCOPYRIGHT('Patrik Schindler <poc@pocnet.net>, 2024-08-05')
      H*
      H* This file is part of cisco-erfassung, an application conglomerate for
      H*  management of Cisco devices on AS/400, i5/OS and IBM i.
@@ -43,6 +43,7 @@
      H*     36: Show row in blue (when DCA is disabled)
      H*     37: Show row in turquoise (when no entries in automatic entry table)
      H*     38: Show row in red (when DCA is older than three days)
+     H*     39: Show row in yellow (when running-config is newer than startup)
      H*- General DSPF Conditioning:
      H*     41: Place Cursor in Pos-To Field.
      H*     42: Indicate ADDREC was called. (DSPF)
@@ -567,8 +568,9 @@ X01  C                   ELSE
 E01  C                   ENDIF
      C*
      C* Reset colors.
-     C                   MOVEA     '000'         *IN(36)
+     C                   MOVEA     '0000'        *IN(36)
      C*
+     C* Rewrite this with SELECT. Nested IFs are so very ugly.
      C* Color me blue - if dca is disabled.
 B01  C     DCA           IFEQ      *ZERO
      C                   MOVE      *ON           *IN36
@@ -584,6 +586,17 @@ B02  C     *IN71         IFEQ      *OFF
      C     TS_NOW        SUBDUR    TS_DB         TS_RESULT:*D
 B03  C     TS_RESULT     IFGT      3
      C                   MOVE      *ON           *IN38
+E03  C                   ENDIF
+     C*
+     C* Color me yellow - if running-config is newer than startup-config.
+B03  C                   IF        NOT %NULLIND(CFUPDT)
+B04  C                   IF        NOT %NULLIND(CFSAVD)
+B05  C     CFUPDT        IFGT      CFSAVD
+     C                   MOVE      *ON           *IN39
+X05  C                   ELSE
+     C                   MOVE      *OFF          *IN39
+E05  C                   ENDIF
+E04  C                   ENDIF
 E03  C                   ENDIF
      C*
 X02  C                   ELSE

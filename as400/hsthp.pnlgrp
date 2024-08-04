@@ -107,9 +107,9 @@ bereits erwähnten Selektionen in der Opt-Spalte da.
 :PARML.
 :PT.Blau
 :PD.Die automatische Erfassung ist für diesen Eintrag ausgeschaltet. Dadurch
-könnten keine automatisch erfassten Datensätze vorhanden sein. Eine manuelle
-Erfassung durch Aufruf des Erfassung-Scripts mit dem Namen des Eintrags startet
-in jedem Fall eine Erfassung.
+könnten keine aktuellen automatisch erfassten Datensätze vorhanden sein. Eine
+manuelle Erfassung durch Aufruf des Erfassung-Scripts mit dem Namen des Eintrags
+startet in jedem Fall eine Erfassung.
 :PT.Türkis
 :PD.Die automatische Erfassung ist für diesen Eintrag eingeschaltet, aber bisher
 wurden keine Daten erfasst. Dies kann daran liegen, dass das Erfassung-Script
@@ -120,6 +120,10 @@ falsch sind.
 letzte Erfassung liegt länger als drei Tage zurück. Dies kann daran liegen,
 dass das Erfassung-Script keinen Zugriff auf das Gerät hat (offline), das Script
 bisher nicht lief, oder die Zugangsdaten für den Eintrag falsch sind.
+:PT.Gelb
+:PD.Die automatische Erfassung ist für diesen Eintrag eingeschaltet, und die
+:HP1.running-config:EHP1. ist neuer als die :HP1.startup-config:EHP1. Dies
+bedeutet dass die Konfiguration nicht gesichert wurde.
 :EPARML.
 :EHELP.
 .* -----------------------------------------------------------------------------

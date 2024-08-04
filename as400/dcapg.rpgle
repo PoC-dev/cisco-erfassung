@@ -1,4 +1,4 @@
-     HCOPYRIGHT('Patrik Schindler <poc@pocnet.net>, 2024-08-03')
+     HCOPYRIGHT('Patrik Schindler <poc@pocnet.net>, 2024-08-04')
      H*
      H* This file is part of cisco-erfassung, an application conglomerate for
      H*  management of Cisco devices on AS/400, i5/OS and IBM i.
@@ -45,6 +45,7 @@
      H*     47: Show red 'Erfassung too old' warning.
      H*     48: Show CFSAVD field (if not NULL).
      H*     49: Show CFUPDT field (if not NULL).
+     H*     50: Show red 'Config not saved' warning.
      H*     51: Show red 'End of Support!' warning.
      H*     52: Show VER_SOLL/Update if version is different to given version.
      H*     53: Show ASDM version (if not NULL).
@@ -192,9 +193,16 @@
      C                   MOVE      *OFF          *IN49
      C                   ENDIF
      C*
-     C* FIXME: Implement timestamp diff between CFUPDT and CFSAVD.
-     C*        If CFSAVD < CFUPDT, set IN50.
-     C*        Handle field(s) being NULL gracefully.
+     C* Alert if running-config is newer than startup-config.
+     C                   IF        NOT %NULLIND(CFUPDT)
+     C                   IF        NOT %NULLIND(CFSAVD)
+     C     CFUPDT        IFGT      CFSAVD
+     C                   MOVE      *ON           *IN50
+     C                   ELSE
+     C                   MOVE      *OFF          *IN50
+     C                   ENDIF
+     C                   ENDIF
+     C                   ENDIF
      C*------------------------------------------
      C* Display for page two.
      C*----------------------------

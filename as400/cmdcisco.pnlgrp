@@ -85,9 +85,9 @@ bereitgestellt, die nicht nur der Stammdatenerfassung dienen, sondern auch die
 automatisch erfassten Gerätedaten präsentieren. Dazu gehört:
 :UL.
 :LI.Strukturierte Ansicht der analysierten Daten, einschließlich
-VLAN-Konfiguration und :HP1.show inventory:EHP1,
+VLAN-Konfiguration und :HP1.show inventory:EHP1.,
 :LI.Textbetrachter für die erhaltene Konfiguration und Rohausgabe von :HP1.show
-version:EHP1,
+version:EHP1.,
 :LI.Suchanwendung für Seriennummern von Geräten und deren einzelnen Komponenten,
 :LI.Wartungsanwendung für eine Liste empfohlener Betriebssystemversionen für
 eine bestimmte Kombination aus Modell, RAM und Flash-Größe,
@@ -120,7 +120,8 @@ um die Datenbanktabellen mit Informationen zu füllen.
 Hersteller die jeweils aktuelle Softwareversion eingepflegt werden (11, 12).
 :NOTE.Es gibt keine Funktion zur automatischen Kontrolle der
 Zuordnungsabweichungen von Anyconnect, da diese letztendlich unabhängig von der
-Hardware (ASA) sind, sondern nur relevant für die Clients.:ENOTE.
+Hardware (ASA) sind, sondern nur relevant für die Clients (Mac, Linux, etc.).
+:ENOTE.
 :P.Schlussendlich kann mit Hilfe von (20) festgestellt werden, welche Geräte
 Updates benötigen.
 .IM #MENUUSGH
@@ -133,7 +134,7 @@ erfasste Informationen zu einem Gerät abzurufen.
 :EHELP.
 .*
 :HELP NAME=help02.Auswahl 2 - Hilfetext
-:XH3.Auswahl 2. Globale Seriennummernsuche
+:XH3.Auswahl 2. Globale Seriennummenrsuche
 :P.Diese Auswahl treffen, um im automatisch erfassten :HP1.show inventory:EHP1.
 nach einer Serinnummer zu suchen und das zugehörige Gerät und dessen Komponente
 ausfindig zu machen.

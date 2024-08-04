@@ -32,19 +32,23 @@
      A  36                                  COLOR(BLU)
      A  37                                  COLOR(TRQ)
      A  38                                  COLOR(RED)
+     A  39                                  COLOR(YLW)
      A*         ##Pull values from the table definition itself...
      A            HOSTNAME  R        O 10  7
      A  36                                  COLOR(BLU)
      A  37                                  COLOR(TRQ)
      A  38                                  COLOR(RED)
+     A  39                                  COLOR(YLW)
      A            SERVTYP   R        O 10 47
      A  36                                  COLOR(BLU)
      A  37                                  COLOR(TRQ)
      A  38                                  COLOR(RED)
+     A  39                                  COLOR(YLW)
      A            COMMT$        29A  O 10 52
      A  36                                  COLOR(BLU)
      A  37                                  COLOR(TRQ)
      A  38                                  COLOR(RED)
+     A  39                                  COLOR(YLW)
      A* This helps to coloring rows BLU without an extra CHAIN.
      A            DCA       R        H
      A            COMMT     R        H
