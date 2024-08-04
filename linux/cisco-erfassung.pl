@@ -1369,7 +1369,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                         syslog(LOG_DEBUG, "%s: config changed: using formatted date '%s'", $hostnameport, $cfupdt);
                     } elsif ( $line =~ /^! No configuration change since last restart$/ ) {
                         # Classic IOS only.
-                        syslog(LOG_DEBUG,
+                        syslog(LOG_INFO,
                             "%s: config changed: no configuration change since last restart, using saved configuration stamp",
                                 $hostnameport);
                         if ( defined($cfsavd) ) {
@@ -1380,7 +1380,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
 
                 # A freshly booted XE device might not show "NVRAM config last updated". Use saved timestamp.
                 if ( ! defined($cfupdt) ) {
-                    syslog(LOG_NOTICE, "%s: config changed: no running-config stamp found, using saved configuration stamp",
+                    syslog(LOG_INFO, "%s: config changed: no running-config stamp found, using saved configuration stamp",
                         $hostnameport);
                     $cfupdt = $cfsavd;
                 }
@@ -1551,7 +1551,7 @@ if ( $do_scm == 1 ) {
 
 # Delete orphaned entries from the database.
 if ( $do_orphans == 1 ) {
-    syslog(LOG_DEBUG, "DB: Delete orphaned entries");
+    syslog(LOG_DEBUG, "DB: Delete orphaned data from auxiliary tables (no associated entry in hstpf)");
     @to_clean_pfs = ('cfgverpf', 'dcapf', 'invpf');
     foreach $to_clean_pf (@to_clean_pfs) {
         $dbh->do("DELETE FROM $to_clean_pf WHERE hostname NOT IN (SELECT hostname FROM hstpf)");
@@ -1611,6 +1611,7 @@ END {
     if ( $sth_select_count_hostname_scm ) {
         $sth_select_count_hostname_scm->finish;
     }
+
     if ( $dbh ) {
         $dbh->disconnect;
     }
