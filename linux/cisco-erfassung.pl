@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # This is to be manually incremented on each "publish".
-my $versionstring = '2024-08-02.00';
+my $versionstring = '2024-08-04.00';
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -542,7 +542,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
             @show_version = split("\n", $before);
             foreach $line (@show_version) {
                 # Remove CR only for parsing into the database.
-                # FIXME: Harmonize this. We probably have this in too many places instead of one centralized.
+                # FIXME: Harmonize this. We probably have this in too many places.
                 $line =~ tr/\015//d;
 
                 # FIXME: How can we make these lines shorter to fit in 132 chars?
@@ -1374,12 +1374,14 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                 }
 
                 # Look for timestamp lines.
-                # FIXME: Some devices emit '! No configuration change since last restart'
                 foreach $line (@show_config) {
                     if ( $line =~ /^! Last configuration change at (\d{2}:\d{2}:\d{2} \S+ \S{3} \S{3} \d{1,2} \d{4}) by \S+$/ ) {
                         $stamp_type = 'run';
                     } elsif ( $line =~ /^! NVRAM config last updated at (\d{2}:\d{2}:\d{2} \S+ \S{3} \S{3} \d{1,2} \d{4}) by \S+$/ ) {
                         $stamp_type = 'sav';
+                    } elsif ( $line =~ /^! No configuration change since last restart$/ ) {
+                        # Classic IOS only.
+                        syslog(LOG_DEBUG, "%s: No configuration change since last restart", $hostnameport);
                     } else {
                         undef($stamp_type);
                     }
@@ -1404,6 +1406,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                 }
 
                 # FIXME: A freshly booted device has not shown "NVRAM config last updated". How to deal with that?
+                # Proposal: We could extract the last saved date from startup config and set running config to the same value.
                 if ( defined($cfupdt) && defined($cfsavd) ) {
                     # Actually insert data.
                     $sth_update_dcapf_cfsavd_cfupdt->execute($cfsavd, $cfupdt, $hostnameport);

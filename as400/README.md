@@ -86,7 +86,6 @@ This presents you with a menu from where you can choose the individual applicati
 Main Host list/master file: HSTDF HSTHP HSTPF HSTPG HSTPOSLF:
 - Use transactions for deleting auxiliary table contents
 - Expand error handling for auxiliary table updates
-- When deleting an entry, also delete the corresponding entry in OSMRPTPF.
 
 ----
 
