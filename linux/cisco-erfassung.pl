@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # This is to be manually incremented on each "publish".
-my $versionstring = '2024-08-04.01';
+my $versionstring = '2024-08-04.02';
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -1297,19 +1297,6 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                     if ( $retval != 0 ) {
                         syslog(LOG_NOTICE, "SCM: error %d while adding, continuing anyway", $retval);
                     }
-
-                    # Prepare timestamp for, well, a timestamp. In the database, that is.
-                    @time_tm = localtime();
-                    $stamp = strftime('%Y-%m-%d-%H.%M.%S.000000', @time_tm);
-
-                    # Has config changed?
-                    if ( $use_git == 0 ) {
-                        $retval = system('cd ' . $scmtmp . ' && cvs -Q diff ' . $hostnameport . ' >/dev/null 2>&1');
-                    } else {
-                        $retval = system('cd ' . $scmtmp . ' && git diff --quiet ' . $hostnameport);
-                    }
-                    $retval = ($retval >> 8);
-                    syslog(LOG_DEBUG, "%s: SCM: diff return value: %s", $hostnameport, $retval);
                 } else {
                     syslog(LOG_NOTICE, "%s: SCM: Could not open destination file '%s' for writing, skipping update",
                         $hostnameport, $scmdestfile);
