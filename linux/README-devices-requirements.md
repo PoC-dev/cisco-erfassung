@@ -43,7 +43,7 @@ With the default configuration, telnet connections ask simply for a password. Th
 
 In any case, you should keep an administrative backup session open, and test with a second session that your changed configuration still allows you to gain configuration privileges.
 
-For IOS devices, `show`-commands have are allowed implicitly with privilege level 2. But this level does not allow to enter configuration mode, even when the command line is elevated ("enabled"). This is an acceptable middle ground between security and excessive configuration statements being necessary to allow individual commands.
+For IOS devices, some `show`-commands have are allowed implicitly with privilege level 2. But this level does not allow to enter configuration mode, even when the command line is elevated ("enabled"). This is an acceptable middle ground between security and excessive configuration statements being necessary to allow individual commands.
 
 The following snippet is sufficient for releases 15.2(2)T and onward:
 ```
@@ -55,10 +55,14 @@ aaa authorization console
 username backup privilege 2 secret 0 secretsecret
 !
 privilege exec level 2 dir
+privilege exec level 2 show running-config
+privilege exec level 2 show startup-config
 file privilege 2
 ```
 
-**Note:** `aaa authorization console` automatically enables the user. For me this is very handy to spare typing. Your mileage may vary.
+**Note:** `aaa authorization console` automatically enables the user. For me this is very handy to save typing. Your mileage may vary.
+
+Practice has shown that changes to `privilege exec level` statements are not fully in effect unless the device has been reloaded.
 
 #### Older releases.
 Releases between 12.1 and 15.2(2)T do not support `file privilege`. Ignore this parameter for those. Later releases use this parameter to allow access to files, such as *startup-config*.
