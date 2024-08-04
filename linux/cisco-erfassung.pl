@@ -1402,6 +1402,16 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
 
         # ----------------------------------------------------------------------
 
+        # Only IOS seems to provide stamps of running and saved configs.
+        if ( $wartungstyp eq 'IOS' ) {
+            if ($cfupdt gt $cfsavd ) {
+                syslog(LOG_INFO, "%s: running-config timestamp is newer than startup-config, forgot to save config with wr?",
+                    $hostnameport);
+            }
+        }
+
+        # ----------------------------------------------------------------------
+
         syslog(LOG_DEBUG, "%s: Host loop: close connection to device", $hostnameport);
         $cnh->send("exit\n");
         $cnh->soft_close();

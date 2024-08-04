@@ -63,9 +63,6 @@ If no hostnames are given, all hosts found in the database are handled, if eligi
 
 If the script runs without issues, I recommend to run it at least daily from *cron*.
 
-## Bugs and enhancement ideas.
-- Parse configuration headers and emit message when running-config age > startup-config age: No `wr` done.
-
 ----
 
 2024-08-04 poc@pocnet.net
