@@ -58,6 +58,8 @@ privilege exec level 2 dir
 file privilege 2
 ```
 
+**Note:** `aaa authorization console` automatically enables the user. For me this is very handy to spare typing. Your mileage may vary.
+
 #### Older releases.
 Releases between 12.1 and 15.2(2)T do not support `file privilege`. Ignore this parameter for those. Later releases use this parameter to allow access to files, such as *startup-config*.
 
