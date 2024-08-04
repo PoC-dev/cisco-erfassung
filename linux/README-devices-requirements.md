@@ -47,6 +47,7 @@ For IOS devices, `show`-commands have are allowed implicitly with privilege leve
 
 The following snippet is sufficient for releases 15.2(2)T and onward:
 ```
+aaa new-model
 aaa authentication login default local
 aaa authorization exec default local
 aaa authorization console
