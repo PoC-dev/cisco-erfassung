@@ -24,7 +24,7 @@
 :MENUI         OPTION=2
                HELP=help02
                ACTION='CMD CALL PGM(*CURLIB/SERNOPG)'
-               .Globale Seriennummersuche
+               .Globale Seriennummernsuche
 :EMENUGRP.
 :MENUGRP.Aktualisierungsvorbereitung
 :MENUI         OPTION=10
@@ -44,7 +44,7 @@
 :MENUI         OPTION=20
                HELP=help20
                ACTION='CMD CALL PGM(*CURLIB/RPTPRTPG) PARM(RPTUPDTEPG)'
-               .Report zu anstehenden OS- und Anyconnect Aktualisierungen
+               .Report zu anstehenden OS- und Anyconnect-Aktualisierungen
 :MENUI         OPTION=21
                HELP=help21
                ACTION='CMD CALL PGM(*CURLIB/RPTPRTPG) PARM(RPTUPTIMPG)'
@@ -133,7 +133,7 @@ erfasste Informationen zu einem Gerät abzurufen.
 :EHELP.
 .*
 :HELP NAME=help02.Auswahl 2 - Hilfetext
-:XH3.Auswahl 2. Globale Seriennummersuche
+:XH3.Auswahl 2. Globale Seriennummernsuche
 :P.Diese Auswahl treffen, um im automatisch erfassten :HP1.show inventory:EHP1.
 nach einer Serinnummer zu suchen und das zugehörige Gerät und dessen Komponente
 ausfindig zu machen.
@@ -168,7 +168,7 @@ deren zugeordnete Installationsplattformen zu bearbeiten.
 :EHELP.
 .*
 :HELP NAME=help20.Auswahl 20 - Hilfetext
-:XH3.Auswahl 20. Report zu anstehenden OS- und Anyconnect Aktualisierungen
+:XH3.Auswahl 20. Report zu anstehenden OS- und Anyconnect-Aktualisierungen
 :P.Diese Auswahl treffen, um eine Liste der Geräte auszugeben, für welche
 :UL.
 :LI.die installierte Softwareversion von der gewünschten Softwareversion
