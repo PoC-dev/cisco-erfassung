@@ -429,6 +429,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
     # Clear call array for telnet/ssh by expect from stray entries of former run.
     @cnh_parms = ();
 
+
     # Connect and try to log in.
     if ( $conn_method eq "telnet" ) {
         push(@cnh_parms, $hostname);
@@ -439,14 +440,8 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
         $cnh->log_stdout(0);
         $cnh->exp_internal(0);
 
-        if ( $errcount > 0 ) {
-            syslog(LOG_WARNING, "%s: connect: expect error handling telnet login, skipping host", $hostnameport);
-            $cnh->soft_close();
-            next;
-        }
-
         for( $loopcount = 0; $loopcount < 3; $loopcount++ ) {
-            ($pat, $err, $match, $before, $after) = $cnh->expect(10,
+            ($pat, $err, $match, $before, $after) = $cnh->expect(4,
                 'Username:',
                 'Password:');
             if ( ! defined($err) ) {
@@ -465,7 +460,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
         }
 
         if ( $errcount > 0 ) {
-            syslog(LOG_WARNING, "%s: connect: expect error handling telnet login, skipping host", $hostnameport);
+            syslog(LOG_WARNING, "%s: connect: expect error %s handling telnet login, skipping host", $hostnameport, $err);
             # Now we can safely jump to the next host in the list.
             next;
         }
@@ -529,19 +524,19 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
     }
 
     # If we can't log in, skip further processing for that host.
-    if ( $err ) {
+    if ( defined($err) ) {
         syslog(LOG_WARNING, "%s: connect: expect error %s encountered when spawning %s, skipping host",
             $hostnameport, $err, $conn_method);
         next;
     }
-
-    # --------------------------------------------------------------------------
 
     # If we do not have a valid connection handle, try next device.
     if ( ! defined($cnh) ) {
         syslog(LOG_WARNING, "%s: connect: could not obtain Expect-Handle, skipping host", $hostnameport);
         next;
     }
+
+    # --------------------------------------------------------------------------
 
     # Common I/O for both telnet and ssh.
     ($pat, $err, $match, $before, $after) = $cnh->expect(5,
