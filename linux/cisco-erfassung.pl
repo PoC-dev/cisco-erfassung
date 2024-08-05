@@ -747,6 +747,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                 }
             }
         }
+        syslog(LOG_DEBUG, "%s: show version: saved %d lines to database", $hostnameport, $lineno);
     } else {
         syslog(LOG_WARNING, "%s: show version: expect error %s encountered while trying command, skipping host",
             $hostnameport, $err);
@@ -755,8 +756,6 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
         $cnh->soft_close();
         $dbh->do("rollback");
         next;
-    } else {
-        syslog(LOG_DEBUG, "%s: show version: saved %d lines to database", $hostnameport, $lineno);
     }
 
     # ------------------------------
