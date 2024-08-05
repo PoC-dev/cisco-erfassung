@@ -74,10 +74,9 @@ username backup privilege 2 password 0 secretsecret
 
 IOS 11.2 does not support
 - `aaa authorization console`,
-- `dir`
-- `privilege level`.
+- `dir`.
 
-Thus you must provide an enable password in the master data to reach enable mode. The implicitly allowed `show` commands work anyway.
+Thus you must provide an enable password in the master data to reach enable mode.
 
 ----
 
