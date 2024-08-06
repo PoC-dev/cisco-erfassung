@@ -1,4 +1,4 @@
-     HCOPYRIGHT('Patrik Schindler <poc@pocnet.net>, 2024-08-04')
+     HCOPYRIGHT('Patrik Schindler <poc@pocnet.net>, 2024-08-06')
      H*
      H* This file is part of cisco-erfassung, an application conglomerate for
      H*  management of Cisco devices on AS/400, i5/OS and IBM i.
@@ -194,15 +194,9 @@
      C                   ENDIF
      C*
      C* Alert if running-config is newer than startup-config.
-     C                   IF        NOT %NULLIND(CFUPDT)
-     C                   IF        NOT %NULLIND(CFSAVD)
-     C     CFUPDT        IFGT      CFSAVD
-     C                   MOVE      *ON           *IN50
-     C                   ELSE
-     C                   MOVE      *OFF          *IN50
-     C                   ENDIF
-     C                   ENDIF
-     C                   ENDIF
+     C                   EVAL      *IN50 = ((NOT(%NULLIND(CFUPDT)) AND
+     C                                      (NOT(%NULLIND(CFSAVD)) AND
+     C                                      (CFUPDT > CFSAVD))))
      C*------------------------------------------
      C* Display for page two.
      C*----------------------------
