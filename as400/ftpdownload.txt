@@ -43,7 +43,7 @@ get CISCO/SOURCES.OSMRPTMLF osmrptmlf.dds
 get CISCO/SOURCES.OSMRPTOLF osmrptolf.dds
 get CISCO/SOURCES.OSMRPTPG osmrptpg.rpgle
 get CISCO/SOURCES.OSUPDTELF osupdtelf.dds
-get CISCO/SOURCES.RPTPRTPG rptprtpg.rpgle
+get CISCO/SOURCES.RPTPRTPG rptprtpg.clp
 Get CISCO/SOURCES.RPTUPDTEPG rptupdtepg.rpgle
 get CISCO/SOURCES.RPTUPDTEPT rptupdtept.dds
 get CISCO/SOURCES.RPTUPTIMLF rptuptimlf.dds

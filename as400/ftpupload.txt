@@ -43,7 +43,7 @@ put osmrptmlf.dds CISCO/SOURCES.OSMRPTMLF
 put osmrptolf.dds CISCO/SOURCES.OSMRPTOLF
 put osmrptpg.rpgle CISCO/SOURCES.OSMRPTPG
 put osupdtelf.dds CISCO/SOURCES.OSUPDTELF
-put rptprtpg.rpgle CISCO/SOURCES.RPTPRTPG
+put rptprtpg.clp CISCO/SOURCES.RPTPRTPG
 put rptupdtepg.rpgle CISCO/SOURCES.RPTUPDTEPG
 put rptupdtept.dds CISCO/SOURCES.RPTUPDTEPT
 put rptuptimlf.dds CISCO/SOURCES.RPTUPTIMLF
