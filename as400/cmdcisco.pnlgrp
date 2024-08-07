@@ -134,7 +134,7 @@ erfasste Informationen zu einem Gerät abzurufen.
 :EHELP.
 .*
 :HELP NAME=help02.Auswahl 2 - Hilfetext
-:XH3.Auswahl 2. Globale Seriennummenrsuche
+:XH3.Auswahl 2. Globale Seriennummernsuche
 :P.Diese Auswahl treffen, um im automatisch erfassten :HP1.show inventory:EHP1.
 nach einer Serinnummer zu suchen und das zugehörige Gerät und dessen Komponente
 ausfindig zu machen.
