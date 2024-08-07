@@ -181,7 +181,7 @@ abweicht.
 :EHELP.
 .*
 :HELP NAME=help21.Auswahl 21 - Hilfetext
-:XH3.Auswahl 22. Report zu Uptimes
+:XH3.Auswahl 21. Report zu Uptimes
 :P.Diese Auswahl treffen, um eine Liste der Geräte und ihrer Uptimes auszugeben.
 Die Liste wird auf dem Standarddrucker ausgedruckt.
 :EHELP.
