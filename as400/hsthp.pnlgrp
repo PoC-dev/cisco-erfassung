@@ -291,23 +291,23 @@ Listendarstellung in blauer Farbe hervorgehoben
 :HELP NAME='DFIELD/IGNORE'.Ignoriere Updates
 :XH3.Ignoriere Updates
 :P.Für bestimmte Fälle kann es notwendig sein, keine Aktualisierungen auf einem
-Gerät durchzuführen. Dies kann durch das Unterdrücken des Reports für die beiden
-Softwarekategorien vereinfacht werden.
+Gerät durchzuführen. Dies kann durch das Unterdrücken des Reports für die
+vorhandenen Aktualisierungskategorie(n) erreicht werden.
 :UL.
-:LI.OS
-:LI.Anyconnect
+:LI.OS - Betriebssystem
+:LI.Anyconnect - VPN-Clients
 :EUL.
-:NOTE.Es wird empfohlen, das Kommentarfeld für eine Begründung der ausgesetzten
+:NOTE.Es wird empfohlen, das Bemerkungsfeld für eine Begründung der ausgesetzten
 Aktualisierungen zu nutzen.
 :ENOTE.
 :EHELP.
 .* -----------------------------------------------------------------------------
-:HELP NAME='DFIELD/UPD_IGN'.OS
-:XH3.OS
-:P.Hier kann angegeben werden, ob das Gerät bei verfügbaren Aktualisierungen für
-das Basisbetriebssystem im Aktualisierungsreport gelistet oder ignoriert wird.
+:HELP NAME='DFIELD/UPD_IGN'.Ignoriere OS-Updates
+:XH3.Ignoriere OS-Updates
+:P.Hier kann angegeben werden, ob das Gerät bei verfügbaren Aktualisierungen
+für das Betriebssystem im Aktualisierungsreport gelistet oder ignoriert wird.
 :NOTE.Unabhängig von dieser Einstellung wird in der Detailansicht der erfassten
-Daten immer ausgegeben, ob ein Update verfügbar ist.
+Daten immer ausgegeben, ob ein Update des Betriebssystems verfügbar ist.
 :ENOTE.
 :P.Es handelt sich um ein Einzelwertauswahlfeld. Gültige Werte sind:
 :UL.

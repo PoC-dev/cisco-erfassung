@@ -228,32 +228,32 @@
      A                                      Details')
      A          H                           HLPARA(1 1 1 80)
      A                                      HLPPNLGRP('DETAIL/MODE' HSTHP)
-     A          H                           HLPARA(3 1 3 80)
+     A          H                           HLPARA(3 2 3 80)
      A                                      HLPPNLGRP('DETAIL/OPTIONS' HSTHP)
      A          H                           HLPARA(*CNST 1)
      A                                      HLPPNLGRP('DETAIL/GENERAL' HSTHP)
-     A          H                           HLPARA(6 3 6 65)
+     A          H                           HLPARA(6 2 6 65)
      A                                      HLPPNLGRP('DFIELD/HOSTNAME' HSTHP)
+     A          H                           HLPARA(8 2 8 24)
+     A                                      HLPPNLGRP('DFIELD/IGNORE' HSTHP)
+     A          H                           HLPARA(8 27 9 45)
+     A                                      HLPPNLGRP('DFIELD/UPD_IGN' HSTHP)
+     A          H                           HLPARA(8 54 9 80)
+     A                                      HLPPNLGRP('DFIELD/ACU_IGN' HSTHP)
      A          H                           HLPARA(*CNST 2)
      A                                      HLPPNLGRP('DETAIL/ACCESS' HSTHP)
-     A          H                           HLPARA(9 3 9 55)
+     A          H                           HLPARA(12 2 12 55)
      A                                      HLPPNLGRP('DFIELD/SERVTYP' HSTHP)
-     A          H                           HLPARA(10 3 10 58)
+     A          H                           HLPARA(13 2 13 58)
      A                                      HLPPNLGRP('DFIELD/CONN' HSTHP)
-     A          H                           HLPARA(11 3 11 55)
+     A          H                           HLPARA(14 2 14 55)
      A                                      HLPPNLGRP('DFIELD/USERNAME' HSTHP)
-     A          H                           HLPARA(12 3 12 42)
+     A          H                           HLPARA(15 2 15 42)
      A                                      HLPPNLGRP('DFIELD/PASSWD' HSTHP)
-     A          H                           HLPARA(13 3 13 55)
+     A          H                           HLPARA(16 2 16 55)
      A                                      HLPPNLGRP('DFIELD/ENABLE' HSTHP)
-     A          H                           HLPARA(15 3 16 35)
+     A          H                           HLPARA(18 2 19 35)
      A                                      HLPPNLGRP('DFIELD/DCA' HSTHP)
-     A          H                           HLPARA(*CNST 3)
-     A                                      HLPPNLGRP('DETAIL/IGNORE' HSTHP)
-     A          H                           HLPARA(18 27 19 45)
-     A                                      HLPPNLGRP('DFIELD/UPD_IGN' HSTHP)
-     A          H                           HLPARA(18 54 19 80)
-     A                                      HLPPNLGRP('DFIELD/ACU_IGN' HSTHP)
      A          H                           HLPARA(19 2 19 75)
      A                                      HLPPNLGRP('DFIELD/COMMT' HSTHP)
      A          H                           HLPARA(23 2 23 80)
@@ -282,50 +282,51 @@
      A N44 60                               DSPATR(PC)
      A  92                                  ERRMSGID(ERR1021 GENERICMSG 92)
      A*
-     A                                  8  2'Zugriff' DSPATR(HI) HLPID(2)
-     A                                  9  3'Typ  . . . . . . . . .'
-     A            SERVTYP   R        B  9 27VALUES('ASA' 'IOS')
+     A                                  8  2'Ignoriere Updates'
+     A                                      DSPATR(HI)
+     A                                  8 20'. . .  OS . . .'
+     A            UPD_IGN$       2Y 0B  8 37SNGCHCFLD
+     A                                      CHOICE(1 'Nein')
+     A                                      CHOICE(2 'Ja')
+     A N44                                  DSPATR(UL)
+     A                                  8 54'Anyconnect . . .'
+     A            ACU_IGN$       2Y 0B  8 72SNGCHCFLD
+     A                                      CHOICE(1 'Nein')
+     A                                      CHOICE(2 'Ja')
+     A N44                                  DSPATR(UL)
+     A*
+     A                                 11  2'Zugriff' DSPATR(HI) HLPID(2)
+     A                                 12  3'Typ  . . . . . . . . .'
+     A            SERVTYP   R        B 12 27VALUES('ASA' 'IOS')
      A  44                                  DSPATR(PR)
      A N44                                  DSPATR(UL)
      A N44 61                               DSPATR(PC)
-     A                                  9 46'(ASA, IOS)'
-     A                                 10  3'Zugriffsmethode  . . .'
-     A            CONN      R        B 10 27VALUES('ssh' 'telnet')
+     A                                 12 46'(ASA, IOS)'
+     A                                 13  3'Zugriffsmethode  . . .'
+     A            CONN      R        B 13 27VALUES('ssh' 'telnet')
      A  44                                  DSPATR(PR)
      A N44                                  DSPATR(UL)
      A N44 62                               DSPATR(PC)
-     A                                 10 46'(ssh, telnet)'
-     A                                 11  3'Benutzer . . . . . . .'
-     A            USERNAME  R        B 11 27
+     A                                 13 46'(ssh, telnet)'
+     A                                 14  3'Benutzer . . . . . . .'
+     A            USERNAME  R        B 14 27
      A  44                                  DSPATR(PR)
      A N44                                  DSPATR(UL)
      A N44 63                               DSPATR(PC)
-     A                                 11 46'(optional)'
-     A                                 12  3'Passwort . . . . . . .'
-     A            PASSWD    R        B 12 27
+     A                                 14 46'(optional)'
+     A                                 15  3'Passwort . . . . . . .'
+     A            PASSWD    R        B 15 27
      A  44                                  DSPATR(PR)
      A N44                                  DSPATR(UL)
      A N44 64                               DSPATR(PC)
-     A                                 13  3'Enable-Secret  . . . .'
-     A            ENABLE    R        B 13 27
+     A                                 16  3'Enable-Secret  . . . .'
+     A            ENABLE    R        B 16 27
      A  44                                  DSPATR(PR)
      A N44                                  DSPATR(UL)
      A N44 65                               DSPATR(PC)
-     A                                 13 46'(optional)'
-     A                                 15  3'Automatische Erfassung'
-     A            DCA$           2Y 0B 15 27SNGCHCFLD
-     A                                      CHOICE(1 'Nein')
-     A                                      CHOICE(2 'Ja')
-     A N44                                  DSPATR(UL)
-     A                                 18  2'Ignoriere Updates . . .'
-     A                                      DSPATR(HI) HLPID(3)
-     A                                 18 27'OS . . .'
-     A            UPD_IGN$       2Y 0B 18 37SNGCHCFLD
-     A                                      CHOICE(1 'Nein')
-     A                                      CHOICE(2 'Ja')
-     A N44                                  DSPATR(UL)
-     A                                 18 54'Anyconnect . . .'
-     A            ACU_IGN$       2Y 0B 18 72SNGCHCFLD
+     A                                 16 46'(optional)'
+     A                                 18  3'Automatische Erfassung'
+     A            DCA$           2Y 0B 18 27SNGCHCFLD
      A                                      CHOICE(1 'Nein')
      A                                      CHOICE(2 'Ja')
      A N44                                  DSPATR(UL)
