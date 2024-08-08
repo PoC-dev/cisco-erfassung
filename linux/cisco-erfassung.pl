@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # This is to be manually incremented on each "publish".
-my $versionstring = '2024-08-05.00';
+my $versionstring = '2024-08-08.00';
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -1457,53 +1457,50 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                 syslog(LOG_NOTICE, "%s: config changed: unexpected end of running-config: '%s', skipping timestamp handling",
                     $hostnameport, $show_config[-1]);
                 next;
-            }
+            } else {
+                # Look for timestamp lines.
+                foreach $line (@show_config) {
+                    if ( $line =~ /^! Last configuration change at (\d{2}:\d{2}:\d{2} \S+ \S{3} \S{3} \d{1,2} \d{4}) by \S+$/ ) {
+                        $time_dtf = $time_parser->parse_datetime($1);
+                        if ( defined($time_dtf) ) {
+                            $cfupdt = $time_formatter->format_datetime($time_dtf);
+                            syslog(LOG_DEBUG, "%s: config changed: using formatted date '%s'", $hostnameport, $cfupdt);
+                        } else {
+                            syslog(LOG_INFO, "%s: config changed: could not extract timestamp, invalid time zone?", $hostnameport);
+                            last;
 
-            # Look for timestamp lines.
-            foreach $line (@show_config) {
-                if ( $line =~ /^! Last configuration change at (\d{2}:\d{2}:\d{2} \S+ \S{3} \S{3} \d{1,2} \d{4}) by \S+$/ ) {
-                    $time_dtf = $time_parser->parse_datetime($1);
-                    if ( defined($time_dtf) ) {
-                    $cfupdt = $time_formatter->format_datetime($time_dtf);
-                        syslog(LOG_DEBUG, "%s: config changed: using formatted date '%s'", $hostnameport, $cfupdt);
-                    } else {
-                        syslog(LOG_INFO, "%s: config changed: could not extract timestamp, invalid time zone?", $hostnameport);
-                        $errcount++;
-                        last;
+                        }
+                    } elsif ( $line =~ /^! No configuration change since last restart$/ ) {
+                        # Classic IOS only.
+                        syslog(LOG_INFO,
+                            "%s: config changed: no configuration change since last restart, using saved configuration stamp",
+                                $hostnameport);
+                        if ( defined($cfsavd) ) {
+                            $cfupdt = $cfsavd;
+                        } else {
+                            last;
+                        }
+                    }
+                }
 
+                # A freshly booted XE device might not show "NVRAM config last updated". Use saved timestamp.
+                if ( ! defined($cfupdt) && defined($cfsavd) ) {
+                    syslog(LOG_INFO, "%s: config changed: no running-config stamp found, using saved configuration stamp",
+                        $hostnameport);
+                    $cfupdt = $cfsavd;
+                }
+
+                # Actually insert data.
+                if ( defined($cfupdt) ) {
+                    $sth_update_dcapf_cfupdt->execute($cfupdt, $hostnameport);
+                    if ( defined($dbh->errstr) ) {
+                        syslog(LOG_NOTICE, "%s: config changed: SQL execution error: %s", $hostnameport, $dbh->errstr);
                     }
-                } elsif ( $line =~ /^! No configuration change since last restart$/ ) {
-                    # Classic IOS only.
-                    syslog(LOG_INFO,
-                        "%s: config changed: no configuration change since last restart, using saved configuration stamp",
-                            $hostnameport);
-                    if ( defined($cfsavd) ) {
-                        $cfupdt = $cfsavd;
-                    } else {
-                        $errcount++;
-                        last;
-                    }
+                } else {
+                    syslog(LOG_NOTICE, "%s: config changed: could not extract timestamp, nor derive it from cfsavd", $hostnameport);
                 }
             }
 
-            # A freshly booted XE device might not show "NVRAM config last updated". Use saved timestamp.
-            if ( ! defined($cfupdt) && defined($cfsavd) ) {
-                syslog(LOG_INFO, "%s: config changed: no running-config stamp found, using saved configuration stamp",
-                    $hostnameport);
-                $cfupdt = $cfsavd;
-            } else {
-                $errcount++;
-            }
-
-            # Actually insert data.
-            if ( defined($cfupdt) && $errcount == 0 ) {
-                $sth_update_dcapf_cfupdt->execute($cfupdt, $hostnameport);
-                if ( defined($dbh->errstr) ) {
-                    syslog(LOG_NOTICE, "%s: config changed: SQL execution error: %s", $hostnameport, $dbh->errstr);
-                }
-            } else {
-                syslog(LOG_NOTICE, "%s: config changed: could not extract timestamp, nor derive it from cfsavd", $hostnameport);
-            }
         } else {
             syslog(LOG_WARNING, "%s: config changed: expect error %s encountered while trying 'show running-config', skipping host",
                 $hostnameport, $err);
