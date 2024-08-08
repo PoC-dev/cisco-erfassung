@@ -61,6 +61,8 @@
      A            HOSTNAME$ R           3 22REFFLD(HOSTNAME CFGVERPF) COLOR(TRQ)
      A  41                              4  3'Zeitstempel . . .'
      A  41        CFSAVD$       16A     4 22
+     A  42                              4 67'Gezeigte ASA-Konfiguration ist -
+     A                                      die laufende, nicht die gesicherte.'
      A* Footer of the form -----------------------------------------------------
      A* A subfile control record may contain elements above or below
      A* the actual subfile, but not both. So here is a simple screen

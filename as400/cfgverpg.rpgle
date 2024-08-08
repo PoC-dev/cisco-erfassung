@@ -1,4 +1,4 @@
-     HCOPYRIGHT('Patrik Schindler <poc@pocnet.net>, 2024-08-03')
+     HCOPYRIGHT('Patrik Schindler <poc@pocnet.net>, 2024-08-08')
      H*
      H* This file is part of cisco-erfassung, an application conglomerate for
      H*  management of Cisco devices on AS/400, i5/OS and IBM i.
@@ -41,6 +41,7 @@
      H*     41: Show CFUPDDB. (DSPF)
      H*- Other Error Handling:
      H*     71: CHAIN found no records in dca
+     H*     72: CHAIN found no records in hst (should not happen)
      H*
      H*************************************************************************
      F* File descriptors. Unfortunately, we're bound to handle files by file
@@ -49,6 +50,7 @@
      F*
      FCFGVERPF  IF   E           K DISK
      FDCAPF     IF   E           K DISK
+     FHSTPF     IF   E           K DISK
      F*
      F* Display file.
      FCFGVERDF  CF   E             WORKSTN
@@ -90,6 +92,7 @@ E01  C                   ENDSL
      C* ------------------------------------------
      C* Fetch timestamp for DCA, only for config
 B01  C     *IN40         IFEQ      *OFF
+     C* ----------------------------
      C     HOSTNAME$     CHAIN     DCATBL                             71
      C*
 B02  C     *IN71         IFEQ      *ON
@@ -111,6 +114,16 @@ X03  C                   ELSE
 E03  C                   ENDIF
      C* -----------------
 E02  C                   ENDIF
+     C* ----------------------------
+     C     HOSTNAME$     CHAIN     HOSTS                              72
+     C*
+B02  C     *IN72         IFEQ      *OFF
+     C     SERVTYP       ANDEQ     'ASA'
+     C                   MOVE      *ON           *IN42
+X02  C                   ELSE
+     C                   MOVE      *OFF          *IN42
+E02  C                   ENDIF
+     C* ----------------------------
 E01  C                   ENDIF
      C* ------------------------------------------
      C*
