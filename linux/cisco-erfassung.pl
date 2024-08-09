@@ -1514,8 +1514,8 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
     # ----------------------------------------------------------------------
 
     # Only IOS seems to provide stamps of running and saved configs.
-    if ( $wartungstyp eq 'IOS' ) {
-        if ($cfupdt gt $cfsavd ) {
+    if ( $wartungstyp eq 'IOS' && defined($cfupdt) && defined($cfsavd) ) {
+        $cfupdt gt $cfsavd ) {
             syslog(LOG_INFO, "%s: running-config timestamp is newer than startup-config, forgot to save config with wr?",
                 $hostnameport);
         }
