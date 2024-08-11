@@ -82,6 +82,9 @@ This presents you with a menu from where you can choose the individual applicati
 
 **Note:** Extensive online help (in German language) is provided. You can access the initial help text in the main menu (by pressing `F1`) to get started quickly.
 
+## Known bugs.
+- Adding entries from missing OS-Device-Associations needs two times enter and sometimes results in an error message.
+
 ## ToDo.
 Main Host list/master file: HSTDF HSTHP HSTPF HSTPG HSTPOSLF:
 - Use transactions for deleting auxiliary table contents
