@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # This is to be manually incremented on each "publish".
-my $versionstring = '2024-08-10.00';
+my $versionstring = '2024-08-16.00';
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -825,7 +825,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
     ($pat, $err, $match, $before, $after) = $cnh->expect(5, '-re', $prompt_re);
 
     if ( ! defined($err) ) {
-        # Clean table from old entries.
+        syslog(LOG_DEBUG, "%s: show inventory: deleting previous data", $hostnameport);
         $sth_delete_invpf->execute($hostnameport);
         if ( defined($dbh->errstr) ) {
             syslog(LOG_NOTICE, "%s: show inventory: SQL execution error deleting previous data: %s", $hostnameport, $dbh->errstr);
@@ -833,8 +833,8 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
             # Set defaults for our parser helpers.
             $inv_have_line_name = $inv_have_line_pid = 0;
 
-            # Filter nasty (un)printables.
-            $before =~ tr/\000-\010|\013-\037|\177-\377//d;
+            # Filter nasty (un)printables. Keep CR, so we're able to detect an empty line.
+            $before =~ tr/\000-\010|\013-\014|\016-\037|\177-\377//d;
 
             @beforeLinesArray = split("\n", $before);
             foreach $line (@beforeLinesArray) {
@@ -854,6 +854,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
 
                         # Extract ASA hardware serial number from here.
                         if ( $wartungstyp eq 'ASA' ) {
+                            syslog(LOG_DEBUG, "%s: show inventory: found ASA serial number %s", $hostnameport, $inv_serno);
                             $serno = $inv_serno;
                         }
 
@@ -1324,7 +1325,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                 syslog(LOG_DEBUG, "%s: config saved: found ASA match '%s %s'", $hostnameport, $1, $2);
                 last;
             } elsif ( $wartungstyp eq 'IOS' &&
-                    $line =~ /^! NVRAM config last updated at (\d{2}:\d{2}:\d{2} \S+ \S{3} \S{3} \d{1,2} \d{4}) by \S+$/ ) {
+                    $line =~ /^! NVRAM config last updated at (\d{2}:\d{2}:\d{2} \S+ \S{3} \S{3} \d{1,2} \d{4})( by \S+)?$/ ) {
                 $time_dtf = $time_parser->parse_datetime($1);
                 syslog(LOG_DEBUG, "%s: config saved: found IOS match '%s'", $hostnameport, $1);
                 last;
@@ -1460,7 +1461,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
             } else {
                 # Look for timestamp lines.
                 foreach $line (@show_config) {
-                    if ( $line =~ /^! Last configuration change at (\d{2}:\d{2}:\d{2} \S+ \S{3} \S{3} \d{1,2} \d{4}) by \S+$/ ) {
+                    if ( $line =~ /^! Last configuration change at (\d{2}:\d{2}:\d{2} \S+ \S{3} \S{3} \d{1,2} \d{4})( by \S+)?$/ ) {
                         $time_dtf = $time_parser->parse_datetime($1);
                         if ( defined($time_dtf) ) {
                             $cfupdt = $time_formatter->format_datetime($time_dtf);
@@ -1727,6 +1728,8 @@ END {
         $cnh->send("exit\n");
         $cnh->soft_close();
     }
+
+    syslog(LOG_INFO, "Done");
 
     closelog;
 }
