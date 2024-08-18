@@ -22,6 +22,9 @@ dltpnlgrp pnlgrp(ciscohp)
 rmvm file(*curlib/sources) mbr(ciscohp)
 ```
 
+## 2024-08-18: shortened *uptime* field from 52 to 50 positions.
+Done because while rearranging/matching fields and field descriptions between hst* and dca*, uptime field length made the field wrap in dcadf. The slightly shorter length should not be a problem.
+
 ----
 
-2024-08-04 poc@pocnet.net
+2024-08-18 poc@pocnet.net
