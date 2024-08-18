@@ -1,4 +1,4 @@
-     HCOPYRIGHT('Patrik Schindler <poc@pocnet.net>, 2024-08-17')
+     HCOPYRIGHT('Patrik Schindler <poc@pocnet.net>, 2024-08-18')
      H*
      H* This file is part of cisco-erfassung, an application conglomerate for
      H*  management of Cisco devices on AS/400, i5/OS and IBM i.
@@ -130,7 +130,7 @@
      C* Display for page one.
      C*
      C* Show or hide ENABLE depending on availability.
-     C                   EVAL      *IN40 = (NOT(%NULLIND(CFUPDT)))
+     C                   EVAL      *IN40 = (NOT(%NULLIND(ENABLE)))
      C*
      C* Fill out automation field.
      C     DCA           IFEQ      *ZERO
