@@ -31,7 +31,7 @@
      A            RAM            4S 0
      A            RLD$REASON    84A         ALWNULL
      A            SYSIMG        80A         ALWNULL
-     A            UPTIME        52A         ALWNULL TEXT('Textual uptime')
+     A            UPTIME        50A         ALWNULL TEXT('Textual uptime')
      A            CFUPDT          Z         ALWNULL TEXT('Device cfg changed')
      A            CFSAVD          Z         ALWNULL TEXT('Device cfg written')
      A            ASA_DM_VER    20A         ALWNULL TEXT('ASDM version')

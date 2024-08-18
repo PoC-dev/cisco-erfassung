@@ -296,7 +296,7 @@
      A N44                                  DSPATR(UL)
      A*
      A                                 11  2'Zugriff' DSPATR(HI) HLPID(2)
-     A                                 12  3'Typ  . . . . . . . . .'
+     A                                 12  3'Hosttyp  . . . . . . .'
      A            SERVTYP   R        B 12 27VALUES('ASA' 'IOS')
      A  44                                  DSPATR(PR)
      A N44                                  DSPATR(UL)

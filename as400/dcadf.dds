@@ -36,33 +36,33 @@
      A                                      Erfasste Daten')
      A          H                           HLPARA(3 2 3 68)
      A                                      HLPPNLGRP('DCA/HOSTNAME' DCAHP)
-     A          H                           HLPARA(6 3 6 33)
+     A          H                           HLPARA(6 2 6 33)
      A                                      HLPPNLGRP('DCA1/SERVTYP' DCAHP)
-     A          H                           HLPARA(7 3 7 36)
+     A          H                           HLPARA(7 2 7 36)
      A                                      HLPPNLGRP('DCA1/CONN' DCAHP)
-     A          H                           HLPARA(8 3 8 46)
+     A          H                           HLPARA(8 2 8 46)
      A                                      HLPPNLGRP('DCA1/USERNAME' DCAHP)
-     A          H                           HLPARA(9 3 9 46)
+     A          H                           HLPARA(9 2 9 46)
      A                                      HLPPNLGRP('DCA1/PASSWD' DCAHP)
-     A          H                           HLPARA(10 3 10 46)
+     A          H                           HLPARA(10 2 10 46)
      A                                      HLPPNLGRP('DCA1/ENABLE' DCAHP)
-     A          H                           HLPARA(11 3 11 34)
+     A          H                           HLPARA(11 2 11 34)
      A                                      HLPPNLGRP('DCA1/DCA' DCAHP)
-     A          H                           HLPARA(12 3 12 34)
+     A          H                           HLPARA(12 2 12 34)
      A                                      HLPPNLGRP('DCA1/UPD_IGN' DCAHP)
-     A          H                           HLPARA(13 3 13 34)
+     A          H                           HLPARA(13 2 13 34)
      A                                      HLPPNLGRP('DCA1/ACU_IGN' DCAHP)
      A          H                           HLPARA(15 2 16 52)
      A                                      HLPPNLGRP('DCA1/COMMT' DCAHP)
-     A          H                           HLPARA(19 3 19 80)
+     A          H                           HLPARA(19 2 19 80)
      A                                      HLPPNLGRP('DCA1/STAMP' DCAHP)
-     A          H                           HLPARA(20 3 20 46)
+     A          H                           HLPARA(20 2 20 46)
      A                                      HLPPNLGRP('DCA1/CFUPDT' DCAHP)
-     A          H                           HLPARA(21 3 21 80)
+     A          H                           HLPARA(21 2 21 80)
      A                                      HLPPNLGRP('DCA1/CFSAVD' DCAHP)
      A          H                           HLPARA(22 70 22 80)
      A                                      HLPPNLGRP('DCA1/MORE' DCAHP)
-     A          H                           HLPARA(23 1 23 80)
+     A          H                           HLPARA(23 1 23 45)
      A                                      HLPPNLGRP('DCA/FKEYS' DCAHP)
      A*         ##End of definitions. Here be real screen elements.
      A                                  1 24'Cisco-Wartungen: Erfasste Daten'
@@ -80,29 +80,29 @@
      A            USERNAME  R           8 31REFFLD(USERNAME HSTPF)
      A                                  9  3'Passwort . . . . . . . . .'
      A            PASSWD    R           9 31REFFLD(PASSWD HSTPF)
-     A  43                             10  3'Enable-Secret  . . . . . .'
-     A  43        ENABLE    R          10 31REFFLD(ENABLE HSTPF)
+     A  40                             10  3'Enable-Secret  . . . . . .'
+     A  40        ENABLE    R          10 31REFFLD(ENABLE HSTPF)
      A                                 11  3'Automatische Erfassung . .'
-     A N44                             11 31'Nein'
-     A  44                             11 31'Ja'
+     A N41                             11 31'Nein'
+     A  41                             11 31'Ja'
      A                                 12  3'Ignoriere neues OS . . . .'
-     A N45                             12 31'Nein'
-     A  45                             12 31'Ja'
+     A N42                             12 31'Nein'
+     A  42                             12 31'Ja'
      A                                 13  3'Ignoriere neuen Anyconnect'
-     A N46                             13 31'Nein'
-     A  46                             13 31'Ja'
+     A N43                             13 31'Nein'
+     A  43                             13 31'Ja'
      A                                 15  2'Bemerkung' DSPATR(HI)
      A            COMMT     R          16  3REFFLD(COMMT HSTPF)
      A                                 18  2'Zeitstempel' DSPATR(HI)
      A                                 19  3'Erfassung  . . . . . . . .'
      A            STAMP$        16A    19 31
-     A  47                             19 53'Erfassung älter als 3 Tage!'
+     A  44                             19 53'Erfassung älter als 3 Tage!'
      A                                      COLOR(RED)
-     A  48                             20  3'Cfg Geändert (run) . . . .'
-     A  48        CFUPDT$       16A    20 31
-     A  49                             21  3'Cfg Gesichert (save) . . .'
-     A  49        CFSAVD$       16A    21 31
-     A  50                             21 53'Älter als run, wr vergessen!'
+     A  45                             20  3'Cfg Geändert (run) . . . .'
+     A  45        CFUPDT$       16A    20 31
+     A  46                             21  3'Cfg Gesichert (save) . . .'
+     A  46        CFSAVD$       16A    21 31
+     A  47                             21 53'Älter als run, wr vergessen!'
      A                                      COLOR(RED)
      A                                 22 70'Weitere ...' DSPATR(HI)
      A                                 23  2'F3=Verlassen   F10=Vlan-Info   -
@@ -119,33 +119,33 @@
      A*         ##Help Area definition for this screen.
      A                                      HLPTITLE('Cisco-Wartungen: -
      A                                      Erfasste Daten')
-     A          H                           HLPARA(3 2 3 64)
+     A          H                           HLPARA(3 2 3 68)
      A                                      HLPPNLGRP('DCA/HOSTNAME' DCAHP)
-     A          H                           HLPARA(6 3 6 46)
+     A          H                           HLPARA(6 2 6 70)
      A                                      HLPPNLGRP('DCA2/MODEL' DCAHP)
-     A          H                           HLPARA(7 3 7 35)
+     A          H                           HLPARA(7 2 7 39)
      A                                      HLPPNLGRP('DCA2/RAM' DCAHP)
-     A          H                           HLPARA(8 3 8 35)
+     A          H                           HLPARA(8 2 8 39)
      A                                      HLPPNLGRP('DCA2/FLASH' DCAHP)
-     A          H                           HLPARA(9 3 9 38)
+     A          H                           HLPARA(9 2 9 42)
      A                                      HLPPNLGRP('DCA2/SERNO' DCAHP)
-     A          H                           HLPARA(10 3 10 80)
+     A          H                           HLPARA(12 2 12 80)
      A                                      HLPPNLGRP('DCA2/VERSION' DCAHP)
-     A          H                           HLPARA(11 3 11 46)
+     A          H                           HLPARA(13 2 13 50)
      A                                      HLPPNLGRP('DCA2/ASA_DM_VER' DCAHP)
-     A          H                           HLPARA(14 3 15 80)
+     A          H                           HLPARA(14 2 15 80)
      A                                      HLPPNLGRP('DCA2/SYSIMG' DCAHP)
-     A          H                           HLPARA(16 3 17 80)
+     A          H                           HLPARA(16 2 17 80)
      A                                      HLPPNLGRP('DCA2/RLDREASON' DCAHP)
-     A          H                           HLPARA(18 3 18 76)
+     A          H                           HLPARA(18 2 18 80)
      A                                      HLPPNLGRP('DCA2/UPTIME' DCAHP)
-     A          H                           HLPARA(19 3 19 34)
+     A          H                           HLPARA(19 2 19 36)
      A                                      HLPPNLGRP('DCA2/CONFREG' DCAHP)
-     A          H                           HLPARA(21 27 21 73)
+     A          H                           HLPARA(20 31 20 77)
      A                                      HLPPNLGRP('DCA2/ASA_FOVER' DCAHP)
-     A          H                           HLPARA(22 74 22 77)
+     A          H                           HLPARA(22 77 22 80)
      A                                      HLPPNLGRP('DCA2/END' DCAHP)
-     A          H                           HLPARA(23 1 23 80)
+     A          H                           HLPARA(23 1 23 45)
      A                                      HLPPNLGRP('DCA/FKEYS' DCAHP)
      A*         ##End of definitions. Here be real screen elements.
      A                                  1 24'Cisco-Wartungen: Erfasste Daten'
@@ -157,7 +157,7 @@
      A                                  5  2'Hardware' DSPATR(HI)
      A                                  6  3'Modell . . . . . . . . . .'
      A            MODEL     R           6 31
-     A  51                              6 56'End of Support!' COLOR(RED)
+     A  50                              6 56'End of Support!' COLOR(RED)
      A                                  7  3'RAM  . . . . . . . . . . .'
      A            RAM       R     Y     7 32EDTCDE(1)
      A                                  7 38'MB'
@@ -169,24 +169,24 @@
      A                                 11  2'Software' DSPATR(HI)
      A                                 12  3'Version  . . . . . . . . .'
      A            VERSION   R          12 31
-     A  52                             12 56'Upd.' COLOR(TRQ)
-     A  52        VER_SOLL  R          12 61REFFLD(VERSION) COLOR(TRQ)
-     A  53                             13  3'ASDM-Version . . . . . . .'
-     A  53        ASA_DM_VERR          13 31
+     A  51                             12 56'Upd.' COLOR(TRQ)
+     A  51        VER_SOLL  R          12 61REFFLD(VERSION) COLOR(TRQ)
+     A  52                             13  3'ASDM-Version . . . . . . .'
+     A  52        ASA_DM_VERR          13 31
      A                                 14  3'OS-Image . . . . . . . . .'
      A            SYSIMG    R        B 14 31CNTFLD(50) DSPATR(PR)
-     A  54                             16  3'Reload Reason  . . . . . .'
-     A  54        RLD$REASONR        B 16 31CNTFLD(50) DSPATR(PR)
-     A  55                                  COLOR(RED)
+     A  53                             16  3'Reload Reason  . . . . . .'
+     A  53        RLD$REASONR        B 16 31CNTFLD(50) DSPATR(PR)
+     A  54                                  COLOR(RED)
      A                                 18  3'Uptime . . . . . . . . . .'
      A            UPTIME    R          18 31
      A                                 19  3'Config-Register  . . . . .'
      A            CONFREG   R          19 31
-     A  56                             21 31'Achtung!'
+     A  55                             20 31'Achtung!'
      A                                      COLOR(YLW) DSPATR(RI)
-     A  56                             21 40'Host ist Teil eines Failover--
+     A  55                             20 40'Host ist Teil eines Failover--
      A                                      Clusters!'
-     A                                 22 74'Ende' DSPATR(HI)
+     A                                 22 75'Ende' DSPATR(HI)
      A                                 23  2'F3=Verlassen   F10=Vlan-Info   -
      A                                      F12=Abbrechen'
      A                                      COLOR(BLU)
@@ -237,9 +237,9 @@
      A            VTP_MODE  R           4 16
      A                                  5  2'Version . . .'
      A            VTP_VERS  R           5 16EDTCDE(1)
-     A  57                              6  2'Pruning . . .'
-     A  57N58                           6 16'Nein'
-     A  57 58                           6 16'Ja'
+     A  56                              6  2'Pruning . . .'
+     A  56N57                           6 16'Nein'
+     A  56 57                           6 16'Ja'
      A                                  8  1'Lokale Vlan-Liste' DSPATR(HI)
      A                                 10  4'ID' DSPATR(HI) HLPID(1)
      A                                 10  8'Name' DSPATR(HI) HLPID(2)

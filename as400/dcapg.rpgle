@@ -1,4 +1,4 @@
-     HCOPYRIGHT('Patrik Schindler <poc@pocnet.net>, 2024-08-06')
+     HCOPYRIGHT('Patrik Schindler <poc@pocnet.net>, 2024-08-17')
      H*
      H* This file is part of cisco-erfassung, an application conglomerate for
      H*  management of Cisco devices on AS/400, i5/OS and IBM i.
@@ -38,22 +38,22 @@
      H*     33: SFLCLR.
      H*     34: SFLEND, EOF from Database file.
      H*- General DSPF Conditioning:
-     H*     43: Show ENABLE field (if not NULL).
-     H*     44: DCA = 1
-     H*     45: UPD_IGN = 1
-     H*     46: ACU_IGN = 1
-     H*     47: Show red 'Erfassung too old' warning.
-     H*     48: Show CFSAVD field (if not NULL).
-     H*     49: Show CFUPDT field (if not NULL).
-     H*     50: Show red 'Config not saved' warning.
-     H*     51: Show red 'End of Support!' warning.
-     H*     52: Show VER_SOLL/Update if version is different to given version.
-     H*     53: Show ASDM version (if not NULL).
-     H*     54: Show reload reason (if not NULL).
-     H*     55: Color reload reason red, so it indicates error.
-     H*     56: Show string if failover is present.
-     H*     57: Show VTP pruning (if not NULL).
-     H*     58: VTP_PRUNING = 1
+     H*     40: Show ENABLE field (if not NULL).
+     H*     41: DCA = 1
+     H*     42: UPD_IGN = 1
+     H*     43: ACU_IGN = 1
+     H*     44: Show red 'Erfassung too old' warning.
+     H*     45: Show CFSAVD field (if not NULL).
+     H*     46: Show CFUPDT field (if not NULL).
+     H*     47: Show red 'Config not saved' warning.
+     H*     50: Show red 'End of Support!' warning.
+     H*     51: Show VER_SOLL/Update if version is different to given version.
+     H*     52: Show ASDM version (if not NULL).
+     H*     53: Show reload reason (if not NULL).
+     H*     54: Color reload reason red, so it indicates error.
+     H*     55: Show string if failover is present.
+     H*     56: Show VTP pruning (if not NULL).
+     H*     57: VTP_PRUNING = 1
      H*     60: Show DSPREC Form 2 instead of 1.
      H*- Other Error Handling:
      H*     71: CHAIN found no records in hosts
@@ -130,31 +130,27 @@
      C* Display for page one.
      C*
      C* Show or hide ENABLE depending on availability.
-     C                   IF        NOT %NULLIND(ENABLE)
-     C                   MOVE      *ON           *IN43
-     C                   ELSE
-     C                   MOVE      *OFF          *IN43
-     C                   ENDIF
+     C                   EVAL      *IN40 = (NOT(%NULLIND(CFUPDT)))
      C*
      C* Fill out automation field.
      C     DCA           IFEQ      *ZERO
-     C                   MOVE      *OFF          *IN44
+     C                   MOVE      *OFF          *IN41
      C                   ELSE
-     C                   MOVE      *ON           *IN44
+     C                   MOVE      *ON           *IN41
      C                   ENDIF
      C*
      C* Fill out updates field.
      C     UPD_IGN       IFEQ      *ZERO
-     C                   MOVE      *OFF          *IN45
+     C                   MOVE      *OFF          *IN42
      C                   ELSE
-     C                   MOVE      *ON           *IN45
+     C                   MOVE      *ON           *IN42
      C                   ENDIF
      C*
      C* Fill out ac updates field.
      C     ACU_IGN       IFEQ      *ZERO
-     C                   MOVE      *OFF          *IN46
+     C                   MOVE      *OFF          *IN43
      C                   ELSE
-     C                   MOVE      *ON           *IN46
+     C                   MOVE      *ON           *IN43
      C                   ENDIF
      C*
      C* Shorten Time Stamps for last inventory run.
@@ -168,9 +164,9 @@
      C                   MOVE      STAMP         TS_DB
      C     TS_NOW        SUBDUR    TS_DB         TS_RESULT:*D
      C     TS_RESULT     IFGT      3
-     C                   MOVE      *ON           *IN46
+     C                   MOVE      *ON           *IN44
      C                   ELSE
-     C                   MOVE      *OFF          *IN46
+     C                   MOVE      *OFF          *IN44
      C                   ENDIF
      C*
      C* Show cfupdt depending on availability.
@@ -178,9 +174,9 @@
      C     16            SUBST     CFUPDT:1      CFUPDT$
      C     '.':':'       XLATE     CFUPDT$       CFUPDT$
      C     '-':' '       XLATE     CFUPDT$:11    CFUPDT$
-     C                   MOVE      *ON           *IN48
+     C                   MOVE      *ON           *IN45
      C                   ELSE
-     C                   MOVE      *OFF          *IN48
+     C                   MOVE      *OFF          *IN45
      C                   ENDIF
      C*
      C* Show cfsavd depending on availability.
@@ -188,13 +184,13 @@
      C     16            SUBST     CFSAVD:1      CFSAVD$
      C     '.':':'       XLATE     CFSAVD$       CFSAVD$
      C     '-':' '       XLATE     CFSAVD$:11    CFSAVD$
-     C                   MOVE      *ON           *IN49
+     C                   MOVE      *ON           *IN46
      C                   ELSE
-     C                   MOVE      *OFF          *IN49
+     C                   MOVE      *OFF          *IN46
      C                   ENDIF
      C*
      C* Alert if running-config is newer than startup-config.
-     C                   EVAL      *IN50 = ((NOT(%NULLIND(CFUPDT)) AND
+     C                   EVAL      *IN47 = ((NOT(%NULLIND(CFUPDT)) AND
      C                                      (NOT(%NULLIND(CFSAVD)) AND
      C                                      (CFUPDT > CFSAVD))))
      C*------------------------------------------
@@ -220,33 +216,24 @@
      C* Check if the found OS version is equal to the current version. If not,
      C*  we have an update to show.
      C     VERSION       IFNE      N_VERSION
-     C                   MOVE      *ON           *IN52
+     C                   MOVE      *ON           *IN51
      C                   MOVE      N_VERSION     VER_SOLL
      C                   ELSE
-     C                   MOVE      *OFF          *IN52
+     C                   MOVE      *OFF          *IN51
      C                   ENDIF
      C*
      C                   ENDIF
      C*----------------------------
-     C                   IF        NOT %NULLIND(ASA_DM_VER)
-     C                   MOVE      *ON           *IN53
-     C                   ELSE
-     C                   MOVE      *OFF          *IN53
-     C                   ENDIF
-     C*
-     C                   IF        NOT %NULLIND(RLD$REASON)
-     C                   MOVE      *ON           *IN54
-     C                   ELSE
-     C                   MOVE      *OFF          *IN54
-     C                   ENDIF
+     C                   EVAL      *IN52 = (NOT(%NULLIND(ASA_DM_VER)))
+     C                   EVAL      *IN53 = (NOT(%NULLIND(RLD$REASON)))
      C*
      C* If reload was due to some error, color field.
-     C     'error'       SCAN      RLD$REASON:1                           55
-     C     'Critical'    SCAN      RLD$REASON:1                           55
-     C     'fault'       SCAN      RLD$REASON:1                           55
+     C     'error'       SCAN      RLD$REASON:1                           54
+     C     'Critical'    SCAN      RLD$REASON:1                           54
+     C     'fault'       SCAN      RLD$REASON:1                           54
      C*
      C* This numeric A, so we can use it directly.
-     C                   MOVE      ASA_FOVER     *IN56
+     C                   MOVE      ASA_FOVER     *IN55
      C*
      C*-------------------------------------------------------------------------
      C* Now, show forms as desired. This is a crude multipage-form workaround.
@@ -331,11 +318,11 @@
      C*
      C* Ouput VTP Pruning status.
      C                   IF        NOT %NULLIND(VTP_PRUNE)
-     C                   MOVE      *ON           *IN57
+     C                   MOVE      *ON           *IN56
      C* This numeric A, so we can use it directly.
-     C                   MOVE      VTP_PRUNE     *IN58
+     C                   MOVE      VTP_PRUNE     *IN57
      C                   ELSE
-     C                   MOVE      *OFF          *IN57
+     C                   MOVE      *OFF          *IN56
      C                   ENDIF
      C*
      C* Display the subfile- and subfile control records, or indicate an empty

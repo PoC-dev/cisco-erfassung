@@ -570,7 +570,6 @@ E01  C                   ENDIF
      C* Reset colors.
      C                   MOVEA     '0000'        *IN(36)
      C*
-     C* Rewrite this with SELECT. Nested IFs are so very ugly.
      C* Color me blue - if dca is disabled.
 B01  C     DCA           IFEQ      *ZERO
      C                   MOVE      *ON           *IN36
