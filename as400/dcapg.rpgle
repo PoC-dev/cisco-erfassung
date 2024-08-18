@@ -206,9 +206,9 @@
      C     DT_NOW        SUBDUR    DT_DB         DT_RESULT:*D
      C* If date difference is greater than 0...
      C     DT_RESULT     IFGT      *ZERO
-     C                   MOVE      *ON           *IN51
+     C                   MOVE      *ON           *IN50
      C                   ELSE
-     C                   MOVE      *OFF          *IN51
+     C                   MOVE      *OFF          *IN50
      C                   ENDIF
      C*
      C                   ENDIF
