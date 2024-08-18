@@ -96,6 +96,11 @@ Datensatzes angezeigt.
 Befehle aufgerufen, die für den jeweiligen Gerätetyp passend sind.
 :EHELP.
 .* -----------------------------------------------------------------------------
+:HELP NAME='SFLHDR/COMMT'.Spalte Bemerkung
+:XH3.Spalte Bemerkung
+:P.Hier wird - sofern vorhanden - eine Bemerkung eines Datensatzes angezeigt.
+:EHELP.
+.* -----------------------------------------------------------------------------
 :HELP NAME='MAIN/SFLDTA'.Datenbereich
 :XH3.Datenbereich
 :P.Hier sind einige Datensätze aus der Gesamtheit aller vorhandenen Datensätze
