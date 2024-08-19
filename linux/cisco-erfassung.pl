@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # This is to be manually incremented on each "publish".
-my $versionstring = '2024-08-16.00';
+my $versionstring = '2024-08-19.01';
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -39,11 +39,11 @@ my $giturl = $config->{'giturl'};
 # ----------------------------------------------------------------------------------------------------------------------------------
 
 # General vars.
-my ($cleanup, $cnh, $scmdestfile, $scmtmp, $dbh, $dirfh, $do_scm, $do_scm_add, $do_orphans, $do_setnull, $errcount, $fh, $file,
-    $hostname, $hostport, $inv_have_line_name, $inv_have_line_pid, $loopcount, $num_entries, $param, $retval, $setnull_field,
-    $show_config_command, $showverfeature, $stamp_type, $sth_select_hosts, $test_db,  $tmpline, $time_dtf, $time_formatter,
-    $time_parser, $to_clean_pf, $try_loop_string, $use_git, @beforeLinesArray, @cnh_parms, @errtyp, @filelist, @lines, @params,
-    @setnull_fields, @show_config, @show_version, @time_tm, @to_clean_pfs, @try_loop_strings
+my ($asa_serno, $cfsavd_flash, $cleanup, $cnh, $dbh, $dirfh, $do_orphans, $do_scm, $do_scm_add, $do_setnull, $errcount,
+    $fh, $file, $flash_config_timestamp, $flash_size, $hostname, $hostport, $inv_have_line_name, $inv_have_line_pid, $loopcount,
+    $num_entries, $param, $reloaded, $retval, $scmdestfile, $scmtmp, $setnull_field, $show_config_command, $showverfeature,
+    $sth_select_hosts, $test_db, $time_dtf, $tmpline, $to_clean_pf, $try_loop_string, $use_git, @beforeLinesArray, @cnh_parms,
+    @errtyp, @filelist, @lines, @params, @setnull_fields, @show_config, @show_version, @time_tm, @to_clean_pfs, @try_loop_strings
 );
 
 # Matches a Cisco-CLI-Prompt, so Expect knows when the result of the sent command has been sent.
@@ -56,8 +56,9 @@ my ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp);
 my ($lineno, $line);
 
 # Vars from dcapf. Also see handler if $do_setnull == 1!
-my ( $asa_dm_ver, $asa_fover, $cfsavd, $cfupdt, $confreg, $flash, $model, $ram, $reload_reason, $serno, $stamp,
-    $sysimg, $uptime, $uptime_min, $version, $vtp_domain, $vtp_mode, $vtp_prune, $vtp_vers);
+my ( $asa_dm_ver, $asa_fover, $cfsavd, $cfupdt, $confreg, $flash, $model, $ram, $reload_reason, $serno, $stamp, $sysimg, $uptime,
+    $uptime_min, $version, $vtp_domain, $vtp_mode, $vtp_prune, $vtp_vers
+);
 
 # Vars from invpf.
 my ($inv_name, $inv_descr, $inv_pid, $inv_vid, $inv_serno);
@@ -262,11 +263,18 @@ if ( defined($dbh->errstr) ) {
 
 
 # Prepare reusable timestamp formatting.
-$time_parser = DateTime::Format::Strptime->new(
+my $time_parser_config = DateTime::Format::Strptime->new(
     pattern => "%T %Z %a %b %d %Y",
 );
-$time_formatter = DateTime::Format::Strptime->new(
+my $time_parser_flash = DateTime::Format::Strptime->new(
+    pattern => "%b %d %Y %T %Z",
+);
+my $time_formatter = DateTime::Format::Strptime->new(
     pattern => "%Y-%m-%d-%H.%M.%S.000000",
+);
+# This is for calculating a time window when comparing stamps with some deviation.
+my $duration = DateTime::Duration->new(
+    minutes => 2
 );
 
 # ----------------------------------------------------------------------------------------------------------------------------------
@@ -421,7 +429,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
 
 
     # Clear vars from previous iteration.
-    $asa_dm_ver = $asa_fover = $cfsavd = $cfupdt =  $confreg = $flash = $model = $ram = $reload_reason = $serno =
+    $asa_dm_ver = $asa_fover = $cfsavd = $cfupdt = $confreg = $flash = $model = $ram = $reload_reason = $reloaded = $serno =
         $stamp = $sysimg = $uptime = $uptime_min = $version = $vtp_domain = $vtp_mode = $vtp_prune = $vtp_vers = $inv_name =
         $inv_descr = $inv_pid = $inv_vid = $inv_serno = $ac_type = $ac_ver = $vlan_descr = $vlan_no, $time_dtf = 
         $cfsavd = $cfupdt = undef;
@@ -600,6 +608,150 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
 
     # ----------------------------------------------------------------------
 
+    # Handle show inventory.
+    # Note: IOS 12.0 and earlier don't know this command.
+
+    syslog(LOG_DEBUG, "%s: show inventory: sending command 'show inventory' and parsing output", $hostnameport);
+    $cnh->send("show inventory\n");
+    ($pat, $err, $match, $before, $after) = $cnh->expect(5, '-re', $prompt_re);
+
+    if ( ! defined($err) ) {
+        syslog(LOG_DEBUG, "%s: show inventory: deleting previous data", $hostnameport);
+        $sth_delete_invpf->execute($hostnameport);
+        if ( defined($dbh->errstr) ) {
+            syslog(LOG_NOTICE, "%s: show inventory: SQL execution error deleting previous data: %s", $hostnameport, $dbh->errstr);
+        } else {
+            # Set defaults for our parser helpers.
+            $inv_have_line_name = $inv_have_line_pid = 0;
+
+            # Filter nasty (un)printables. Keep CR, so we're able to detect an empty line.
+            $before =~ tr/\000-\010|\013-\014|\016-\037|\177-\377//d;
+
+            @beforeLinesArray = split("\n", $before);
+            foreach $line (@beforeLinesArray) {
+                # Try to match our line type: Name, Pid, or empty. Everything else is ignored.
+                if ( $line =~ /^\s*$/ ) {
+                    # Check if we have everything for a DB insert.
+                    if ( $inv_have_line_name == 1 && $inv_have_line_pid == 1 ) {
+                        if ( ! defined($inv_pid) || $inv_pid =~ /^\s*$/ ) {
+                            $inv_pid = 'Unspecified';
+                        }
+                        if ( ! defined($inv_vid) || $inv_vid =~ /^\s*$/ ) {
+                            $inv_vid = 'Unspecified';
+                        }
+                        if ( ! defined($inv_serno) || $inv_serno =~ /^\s*$/ ) {
+                            $inv_serno = 'Unspecified';
+                        }
+
+                        # Extract ASA hardware serial number from here.
+                        if ( $wartungstyp eq 'ASA' ) {
+                            syslog(LOG_DEBUG, "%s: show inventory: found ASA serial number %s", $hostnameport, $inv_serno);
+                            $asa_serno = $inv_serno;
+                        }
+
+                        $sth_insert_invpf->execute($hostnameport, $inv_name, $inv_descr, $inv_pid, $inv_vid, $inv_serno);
+                        if ( defined($dbh->errstr) ) {
+                            syslog(LOG_NOTICE, "%s: show inventory: SQL execution error inserting data: %s",
+                                $hostnameport, $dbh->errstr);
+                            last;
+                        }
+
+                        # Reset Variables for next run.
+                        $inv_name = $inv_descr = $inv_pid = $inv_vid = $inv_serno = undef;
+                        $inv_have_line_name = $inv_have_line_pid = 0;
+                    }
+                } elsif ( $line =~ /^NAME: "(.*)", DESCR: "(.*)"\s*$/i ) {
+                    $inv_have_line_name = 1;
+                    $inv_name = $1;
+                    $inv_descr = $2;
+                } elsif ( $line =~ /^PID: (\S*)\s*, VID: (.*)\s*, SN: (.*)\s*$/ ) {
+                    $inv_have_line_pid = 1;
+
+                    # Fix excess blanks at string end.
+                    $inv_pid = $1;
+                    $inv_pid =~ tr/[ ]*$//d;
+
+                    $inv_vid = $2;
+                    $inv_vid =~ tr/[ ]*$//d;
+
+                    $inv_serno = $3;
+                    $inv_serno =~ tr/[ ]*$//d;
+                } elsif ( $line =~ /^% Invalid input detected at '^' marker\.$/ ) {
+                    syslog(LOG_NOTICE, "%s: show inventory: device doesn't support command: %s", $hostnameport);
+                    last;
+                }
+            }
+        }
+    } else {
+        syslog(LOG_WARNING, "%s: show inventory: expect error %s encountered while trying command, skipping host",
+            $hostnameport, $err);
+        # Usually this means we've lost the connection to the device and is always fatal => Skip host.
+        $cnh->soft_close();
+        $dbh->do("rollback");
+        next;
+    }
+
+    # ----------------------------------------------------------------------
+
+    # Obtain various information from flash (permanent storage) memory.
+
+    # Some newer devices insist on flash: (with colon) here. Do that in a loop and jump out if we have what we want.
+    @try_loop_strings = ('show flash', 'show flash:', 'show bootflash:', 'dir flash:');
+    foreach $try_loop_string (@try_loop_strings) {
+        $cnh->send($try_loop_string . "\n");
+        ($pat, $err, $match, $before, $after) = $cnh->expect(5, '-re', $prompt_re);
+
+        if ( ! defined($err) ) {
+            # Filter nasty (un)printables.
+            $before =~ tr/\000-\010|\013-\037|\177-\377//d;
+
+            @beforeLinesArray = split("\n", $before);
+            foreach $line (@beforeLinesArray) {
+                # Again, different devices have different output.
+                if ( $line =~ /^(\d+) bytes total \(\d+ bytes free(\/\d+% free)?\)\s*$/ ) {
+                    $flash_size = sprintf("%.0f", $1 / 1024 / 1024);
+                } elsif ( $line =~ /^(\d+) bytes available \((\d+) bytes used\)\s*$/ ) {
+                    if ( defined($1) && defined($2) ) {
+                        $flash_size = sprintf("%.0f", ($1 + $2) / 1024 / 1024);
+                    } else {
+                        syslog(LOG_NOTICE, "%s: flash: size NOT read from %s, because it is malformed. (%s, %s)",
+                            $hostnameport, $try_loop_string, $1, $2);
+                    }
+                }
+
+                if ( $wartungstyp eq 'IOS' ) {
+                    # Found saved configuration, extract timestamp: Some switches do not show it in the startup-config header.
+                    if ( $line =~ /^\s+\d+\s+\d+\s+(\S{3} \d{2} \d{4}) (\d{2}:\d{2}:\d{2})\.\d{10} (\S+)\s+nvram_config\s*$/ ) {
+                        # This is for show commands.
+                        syslog(LOG_DEBUG, "%s: flash: extracting saved config timestamp: %s %s %s (with '%s')",
+                            $hostnameport, $1, $2, $3, $try_loop_string);
+                        $time_dtf = $time_parser_flash->parse_datetime($1 . ' ' . $2 . ' '  . $3);
+                    } elsif ( $line =~ /^\d+\s+-rw-\s+\d+\s+(\S{3} \d{1,2} \d{4}) (\d{2}:\d{2}:\d{2} \S+)\s+nvram_config\s*$/ ) {
+                        # This is for 'dir flash:'.
+                        syslog(LOG_DEBUG, "%s: flash: extracting saved config timestamp: %s %s (with '%s')",
+                            $hostnameport, $1, $2, $try_loop_string);
+                        $time_dtf = $time_parser_flash->parse_datetime($1 . ' ' . $2);
+                    }
+                }
+            }
+
+            # Format time from earlier found input.
+            if ( $wartungstyp eq 'IOS' && defined($time_dtf) ) {
+                $cfsavd_flash = $time_formatter->format_datetime($time_dtf);
+                syslog(LOG_DEBUG, "%s: flash: using formatted date '%s'", $hostnameport, $cfsavd_flash);
+            }
+        } else {
+            syslog(LOG_WARNING, "%s: flash: expect error %s encountered while trying '%s', skipping host",
+                $hostnameport, $err, $try_loop_string);
+            $cnh->soft_close();
+            # Undo DB changes and try next host in list.
+            $dbh->do("rollback");
+            next;
+        }
+    }
+
+    # ----------------------------------------------------------------------
+
     # Show Version and parse output of it.
     syslog(LOG_DEBUG, "%s: show version: sending command 'show version' and parsing output", $hostnameport);
     $cnh->send("show version\n");
@@ -645,9 +797,12 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                     $uptime = $1;
                 } elsif ( $line =~ /^System returned to ROM by (.+)\s*$/ ) {
                     $reload_reason = $1;
-                } elsif ( $line =~ /^System restarted by (.+) at .*$/ ) {
+                } elsif ( $line =~ /^System restarted by (.+) at (.+)$/ ) {
                     # IOS 11
                     $reload_reason = $1;
+                    $reloaded = $time_parser_config->parse_datetime($2);
+                } elsif ( $line =~ /^System restarted at (.+)$/ ) {
+                    $reloaded = $time_parser_config->parse_datetime($1);
                 } elsif ( $line =~ /^Configuration register is (\w+)( \(will be \w+ at next reload\))?\s*$/ ) {
                     $confreg = $1;
                 }
@@ -753,153 +908,6 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
         next;
     }
 
-    # ------------------------------
-
-    # Check if we still don't know the size of flash mem - happens with some switches and other oddities.
-    # Need to try harder in this case. Flash is a required variable, but we check presence later anyway.
-
-    if ( ! defined($flash) ) {
-        syslog(LOG_DEBUG, "%s: flash: no flash information found in 'show version', trying flash directory commands",
-            $hostnameport);
-
-        # Some newer devices insist on flash: (with colon) here. Do that in a loop and jump out if we have what we want.
-        @try_loop_strings = ('show flash', 'show flash:', 'show bootflash:', 'dir flash:');
-        foreach $try_loop_string (@try_loop_strings) {
-            $cnh->send($try_loop_string . "\n");
-            ($pat, $err, $match, $before, $after) = $cnh->expect(5, '-re', $prompt_re);
-
-            if ( ! defined($err) ) {
-                # Filter nasty (un)printables.
-                $before =~ tr/\000-\010|\013-\037|\177-\377//d;
-
-                @beforeLinesArray = split("\n", $before);
-                foreach $line (@beforeLinesArray) {
-                    # Again, different devices have different output.
-                    if ( $line =~ /^(\d+) bytes total \(\d+ bytes free(\/\d+% free)?\)\s*$/ ) {
-                        $flash = sprintf("%.0f", $1 / 1024 / 1024);
-                    } elsif ( $line =~ /^(\d+) bytes available \((\d+) bytes used\)\s*$/ ) {
-                        if ( defined($1) && defined($2) ) {
-                            $flash = sprintf("%.0f", ($1 + $2) / 1024 / 1024);
-                        } else {
-                            syslog(LOG_NOTICE, "%s: flash: size NOT read from %s, because it is malformed. (%s, %s)",
-                                $hostnameport, $try_loop_string, $1, $2);
-                            $errcount++;
-                        }
-                    }
-                    if ( defined($flash) ) {
-                        last;
-                    }
-                }
-            } else {
-                syslog(LOG_NOTICE, "%s: flash: expect error %s encountered while trying '%s'",
-                    $hostnameport, $err, $try_loop_string);
-                $errcount++;
-            }
-        }
-
-        # Skip host host if there was an error.
-        if ( $errcount > 0 ) {
-            syslog(LOG_WARNING, "%s: flash: skipping host because of earlier errors", $hostnameport);
-            $cnh->soft_close();
-            # Undo DB changes and try next host in list.
-            $dbh->do("rollback");
-            next;
-        }
-    }
-
-    # ----------------------------------------------------------------------
-
-    # Handle show inventory.
-
-    # Why is this in the middle of handling 'show version'? Because of ASA peculiarities!
-    #  The serial number in ASA 'show version' (for licensing) is not the same as printed on the chassis,
-    #   which is required for service contracts. Thus we need to deduce the HW serial after parsing of
-    #   'show_version' output, put before inserting that data into dcapf.
-    # In a way this is thus part of 'show version' - for ASAs,
-    #  with additional benefits to be seen in invpf for any device.
-    #
-    # Note: IOS 12.0 doesn't know this command.
-
-    syslog(LOG_DEBUG, "%s: show inventory: sending command 'show inventory' and parsing output", $hostnameport);
-    $cnh->send("show inventory\n");
-    ($pat, $err, $match, $before, $after) = $cnh->expect(5, '-re', $prompt_re);
-
-    if ( ! defined($err) ) {
-        syslog(LOG_DEBUG, "%s: show inventory: deleting previous data", $hostnameport);
-        $sth_delete_invpf->execute($hostnameport);
-        if ( defined($dbh->errstr) ) {
-            syslog(LOG_NOTICE, "%s: show inventory: SQL execution error deleting previous data: %s", $hostnameport, $dbh->errstr);
-        } else {
-            # Set defaults for our parser helpers.
-            $inv_have_line_name = $inv_have_line_pid = 0;
-
-            # Filter nasty (un)printables. Keep CR, so we're able to detect an empty line.
-            $before =~ tr/\000-\010|\013-\014|\016-\037|\177-\377//d;
-
-            @beforeLinesArray = split("\n", $before);
-            foreach $line (@beforeLinesArray) {
-                # Try to match our line type: Name, Pid, or empty. Everything else is ignored.
-                if ( $line =~ /^\s*$/ ) {
-                    # Check if we have everything for a DB insert.
-                    if ( $inv_have_line_name == 1 && $inv_have_line_pid == 1 ) {
-                        if ( ! defined($inv_pid) || $inv_pid =~ /^\s*$/ ) {
-                            $inv_pid = 'Unspecified';
-                        }
-                        if ( ! defined($inv_vid) || $inv_vid =~ /^\s*$/ ) {
-                            $inv_vid = 'Unspecified';
-                        }
-                        if ( ! defined($inv_serno) || $inv_serno =~ /^\s*$/ ) {
-                            $inv_serno = 'Unspecified';
-                        }
-
-                        # Extract ASA hardware serial number from here.
-                        if ( $wartungstyp eq 'ASA' ) {
-                            syslog(LOG_DEBUG, "%s: show inventory: found ASA serial number %s", $hostnameport, $inv_serno);
-                            $serno = $inv_serno;
-                        }
-
-                        $sth_insert_invpf->execute($hostnameport, $inv_name, $inv_descr, $inv_pid, $inv_vid, $inv_serno);
-                        if ( defined($dbh->errstr) ) {
-                            syslog(LOG_NOTICE, "%s: show inventory: SQL execution error inserting data: %s",
-                                $hostnameport, $dbh->errstr);
-                            last;
-                        }
-
-                        # Reset Variables for next run.
-                        $inv_name = $inv_descr = $inv_pid = $inv_vid = $inv_serno = undef;
-                        $inv_have_line_name = $inv_have_line_pid = 0;
-                    }
-                } elsif ( $line =~ /^NAME: "(.*)", DESCR: "(.*)"\s*$/i ) {
-                    $inv_have_line_name = 1;
-                    $inv_name = $1;
-                    $inv_descr = $2;
-                } elsif ( $line =~ /^PID: (\S*)\s*, VID: (.*)\s*, SN: (.*)\s*$/ ) {
-                    $inv_have_line_pid = 1;
-
-                    # Fix excess blanks at string end.
-                    $inv_pid = $1;
-                    $inv_pid =~ tr/[ ]*$//d;
-
-                    $inv_vid = $2;
-                    $inv_vid =~ tr/[ ]*$//d;
-
-                    $inv_serno = $3;
-                    $inv_serno =~ tr/[ ]*$//d;
-                } elsif ( $line =~ /^% Invalid input detected at '^' marker\.$/ ) {
-                    syslog(LOG_NOTICE, "%s: show inventory: device doesn't support command: %s", $hostnameport);
-                    last;
-                }
-            }
-        }
-    } else {
-        syslog(LOG_WARNING, "%s: show inventory: expect error %s encountered while trying command, skipping host",
-            $hostnameport, $err);
-        # Usually this means we've lost the connection to the device and is always fatal => Skip host.
-        $cnh->soft_close();
-        $dbh->do("rollback");
-        next;
-    }
-
     # ----------------------------------------------------------------------
 
     # Calculate Uptime in Minutes, for our statistics.
@@ -953,6 +961,23 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
     }
 
     # ----------------------------------------------------------------------
+
+    # Check if we don't know the size of flash mem from show ver. Happens with some switches and other oddities.
+    if ( ! defined($flash) ) {
+        syslog(LOG_DEBUG, "%s: show version: no flash information found in 'show version', using information from flash commands",
+            $hostnameport);
+        if ( defined($flash_size) ) {
+            $flash = $flash_size;
+        }
+    }
+
+    # Extract ASA hardware serial number from 'show inventory'.
+    if ( $wartungstyp eq 'ASA' ) {
+        if ( defined($asa_serno) ) {
+            $serno = $asa_serno;
+        }
+    }
+
 
     # Check if we have all mandatory variables filled from 'show version'.
     syslog(LOG_DEBUG, "%s: show version: checking completeness of 'show version' derived variables", $hostnameport);
@@ -1029,7 +1054,8 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
         $sth_insert_dcapf->execute($confreg, $flash, $hostnameport, $model, $ram, $serno, $stamp, $sysimg, $uptime, $uptime_min,
             $version, $asa_dm_ver, $reload_reason);
         if ( defined($dbh->errstr) ) {
-            syslog(LOG_NOTICE, "%s: show version: SQL execution error inserting into dcapf: %s", $hostnameport, $dbh->errstr);
+            syslog(LOG_WARNING, "%s: show version: SQL execution error inserting into dcapf: %s, skipping host",
+                $hostnameport, $dbh->errstr);
             $cnh->soft_close();
             $dbh->do("rollback");
             next;
@@ -1038,7 +1064,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
 
     # ----------------------------------------------------------------------
 
-    # For a wholesome device recovery, we need information about current Vlan-Configuration.
+    # VTP config.
     #
     # FIXME: We should possibly implement this also for NEX.
 
@@ -1113,7 +1139,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
 
     # ----------------------------------------------------------------------
 
-    # Parse existing Vlans.
+    # For a wholesome device recovery, we need information about current Vlan-Configuration.
     #
     # FIXME: We should possibly implement this also for NEX.
 
@@ -1321,28 +1347,38 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
 
             if ( $wartungstyp eq 'ASA' &&
                     $line =~ /^: Written by \S+ at (\d{2}:\d{2}:\d{2})\.\d{3} (\S+ \S{3} \S{3} \d{1,2} \d{4})$/ ) {
-                $time_dtf = $time_parser->parse_datetime($1 . ' ' . $2);
+                $time_dtf = $time_parser_config->parse_datetime($1 . ' ' . $2);
                 syslog(LOG_DEBUG, "%s: config saved: found ASA match '%s %s'", $hostnameport, $1, $2);
                 last;
             } elsif ( $wartungstyp eq 'IOS' &&
                     $line =~ /^! NVRAM config last updated at (\d{2}:\d{2}:\d{2} \S+ \S{3} \S{3} \d{1,2} \d{4})( by \S+)?$/ ) {
-                $time_dtf = $time_parser->parse_datetime($1);
+                $time_dtf = $time_parser_config->parse_datetime($1);
                 syslog(LOG_DEBUG, "%s: config saved: found IOS match '%s'", $hostnameport, $1);
                 last;
             }
         }
 
-        if ( defined($time_dtf) ) {
+        # If we were unable to extract something from configuration, use (hopefully available) flash information.
+        if ( ! defined($time_dtf) ) {
+            syslog(LOG_DEBUG, "%s: config saved: could not extract timestamp, trying stamp from flash mem", $hostnameport);
+            if ( defined($cfsavd_flash) ) {
+                $cfsavd = $cfsavd_flash;
+            } else {
+                syslog(LOG_NOTICE, "%s: config saved: could not extract timestamp, invalid time zone?", $hostnameport);
+            }
+        } else {
             $cfsavd = $time_formatter->format_datetime($time_dtf);
             syslog(LOG_DEBUG, "%s: config saved: using formatted date '%s'", $hostnameport, $cfsavd);
+        }
 
+        if ( ! defined($cfsavd) ) {
+            syslog(LOG_NOTICE, "%s: config saved: could not extract timestamp, invalid time zone?", $hostnameport);
+        } else {
             # Actually write data.
             $sth_update_dcapf_cfsavd->execute($cfsavd, $hostnameport);
             if ( defined($dbh->errstr) ) {
                 syslog(LOG_NOTICE, "%s: config saved: SQL execution error: %s", $hostnameport, $dbh->errstr);
             }
-        } else {
-            syslog(LOG_NOTICE, "%s: config saved: could not extract timestamp, invalid time zone?", $hostnameport);
         }
 
         # --------------------------
@@ -1462,14 +1498,13 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                 # Look for timestamp lines.
                 foreach $line (@show_config) {
                     if ( $line =~ /^! Last configuration change at (\d{2}:\d{2}:\d{2} \S+ \S{3} \S{3} \d{1,2} \d{4})( by \S+)?$/ ) {
-                        $time_dtf = $time_parser->parse_datetime($1);
+                        $time_dtf = $time_parser_config->parse_datetime($1);
                         if ( defined($time_dtf) ) {
                             $cfupdt = $time_formatter->format_datetime($time_dtf);
                             syslog(LOG_DEBUG, "%s: config changed: using formatted date '%s'", $hostnameport, $cfupdt);
                         } else {
                             syslog(LOG_INFO, "%s: config changed: could not extract timestamp, invalid time zone?", $hostnameport);
                             last;
-
                         }
                     } elsif ( $line =~ /^! No configuration change since last restart$/ ) {
                         # Classic IOS only.
@@ -1481,6 +1516,17 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                         } else {
                             last;
                         }
+                    }
+                }
+
+                # Another corner case: $rebooted (stamp) != $cfupdt (stamp) => Device has just reloaded.
+                if ( defined($cfupdt) && defined($cfsavd) && defined($reloaded) ) {
+                    # Deviations between reload time, and running config's "changed" stamp yields in false positives for
+                    # "forgot to save config". We must allow a time frame of 2 minutes around $cfupdt.
+                    if ( $reloaded - $duration le $cfupdt || $reloaded + $duration ge $cfupdt ) {
+                        syslog(LOG_INFO, "%s: config changed: reloaded almost running-config, using saved configuration stamp",
+                            $hostnameport);
+                        $cfupdt = $cfsavd;
                     }
                 }
 
@@ -1498,7 +1544,8 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                         syslog(LOG_NOTICE, "%s: config changed: SQL execution error: %s", $hostnameport, $dbh->errstr);
                     }
                 } else {
-                    syslog(LOG_NOTICE, "%s: config changed: could not extract timestamp, nor derive it from cfsavd", $hostnameport);
+                    syslog(LOG_NOTICE, "%s: config changed: could not extract timestamp, nor derive it from elsewhere",
+                        $hostnameport);
                 }
             }
 
