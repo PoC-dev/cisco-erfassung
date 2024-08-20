@@ -293,7 +293,7 @@ Listendarstellung in blauer Farbe hervorgehoben
 :P.Dieses Feld darf nicht leer sein.
 :EHELP.
 .* -----------------------------------------------------------------------------
-:HELP NAME='DFIELD/IGNORE'.Ignoriere Updates
+:HELP NAME='DETAIL/IGNORE'.Ignoriere Updates
 :XH3.Ignoriere Updates
 :P.Für bestimmte Fälle kann es notwendig sein, keine Aktualisierungen auf einem
 Gerät durchzuführen. Dies kann durch das Unterdrücken des Reports für die

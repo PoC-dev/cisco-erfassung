@@ -235,7 +235,7 @@
      A          H                           HLPARA(6 2 6 65)
      A                                      HLPPNLGRP('DFIELD/HOSTNAME' HSTHP)
      A          H                           HLPARA(8 2 8 24)
-     A                                      HLPPNLGRP('DFIELD/IGNORE' HSTHP)
+     A                                      HLPPNLGRP('DETAIL/IGNORE' HSTHP)
      A          H                           HLPARA(8 27 9 45)
      A                                      HLPPNLGRP('DFIELD/UPD_IGN' HSTHP)
      A          H                           HLPARA(8 54 9 80)
