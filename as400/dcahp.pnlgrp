@@ -191,8 +191,6 @@ Bildschirmseite mit Informationen abgerufen werden kann.
 :XH3.RAM
 :P.Hier wird die gem‰ﬂ Show Version ausgegebene Menge an Arbeitsspeicher
 angezeigt.
-:NOTE.Bei neueren Ger‰ten ist dieser Wert nicht zwingend gleich der physikalisch
-verbauten Menge an Speicher.:ENOTE.
 :EHELP.
 .* -----------------------------------------------------------------------------
 :HELP NAME='DCA2/FLASH'.Flash
