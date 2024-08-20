@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # This is to be manually incremented on each "publish".
-my $versionstring = '2024-08-19.01';
+my $versionstring = '2024-08-20.00';
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -267,7 +267,7 @@ my $time_parser_config = DateTime::Format::Strptime->new(
     pattern => "%T %Z %a %b %d %Y",
 );
 my $time_parser_flash = DateTime::Format::Strptime->new(
-    pattern => "%b %d %Y %T %Z",
+    pattern => "%b %d %Y %T %z",
 );
 my $time_formatter = DateTime::Format::Strptime->new(
     pattern => "%Y-%m-%d-%H.%M.%S.000000",
@@ -726,11 +726,17 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                         syslog(LOG_DEBUG, "%s: flash: extracting saved config timestamp: %s %s %s (with '%s')",
                             $hostnameport, $1, $2, $3, $try_loop_string);
                         $time_dtf = $time_parser_flash->parse_datetime($1 . ' ' . $2 . ' '  . $3);
+                        if ( ! defined($time_dtf) ) {
+                            syslog(LOG_DEBUG, "%s: flash: unable to extract saved config timestamp", $hostnameport);
+                        }
                     } elsif ( $line =~ /^\d+\s+-rw-\s+\d+\s+(\S{3} \d{1,2} \d{4}) (\d{2}:\d{2}:\d{2} \S+)\s+nvram_config\s*$/ ) {
                         # This is for 'dir flash:'.
                         syslog(LOG_DEBUG, "%s: flash: extracting saved config timestamp: %s %s (with '%s')",
                             $hostnameport, $1, $2, $try_loop_string);
                         $time_dtf = $time_parser_flash->parse_datetime($1 . ' ' . $2);
+                        if ( ! defined($time_dtf) ) {
+                            syslog(LOG_DEBUG, "%s: flash: unable to extract saved config timestamp", $hostnameport);
+                        }
                     }
                 }
             }
@@ -747,6 +753,11 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
             # Undo DB changes and try next host in list.
             $dbh->do("rollback");
             next;
+        }
+
+        # If we have what we need, no need iterate another try.
+        if ( defined($flash_size) && defined($time_dtf) ) {
+            last;
         }
     }
 
