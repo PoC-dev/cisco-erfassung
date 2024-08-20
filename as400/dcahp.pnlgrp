@@ -55,6 +55,13 @@ zurück.
 :EPARML.
 :EHELP.
 .* -----------------------------------------------------------------------------
+.* -----------------------------------------------------------------------------
+:HELP NAME='DCA1/ACCESS'.Zugriff
+:XH3.Zugriff
+:P.Im folgenden Abschnitt werden ein Gerät betreffende Informationen zum Zugriff
+auf dieses Gerät angezeigt.
+:EHELP.
+.* -----------------------------------------------------------------------------
 :HELP NAME='DCA1/SERVTYP'.Hosttyp
 :XH3.Hosttyp
 :P.Hier wird der konfigurierte Wert der Geräteklasse zur Erfassung angezeigt.
@@ -91,6 +98,8 @@ PERFORM='DSPHELP DFIELD/PASSWD HSTHP'.Stammdatenkonfiguration: Password.:ELINK.
 :XH3.Enable-Secret
 :P.Hier wird das konfigurierte Enable-Secret nach dem Login zur zur Erfassung
 angezeigt.
+:NOTE.Diese Zeile erscheint leer, wenn kein Enable-Secret konfiguriert wurde.
+:ENOTE.
 :P.Nähere Informationen finden sich in der Hilfe zur :LINK
 PERFORM='DSPHELP DFIELD/ENABLE HSTHP'.Stammdatenkonfiguration: Enable-Secret.
 :ELINK.
@@ -130,6 +139,11 @@ Anyconnect-Updates.:ELINK.
 PERFORM='DSPHELP DFIELD/COMMT HSTHP'.Stammdatenkonfiguration: Bemerkung.:ELINK.
 :EHELP.
 .* -----------------------------------------------------------------------------
+:HELP NAME='DCA1/STAMPS'.Zeitstempel
+:XH3.Zeitstempel
+:P.Hier werden verschiedene Zeitpunkte von erfassten Daten angezeigt.
+:EHELP.
+.* -----------------------------------------------------------------------------
 :HELP NAME='DCA1/STAMP'.Erfassungs-Zeitstempel
 :XH3.Erfassungs-Zeitstempel
 :P.Hier wird der Zeitpunkt der letzten erfolgreichen Erfassung angezeigt.
@@ -142,20 +156,30 @@ Erfassungs-Script daher mindestens alle zwei Tage, besser täglich laufen.:ENOTE.
 :XH3.Cfg-Änderungs-Zeitstempel
 :P.Hier wird der Zeitpunkt der letzten Konfigurationsänderung angezeigt.
 :P.Der Zeitstempel wird aus der :HP1.running-config:EHP1. ausgelesen.
+:NOTE.Diese Zeile erscheint leer, wenn kein Zeitstempel ausgelesen werden
+konnte.:ENOTE.
 :NOTE.ASA hat keine Möglichkeit, diesen Zeitstempel anzuzeigen.:ENOTE.
 :EHELP.
 .* -----------------------------------------------------------------------------
 :HELP NAME='DCA1/CFSAVD'.Cfg-Speicherungs-Zeitstempel
 :XH3.Cfg-Speicherungs-Zeitstempel
-:P.Hier wird der Zeitpunkt des letzten Speicherns der Konfigurations auf dem
+:P.Hier wird der Zeitpunkt des letzten Speicherns der Konfiguration auf dem
 lokalen Festwertspeicher des Endgeräts angezeigt.
 :P.Der Zeitstempel wird aus der :HP1.running-config:EHP1. ausgelesen.
+:NOTE.Diese Zeile erscheint leer, wenn kein Zeitstempel ausgelesen werden
+konnte.:ENOTE.
 :EHELP.
 .* -----------------------------------------------------------------------------
 :HELP NAME='DCA1/MORE'.Bedienhinweis: Weitere...
 :XH3.Bedienhinweis: Weitere...
 :P.Diese Ausgabe zeigt, dass mit der Taste RollUp bzw. ScrollDown eine weitere
 Bildschirmseite mit Informationen abgerufen werden kann.
+:EHELP.
+.* -----------------------------------------------------------------------------
+.* -----------------------------------------------------------------------------
+:HELP NAME='DCA2/HARDWARE'.Hardware
+:XH3.Hardware
+:P.Hier werden verschiedene Aspekte der Hardware angezeigt.
 :EHELP.
 .* -----------------------------------------------------------------------------
 :HELP NAME='DCA2/MODEL'.Modell
@@ -189,9 +213,16 @@ erfasst letztere nicht, diese wird zweckmäßigerweise auf dem Gerät selbst mit
 Show Version in Erfahrung gebracht.:ENOTE.
 :EHELP.
 .* -----------------------------------------------------------------------------
+:HELP NAME='DCA2/SOFTWARE'.Software
+:XH3.Software
+:P.Hier werden verschiedene Aspekte der Software angezeigt.
+:EHELP.
+.* -----------------------------------------------------------------------------
 :HELP NAME='DCA2/VERSION'.Version
 :XH3.Version
 :P.Hier wird die gemäß Show Version ausgegebene Betriebssystemversion angezeigt.
+:NOTE.Ist eine abweichende OS-Version hinterlegt, wird ein entsprechender
+Hinweis angezeigt.:ENOTE.
 :EHELP.
 .* -----------------------------------------------------------------------------
 :HELP NAME='DCA2/ASA_DM_VER'.ASDM-Version
@@ -212,7 +243,7 @@ angezeigt (Dateiname, ggfs. Pfad).
 :P.Hier wird der gemäß Show Version ausgegebene Grund des letzten Reloads
 angezeigt.
 :NOTE.Nicht alle Geräte unterstützen diese Ausgabe.:ENOTE.
-:P.Sollte in der Ausgabe eines der Worte "error", "Critical" oder "fault"
+:P.Sollte in der Ausgabe eines der Worte "error", "critical" oder "fault"
 vorkommen, wird die Ausgabe in roter Farbe zur Hervorhebung dargestellt.
 :EHELP.
 .* -----------------------------------------------------------------------------
@@ -245,6 +276,12 @@ ein entsprechender Hinweis angezeigt.
 Bildschirmseite mit Informationen abgerufen werden kann.
 :EHELP.
 .* -----------------------------------------------------------------------------
+.* -----------------------------------------------------------------------------
+:HELP NAME='VLAN/VTPCFG'.VTP Konfiguration
+:XH3.VTP Konfiguration
+:P.Hier werden verschiedene Aspekte der VTP- und Vlan-Konfiguration angezeigt.
+:EHELP.
+.* -----------------------------------------------------------------------------
 :HELP NAME='VLAN/VTPDOM'.VTP Domain
 :XH3.VTP Domain
 :P.Hier wird die gemäß Show VTP Status ausgebene VTP Domain angezeigt.
@@ -274,6 +311,12 @@ unbekannten MAC adressen an alle Ports weiter. Diese Frames werden daher auch
 über alle Trunkports gesendet. Mit aktiviertem VTP Pruning werden die genannten
 Frames nur noch an einen anderen Switch weitergeleitet, wenn dieser auch ein
 Interface in diesem VLAN hat.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='VLAN/VLANS'.Vlan-Liste
+:XH3.Vlan-Liste
+:P.Hier werden die lokal vorhandenen Vlans angezeigt.
+:NOTE.Die automatischen Vlans 1001 - 1005 werden nicht angezeigt.:ENOTE.
 :EHELP.
 .* -----------------------------------------------------------------------------
 :HELP NAME='VLAN/VLAN'.Vlan ID

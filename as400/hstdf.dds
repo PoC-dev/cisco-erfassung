@@ -254,7 +254,7 @@
      A                                      HLPPNLGRP('DFIELD/ENABLE' HSTHP)
      A          H                           HLPARA(18 2 19 35)
      A                                      HLPPNLGRP('DFIELD/DCA' HSTHP)
-     A          H                           HLPARA(19 2 19 75)
+     A          H                           HLPARA(21 2 21 75)
      A                                      HLPPNLGRP('DFIELD/COMMT' HSTHP)
      A          H                           HLPARA(23 2 23 80)
      A                                      HLPPNLGRP('DETAIL/FKEYS' HSTHP)
