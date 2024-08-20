@@ -56,6 +56,33 @@ zurück.
 :EHELP.
 .* -----------------------------------------------------------------------------
 .* -----------------------------------------------------------------------------
+:HELP NAME='DCA1/DCA'.Automatische Erfassung
+:XH3.Automatische Erfassung
+:P.Hier wird der konfigurierte Wert für die Durchführung der automatischen
+Erfassung angezeigt.
+:P.Nähere Informationen finden sich in der Hilfe zur :LINK
+PERFORM='DSPHELP DFIELD/DCA HSTHP'.Stammdatenkonfiguration: Automatische
+Erfassung.:ELINK.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DCA1/UPD_IGN'.Ignoriere neues OS
+:XH3.Ignoriere neues OS
+:P.Hier wird der konfigurierte Wert zum Ignorieren einer neueren OS-Version
+angezeigt.
+:P.Nähere Informationen finden sich in der Hilfe zur :LINK
+PERFORM='DSPHELP DFIELD/UPD_IGN HSTHP'.Stammdatenkonfiguration: Ignoriere
+OS-Updates.:ELINK.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DCA1/ACU_IGN'.Ignoriere neuen Anyconnect
+:XH3.Ignoriere neuen Anyconnect
+:P.Hier wird der konfigurierte Wert zum Ignorieren einer neueren
+Anyconnect-Version angezeigt.
+:P.Nähere Informationen finden sich in der Hilfe zur :LINK
+PERFORM='DSPHELP DFIELD/ACU_IGN HSTHP'.Stammdatenkonfiguration: Ignoriere
+Anyconnect-Updates.:ELINK.
+:EHELP.
+.* -----------------------------------------------------------------------------
 :HELP NAME='DCA1/ACCESS'.Zugriff
 :XH3.Zugriff
 :P.Im folgenden Abschnitt werden ein Gerät betreffende Informationen zum Zugriff
@@ -103,33 +130,6 @@ angezeigt.
 :P.Nähere Informationen finden sich in der Hilfe zur :LINK
 PERFORM='DSPHELP DFIELD/ENABLE HSTHP'.Stammdatenkonfiguration: Enable-Secret.
 :ELINK.
-:EHELP.
-.* -----------------------------------------------------------------------------
-:HELP NAME='DCA1/DCA'.Automatische Erfassung
-:XH3.Automatische Erfassung
-:P.Hier wird der konfigurierte Wert für die Durchführung der automatischen
-Erfassung angezeigt.
-:P.Nähere Informationen finden sich in der Hilfe zur :LINK
-PERFORM='DSPHELP DFIELD/DCA HSTHP'.Stammdatenkonfiguration: Automatische
-Erfassung.:ELINK.
-:EHELP.
-.* -----------------------------------------------------------------------------
-:HELP NAME='DCA1/UPD_IGN'.Ignoriere neues OS
-:XH3.Ignoriere neues OS
-:P.Hier wird der konfigurierte Wert zum Ignorieren einer neueren OS-Version
-angezeigt.
-:P.Nähere Informationen finden sich in der Hilfe zur :LINK
-PERFORM='DSPHELP DFIELD/UPD_IGN HSTHP'.Stammdatenkonfiguration: Ignoriere
-OS-Updates.:ELINK.
-:EHELP.
-.* -----------------------------------------------------------------------------
-:HELP NAME='DCA1/ACU_IGN'.Ignoriere neuen Anyconnect
-:XH3.Ignoriere neuen Anyconnect
-:P.Hier wird der konfigurierte Wert zum Ignorieren einer neueren
-Anyconnect-Version angezeigt.
-:P.Nähere Informationen finden sich in der Hilfe zur :LINK
-PERFORM='DSPHELP DFIELD/ACU_IGN HSTHP'.Stammdatenkonfiguration: Ignoriere
-Anyconnect-Updates.:ELINK.
 :EHELP.
 .* -----------------------------------------------------------------------------
 :HELP NAME='DCA1/COMMT'.Bemerkung

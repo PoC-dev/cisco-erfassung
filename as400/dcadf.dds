@@ -36,24 +36,24 @@
      A                                      Erfasste Daten')
      A          H                           HLPARA(3 2 3 68)
      A                                      HLPPNLGRP('DCA/HOSTNAME' DCAHP)
-     A          H                           HLPARA(5 2 5 8)
-     A                                      HLPPNLGRP('DCA1/ACCESS' DCAHP)
-     A          H                           HLPARA(6 2 6 33)
-     A                                      HLPPNLGRP('DCA1/SERVTYP' DCAHP)
-     A          H                           HLPARA(7 2 7 36)
-     A                                      HLPPNLGRP('DCA1/CONN' DCAHP)
-     A          H                           HLPARA(8 2 8 46)
-     A                                      HLPPNLGRP('DCA1/USERNAME' DCAHP)
-     A          H                           HLPARA(9 2 9 46)
-     A                                      HLPPNLGRP('DCA1/PASSWD' DCAHP)
-     A          H                           HLPARA(10 2 10 46)
-     A                                      HLPPNLGRP('DCA1/ENABLE' DCAHP)
-     A          H                           HLPARA(11 2 11 34)
+     A          H                           HLPARA(4 2 4 34)
      A                                      HLPPNLGRP('DCA1/DCA' DCAHP)
-     A          H                           HLPARA(12 2 12 34)
+     A          H                           HLPARA(5 2 5 34)
      A                                      HLPPNLGRP('DCA1/UPD_IGN' DCAHP)
-     A          H                           HLPARA(13 2 13 34)
+     A          H                           HLPARA(6 2 6 34)
      A                                      HLPPNLGRP('DCA1/ACU_IGN' DCAHP)
+     A          H                           HLPARA(8 2 8 8)
+     A                                      HLPPNLGRP('DCA1/ACCESS' DCAHP)
+     A          H                           HLPARA(9 2 9 33)
+     A                                      HLPPNLGRP('DCA1/SERVTYP' DCAHP)
+     A          H                           HLPARA(10 2 10 36)
+     A                                      HLPPNLGRP('DCA1/CONN' DCAHP)
+     A          H                           HLPARA(11 2 11 46)
+     A                                      HLPPNLGRP('DCA1/USERNAME' DCAHP)
+     A          H                           HLPARA(12 2 12 46)
+     A                                      HLPPNLGRP('DCA1/PASSWD' DCAHP)
+     A          H                           HLPARA(13 2 13 46)
+     A                                      HLPPNLGRP('DCA1/ENABLE' DCAHP)
      A          H                           HLPARA(15 2 16 52)
      A                                      HLPPNLGRP('DCA1/COMMT' DCAHP)
      A          H                           HLPARA(18 2 18 12)
@@ -74,27 +74,27 @@
      A                                  3  2'Hostname  . . . . . . . . .'
      A                                      DSPATR(HI)
      A            HOSTNAME  R           3 31REFFLD(HOSTNAME HSTPF)
+     A                                  4  3'Automatische Erfassung'
+     A N40                              4 31'Nein'
+     A  40                              4 31'Ja'
+     A                                  5  3'Ignoriere neues OS . . . .'
+     A N41                              5 31'Nein'
+     A  41                              5 31'Ja'
+     A                                  6  3'Ignoriere neuen Anyconnect'
+     A N42                              6 31'Nein'
+     A  42                              6 31'Ja'
      A                                      COLOR(TRQ)
-     A                                  5  2'Zugriff' DSPATR(HI)
-     A                                  6  3'Hosttyp  . . . . . . . . .'
-     A            SERVTYP   R           6 31REFFLD(SERVTYP HSTPF)
-     A                                  7  3'Zugriffsmethode  . . . . .'
-     A            CONN      R           7 31REFFLD(CONN HSTPF)
-     A                                  8  3'Benutzer . . . . . . . . .'
-     A            USERNAME  R           8 31REFFLD(USERNAME HSTPF)
-     A                                  9  3'Passwort . . . . . . . . .'
-     A            PASSWD    R           9 31REFFLD(PASSWD HSTPF)
-     A  40                             10  3'Enable-Secret  . . . . . .'
-     A  40        ENABLE    R          10 31REFFLD(ENABLE HSTPF)
-     A                                 11  3'Automatische Erfassung . .'
-     A N41                             11 31'Nein'
-     A  41                             11 31'Ja'
-     A                                 12  3'Ignoriere neues OS . . . .'
-     A N42                             12 31'Nein'
-     A  42                             12 31'Ja'
-     A                                 13  3'Ignoriere neuen Anyconnect'
-     A N43                             13 31'Nein'
-     A  43                             13 31'Ja'
+     A                                  8  2'Zugriff' DSPATR(HI)
+     A                                  9  3'Hosttyp  . . . . . . . . .'
+     A            SERVTYP   R           9 31REFFLD(SERVTYP HSTPF)
+     A                                 10  3'Zugriffsmethode  . . . . .'
+     A            CONN      R          10 31REFFLD(CONN HSTPF)
+     A                                 11  3'Benutzer . . . . . . . . .'
+     A            USERNAME  R          11 31REFFLD(USERNAME HSTPF)
+     A                                 12  3'Passwort . . . . . . . . .'
+     A            PASSWD    R          12 31REFFLD(PASSWD HSTPF)
+     A  43                             13  3'Enable-Secret  . . . . . .'
+     A  43        ENABLE    R          13 31REFFLD(ENABLE HSTPF)
      A                                 15  2'Bemerkung' DSPATR(HI)
      A            COMMT     R          16  3REFFLD(COMMT HSTPF)
      A                                 18  2'Zeitstempel' DSPATR(HI)

@@ -1,4 +1,4 @@
-     HCOPYRIGHT('Patrik Schindler <poc@pocnet.net>, 2024-08-18')
+     HCOPYRIGHT('Patrik Schindler <poc@pocnet.net>, 2024-08-20')
      H*
      H* This file is part of cisco-erfassung, an application conglomerate for
      H*  management of Cisco devices on AS/400, i5/OS and IBM i.
@@ -38,10 +38,10 @@
      H*     33: SFLCLR.
      H*     34: SFLEND, EOF from Database file.
      H*- General DSPF Conditioning:
-     H*     40: Show ENABLE field (if not NULL).
-     H*     41: DCA = 1
-     H*     42: UPD_IGN = 1
-     H*     43: ACU_IGN = 1
+     H*     40: DCA = 1
+     H*     41: UPD_IGN = 1
+     H*     42: ACU_IGN = 1
+     H*     43: Show ENABLE field (if not NULL).
      H*     44: Show red 'Erfassung too old' warning.
      H*     45: Show CFSAVD field (if not NULL).
      H*     46: Show CFUPDT field (if not NULL).
@@ -129,29 +129,29 @@
      C*-------------------------------------------------------------------------
      C* Display for page one.
      C*
-     C* Show or hide ENABLE depending on availability.
-     C                   EVAL      *IN40 = (NOT(%NULLIND(ENABLE)))
-     C*
      C* Fill out automation field.
      C     DCA           IFEQ      *ZERO
+     C                   MOVE      *OFF          *IN40
+     C                   ELSE
+     C                   MOVE      *ON           *IN40
+     C                   ENDIF
+     C*
+     C* Fill out updates field.
+     C     UPD_IGN       IFEQ      *ZERO
      C                   MOVE      *OFF          *IN41
      C                   ELSE
      C                   MOVE      *ON           *IN41
      C                   ENDIF
      C*
-     C* Fill out updates field.
-     C     UPD_IGN       IFEQ      *ZERO
+     C* Fill out ac updates field.
+     C     ACU_IGN       IFEQ      *ZERO
      C                   MOVE      *OFF          *IN42
      C                   ELSE
      C                   MOVE      *ON           *IN42
      C                   ENDIF
      C*
-     C* Fill out ac updates field.
-     C     ACU_IGN       IFEQ      *ZERO
-     C                   MOVE      *OFF          *IN43
-     C                   ELSE
-     C                   MOVE      *ON           *IN43
-     C                   ENDIF
+     C* Show or hide ENABLE depending on availability.
+     C                   EVAL      *IN43 = (NOT(%NULLIND(ENABLE)))
      C*
      C* Shorten Time Stamps for last inventory run.
      C     16            SUBST     STAMP:1       STAMP$
