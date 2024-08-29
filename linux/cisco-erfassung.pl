@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # This is to be manually incremented on each "publish".
-my $versionstring = '2024-08-20.00';
+my $versionstring = '2024-08-29.00';
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -41,9 +41,10 @@ my $giturl = $config->{'giturl'};
 # General vars.
 my ($asa_serno, $cfsavd_flash, $cleanup, $cnh, $dbh, $dirfh, $do_orphans, $do_scm, $do_scm_add, $do_setnull, $errcount,
     $fh, $file, $flash_config_timestamp, $flash_size, $hostname, $hostport, $inv_have_line_name, $inv_have_line_pid, $loopcount,
-    $num_entries, $param, $reloaded, $retval, $scmdestfile, $scmtmp, $setnull_field, $show_config_command, $showverfeature,
-    $sth_select_hosts, $test_db, $time_dtf, $tmpline, $to_clean_pf, $try_loop_string, $use_git, @beforeLinesArray, @cnh_parms,
-    @errtyp, @filelist, @lines, @params, @setnull_fields, @show_config, @show_version, @time_tm, @to_clean_pfs, @try_loop_strings
+    $num_entries, $param, $quiet_mode, $reloaded, $retval, $scmdestfile, $scmtmp, $setnull_field, $show_config_command,
+    $showverfeature, $sth_select_hosts, $test_db, $time_dtf, $tmpline, $to_clean_pf, $try_loop_string, $use_git, @beforeLinesArray,
+    @cnh_parms, @errtyp, @filelist, @lines, @params, @setnull_fields, @show_config, @show_version, @time_tm, @to_clean_pfs,
+    @try_loop_strings
 );
 
 # Matches a Cisco-CLI-Prompt, so Expect knows when the result of the sent command has been sent.
@@ -77,7 +78,7 @@ my ($pat, $err, $match, $before, $after);
 # See: https://alvinalexander.com/perl/perl-getopts-command-line-options-flags-in-perl/
 
 my %options = ();
-$retval = getopts("cdhnotv", \%options);
+$retval = getopts("cdhnoqtv", \%options);
 
 if ( $retval != 1 ) {
     printf(STDERR "Wrong parameter error. Wanna use git and forgot to give an URL?\n\n");
@@ -91,6 +92,7 @@ if ( defined($options{h}) || $retval != 1 ) {
     -h: Show this help and exit
     -n: Suppress setting empty database fields to NULL
     -o: Suppress cleanup of orphaned database entries andCVS/git files
+    -q: Be quiet about connection errors
     -t: Test database connection and exit
     -v: Show version and exit\n\n");
     printf("Note that logging is done almost entirely via syslog, facility user.\n");
@@ -117,6 +119,12 @@ if ( defined($options{t}) ) {
     $test_db = 1;
 } else {
     $test_db = 0;
+}
+# Be quiet about connection errors
+if ( defined($options{q}) ) {
+    $quiet_mode = 1;
+} else {
+    $quiet_mode = 0;
 }
 
 # Suppress CVS/git functions.
@@ -468,7 +476,9 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
         }
 
         if ( $errcount > 0 ) {
-            syslog(LOG_WARNING, "%s: connect: expect error %s handling telnet login, skipping host", $hostnameport, $err);
+            if ( $quiet_mode eq 0 ) {
+                syslog(LOG_WARNING, "%s: connect: expect error %s handling telnet login, skipping host", $hostnameport, $err);
+            }
             # Now we can safely jump to the next host in the list.
             next;
         }
@@ -516,7 +526,9 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
         }
 
         if ( $errcount > 0 ) {
-            syslog(LOG_WARNING, "%s: connect: expect error handling initial ssh login, skipping host", $hostnameport);
+            if ( $quiet_mode eq 0 ) {
+                syslog(LOG_WARNING, "%s: connect: expect error handling initial ssh login, skipping host", $hostnameport);
+            }
             # Now we can safely jump to the next host in the list.
             next;
         }
@@ -533,8 +545,10 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
 
     # If we can't log in, skip further processing for that host.
     if ( defined($err) ) {
-        syslog(LOG_WARNING, "%s: connect: expect error %s encountered when spawning %s, skipping host",
-            $hostnameport, $err, $conn_method);
+        if ( $quiet_mode eq 0 ) {
+            syslog(LOG_WARNING, "%s: connect: expect error %s encountered when spawning %s, skipping host",
+                $hostnameport, $err, $conn_method);
+        }
         next;
     }
 
