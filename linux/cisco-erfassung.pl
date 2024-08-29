@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # This is to be manually incremented on each "publish".
-my $versionstring = '2024-08-29.00';
+my $versionstring = '2024-08-29.01';
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -733,8 +733,9 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                     }
                 }
 
+                # Extract timestamp from saved configuration: Some switches do not show it in the startup-config header.
+                # Note: IOS XE routers do not retain a date for files shown in `dir nvram:`.
                 if ( $wartungstyp eq 'IOS' ) {
-                    # Found saved configuration, extract timestamp: Some switches do not show it in the startup-config header.
                     if ( $line =~ /^\s+\d+\s+\d+\s+(\S{3} \d{2} \d{4}) (\d{2}:\d{2}:\d{2})\.\d{10} (\S+)\s+nvram_config\s*$/ ) {
                         # This is for show commands.
                         syslog(LOG_DEBUG, "%s: flash: extracting saved config timestamp: %s %s %s (with '%s')",
@@ -1389,16 +1390,23 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
             if ( defined($cfsavd_flash) ) {
                 $cfsavd = $cfsavd_flash;
             } else {
-                syslog(LOG_NOTICE, "%s: config saved: could not extract timestamp, invalid time zone?", $hostnameport);
+                syslog(LOG_DEBUG, "%s: config saved: could not extract timestamp from flash mem", $hostnameport);
             }
         } else {
             $cfsavd = $time_formatter->format_datetime($time_dtf);
-            syslog(LOG_DEBUG, "%s: config saved: using formatted date '%s'", $hostnameport, $cfsavd);
+        }
+
+        # A XE device might not show "NVRAM config last updated". Try reload timestamp.
+        if ( ! defined($cfsavd) ) {
+                syslog(LOG_DEBUG, "%s: config saved: could not extract timestamp, using reload stamp", $hostnameport);
+                $cfsavd = $time_formatter->format_datetime($reloaded);
         }
 
         if ( ! defined($cfsavd) ) {
-            syslog(LOG_NOTICE, "%s: config saved: could not extract timestamp, invalid time zone?", $hostnameport);
+            syslog(LOG_NOTICE, "%s: config saved: could not extract timestamp (flash, reloaded), invalid time zone?",
+                $hostnameport);
         } else {
+            syslog(LOG_DEBUG, "%s: config saved: using formatted date '%s'", $hostnameport, $cfsavd);
             # Actually write data.
             $sth_update_dcapf_cfsavd->execute($cfsavd, $hostnameport);
             if ( defined($dbh->errstr) ) {
@@ -1529,8 +1537,8 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                             syslog(LOG_DEBUG, "%s: config changed: using formatted date '%s'", $hostnameport, $cfupdt);
                         } else {
                             syslog(LOG_INFO, "%s: config changed: could not extract timestamp, invalid time zone?", $hostnameport);
-                            last;
                         }
+                        last;
                     } elsif ( $line =~ /^! No configuration change since last restart$/ ) {
                         # Classic IOS only.
                         syslog(LOG_INFO,
@@ -1538,27 +1546,25 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                                 $hostnameport);
                         if ( defined($cfsavd) ) {
                             $cfupdt = $cfsavd;
-                        } else {
-                            last;
                         }
+                        last;
                     }
                 }
 
-                # Another corner case: $rebooted (stamp) != $cfupdt (stamp) => Device has just reloaded.
-                if ( defined($cfupdt) && defined($cfsavd) && defined($reloaded) ) {
-                    # Deviations between reload time, and running config's "changed" stamp yields in false positives for
-                    # "forgot to save config". We must allow a time frame of 2 minutes around $cfupdt.
-                    if ( $reloaded - $duration le $cfupdt || $reloaded + $duration ge $cfupdt ) {
-                        syslog(LOG_INFO, "%s: config changed: reloaded almost running-config, using saved configuration stamp",
-                            $hostnameport);
-                        $cfupdt = $cfsavd;
-                    }
-                }
-
-                # A freshly booted XE device might not show "NVRAM config last updated". Use saved timestamp.
+                # If we were unable to derive the timestamp of the running configuration from the running configuration...
                 if ( ! defined($cfupdt) && defined($cfsavd) ) {
-                    syslog(LOG_INFO, "%s: config changed: no running-config stamp found, using saved configuration stamp",
-                        $hostnameport);
+                    if ( defined($reloaded) ) {
+                        # Another corner case: $reloaded (stamp) != $cfupdt (stamp) => Device has just reloaded.
+                        # Deviations between reload time, and running config's "changed" stamp yields in false positives for
+                        # "forgot to save config". We must allow a time frame of 2 minutes around $cfupdt.
+                        if ( $reloaded - $duration le $cfupdt || $reloaded + $duration ge $cfupdt ) {
+                            syslog(LOG_INFO, "%s: config changed: reloaded almost running-config, using saved configuration stamp",
+                                $hostnameport);
+                        }
+                    } else {
+                        syslog(LOG_INFO, "%s: config changed: no running-config stamp found, using saved configuration stamp",
+                            $hostnameport);
+                    }
                     $cfupdt = $cfsavd;
                 }
 
