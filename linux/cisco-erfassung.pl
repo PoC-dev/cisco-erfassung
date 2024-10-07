@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # This is to be manually incremented on each "publish".
-my $versionstring = '2024-08-29.01';
+my $versionstring = '2024-10-07.00';
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -762,15 +762,16 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                 syslog(LOG_DEBUG, "%s: flash: using formatted date '%s'", $hostnameport, $cfsavd_flash);
             }
         } else {
-            syslog(LOG_WARNING, "%s: flash: expect error %s encountered while trying '%s', skipping host",
+            syslog(LOG_WARNING, "%s: flash: expect error %s encountered while trying '%s'",
                 $hostnameport, $err, $try_loop_string);
             $cnh->soft_close();
             # Undo DB changes and try next host in list.
             $dbh->do("rollback");
-            next;
+            $errcount++;
+            last;
         }
 
-        # If we have what we need, no need iterate another try.
+        # If we have what we need, no need to iterate another try.
         if ( defined($flash_size) && defined($time_dtf) ) {
             last;
         }
@@ -827,8 +828,24 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                     # IOS 11
                     $reload_reason = $1;
                     $reloaded = $time_parser_config->parse_datetime($2);
+                    if ( defined($reloaded) ) {
+                        syslog(LOG_DEBUG, "%s: show version: reloaded(1): using formatted date '%s'",
+                            $hostnameport, $time_formatter->format_datetime($reloaded));
+                    }
                 } elsif ( $line =~ /^System restarted at (.+)$/ ) {
                     $reloaded = $time_parser_config->parse_datetime($1);
+                    if ( defined($reloaded) ) {
+                        syslog(LOG_DEBUG, "%s: show version: reloaded(2): using formatted date '%s'",
+                            $hostnameport, $time_formatter->format_datetime($reloaded));
+                    }
+                } elsif ( $line =~ /^System returned to ROM by \S+ at (.+)$/ ) {
+                    # FIXME: This doesn't match, despite regexr.com 
+                    syslog(LOG_DEBUG, "%s: show version: reloaded(3): using unformatted date '%s'", $hostnameport, $1);
+                    $reloaded = $time_parser_config->parse_datetime($1);
+                    if ( defined($reloaded) ) {
+                        syslog(LOG_DEBUG, "%s: show version: reloaded(3): using formatted date '%s'",
+                            $hostnameport, $time_formatter->format_datetime($reloaded));
+                    }
                 } elsif ( $line =~ /^Configuration register is (\w+)( \(will be \w+ at next reload\))?\s*$/ ) {
                     $confreg = $1;
                 }
