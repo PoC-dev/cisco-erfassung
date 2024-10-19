@@ -63,6 +63,9 @@ If no hostnames are given, all hosts found in the database are handled, if eligi
 
 If the script runs without issues, I recommend to run it at least daily from *cron*.
 
+## Bugs.
+There is a logic glitch for IOS devices about calculation if the device has a newer running-config compared to startup-config. There are numerous edge cases, e. g. after device reloads and different behavior of different IOS releases. Currently, some IOS XE devices being just reloaded and not experiencing a `wr` appear as if a `wr` was missing.
+
 ----
 
-2024-08-04 poc@pocnet.net
+2024-10-19 poc@pocnet.net
