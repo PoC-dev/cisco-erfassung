@@ -22,8 +22,8 @@
      A          R SHOWINV
      A* Data fields
      A            INV$DESCR    108A
+     A            INV$NAME      64A
      A            HOSTNAME  R               REFFLD(HOSTNAME HSTPF)
-     A            INV$NAME      32A
      A            INV$SERNO     24A
      A            INV$PID       24A
      A            INV$VID       14A

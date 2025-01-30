@@ -84,6 +84,7 @@ This presents you with a menu from where you can choose the individual applicati
 
 ## Known bugs.
 - Adding entries from missing OS-Device-Associations needs two times enter and sometimes results in an error message.
+- Working with missing/orphaned OS-Device-Associations: Deleting entries from the orphaned list prevents the rebuild of the missing list.
 
 ## ToDo.
 Main Host list/master file: HSTDF HSTHP HSTPF HSTPG HSTPOSLF:
@@ -92,4 +93,4 @@ Main Host list/master file: HSTDF HSTHP HSTPF HSTPG HSTPOSLF:
 
 ----
 
-2024-08-03 poc@pocnet.net
+2025-01-30 poc@pocnet.net
