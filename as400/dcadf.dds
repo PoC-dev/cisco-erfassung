@@ -145,11 +145,11 @@
      A                                      HLPPNLGRP('DCA2/SYSIMG' DCAHP)
      A          H                           HLPARA(16 2 17 80)
      A                                      HLPPNLGRP('DCA2/RLDREASON' DCAHP)
-     A          H                           HLPARA(18 2 18 80)
+     A          H                           HLPARA(18 2 19 80)
      A                                      HLPPNLGRP('DCA2/UPTIME' DCAHP)
-     A          H                           HLPARA(19 2 19 36)
+     A          H                           HLPARA(19 2 20 36)
      A                                      HLPPNLGRP('DCA2/CONFREG' DCAHP)
-     A          H                           HLPARA(20 31 20 77)
+     A          H                           HLPARA(20 31 21 77)
      A                                      HLPPNLGRP('DCA2/ASA_FOVER' DCAHP)
      A          H                           HLPARA(22 77 22 80)
      A                                      HLPPNLGRP('DCA2/END' DCAHP)
@@ -186,13 +186,13 @@
      A  53                             16  3'Reload Reason  . . . . . .'
      A  53        RLD$REASONR        B 16 31CNTFLD(50) DSPATR(PR)
      A  54                                  COLOR(RED)
-     A                                 18  3'Uptime . . . . . . . . . .'
-     A            UPTIME    R          18 31
-     A                                 19  3'Config-Register  . . . . .'
-     A            CONFREG   R          19 31
-     A  55                             20 31'Achtung!'
+     A                                 19  3'Uptime . . . . . . . . . .'
+     A            UPTIME    R          19 31
+     A                                 20  3'Config-Register  . . . . .'
+     A            CONFREG   R          20 31
+     A  55                             21 31'Achtung!'
      A                                      COLOR(YLW) DSPATR(RI)
-     A  55                             20 40'Host ist Teil eines Failover--
+     A  55                             21 40'Host ist Teil eines Failover--
      A                                      Clusters!'
      A                                 22 75'Ende' DSPATR(HI)
      A                                 23  2'F3=Verlassen   F10=Vlan-Info   -
