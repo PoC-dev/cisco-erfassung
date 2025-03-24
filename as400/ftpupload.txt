@@ -16,6 +16,7 @@ put dcahp.pnlgrp CISCO/SOURCES.DCAHP
 put dcaosmatch.dds CISCO/SOURCES.DCAOSMATCH
 put dcapf.dds CISCO/SOURCES.DCAPF
 put dcapg.rpgle CISCO/SOURCES.DCAPG
+put dcatspf.dds CISCO/SOURCES.DCATSPF
 put hstdf.dds CISCO/SOURCES.HSTDF
 put hsthp.pnlgrp CISCO/SOURCES.HSTHP
 put hstpf.dds CISCO/SOURCES.HSTPF
@@ -71,6 +72,7 @@ quote rcmd CHGPFM FILE(CISCO/SOURCES) MBR(DCAHP) SRCTYPE(PNLGRP) TEXT('Data Coll
 quote rcmd CHGPFM FILE(CISCO/SOURCES) MBR(DCAOSMATCH) SRCTYPE(LF) TEXT('Data Collected Automatically: Lookup of newer OS')
 quote rcmd CHGPFM FILE(CISCO/SOURCES) MBR(DCAPF) SRCTYPE(PF) TEXT('Data Collected Automatically')
 quote rcmd CHGPFM FILE(CISCO/SOURCES) MBR(DCAPG) SRCTYPE(RPGLE) TEXT('Data Collected Automatically')
+quote rcmd CHGPFM FILE(CISCO/SOURCES) MBR(DCATSPF) SRCTYPE(PF) TEXT('Data Collected Automatically: Various timestamps')
 quote rcmd CHGPFM FILE(CISCO/SOURCES) MBR(HSTDF) SRCTYPE(DSPF) TEXT('Hosts master file')
 quote rcmd CHGPFM FILE(CISCO/SOURCES) MBR(HSTHP) SRCTYPE(PNLGRP) TEXT('Hosts master file')
 quote rcmd CHGPFM FILE(CISCO/SOURCES) MBR(HSTPF) SRCTYPE(PF) TEXT('Hosts master file')

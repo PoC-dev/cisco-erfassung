@@ -1,9 +1,10 @@
 # This is a perl script snippet, meant as configuration file for cisco-erfassung.
 
 # How to connect to the database.
-$config->{"odbc_dsn"}   = "DBI:ODBC:Driver={IBM i Access ODBC Driver};System=ODBC-Name;DBQ=MY400LIB;CMT=1";
-$config->{"odbc_user"}  = "myas400user";
-$config->{"odbc_pass"}  = "mysecretpass";
+$config->{"odbc_dsn"}    = "DBI:ODBC:Driver={IBM i Access ODBC Driver};System=ODBC-Name;DBQ=MY400LIB;CMT=1";
+$config->{"odbc_dsn_nc"} = "DBI:ODBC:Driver={IBM i Access ODBC Driver};System=ODBC-Name;DBQ=MY400LIB;CMT=0";
+$config->{"odbc_user"}   = "myas400user";
+$config->{"odbc_pass"}   = "mysecretpass";
 
 # Use either cvsproject or giturl to handle revision control management over to CVS or git.
 # Don't use both, this is ambiguous.

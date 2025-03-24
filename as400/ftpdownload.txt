@@ -16,6 +16,7 @@ get CISCO/SOURCES.DCAHP dcahp.pnlgrp
 get CISCO/SOURCES.DCAOSMATCH dcaosmatch.dds
 get CISCO/SOURCES.DCAPF dcapf.dds
 get CISCO/SOURCES.DCAPG dcapg.rpgle
+get CISCO/SOURCES.DCATSPF dcatspf.dds
 get CISCO/SOURCES.HSTDF hstdf.dds
 get CISCO/SOURCES.HSTHP hsthp.pnlgrp
 get CISCO/SOURCES.HSTPF hstpf.dds

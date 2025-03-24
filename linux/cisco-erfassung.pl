@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # This is to be manually incremented on each "publish".
-my $versionstring = '2024-10-07.00';
+my $versionstring = '2025-03-24.00';
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -28,9 +28,10 @@ use Sys::Syslog;
 # How to access the database
 our $config;
 require "/etc/cisco-config-backuprc"; # For safety reasons, this data is not in the script.
-my $odbc_dsn  = $config->{'odbc_dsn'};
-my $odbc_user = $config->{'odbc_user'};
-my $odbc_pass = $config->{'odbc_pass'};
+my $odbc_dsn    = $config->{'odbc_dsn'};
+my $odbc_dsn_nc = $config->{'odbc_dsn_nc'};
+my $odbc_user   = $config->{'odbc_user'};
+my $odbc_pass   = $config->{'odbc_pass'};
 
 # Which source control managemnt tool to use.
 my $cvsproject = $config->{'cvsproject'};
@@ -39,8 +40,8 @@ my $giturl = $config->{'giturl'};
 # ----------------------------------------------------------------------------------------------------------------------------------
 
 # General vars.
-my ($asa_serno, $cfsavd_flash, $cleanup, $cnh, $dbh, $dirfh, $do_orphans, $do_scm, $do_scm_add, $do_setnull, $errcount,
-    $fh, $file, $flash_config_timestamp, $flash_size, $hostname, $hostport, $inv_have_line_name, $inv_have_line_pid, $loopcount,
+my ($asa_serno, $cfsavd_flash, $cleanup, $cnh, $dbh, $dbh_nc, $dirfh, $do_orphans, $do_scm, $do_scm_add, $do_setnull, $errcount,
+    $fh, $file, $flash_size, $hostname, $hostport, $inv_have_line_name, $inv_have_line_pid, $loopcount,
     $num_entries, $param, $quiet_mode, $reloaded, $retval, $scmdestfile, $scmtmp, $setnull_field, $show_config_command,
     $showverfeature, $sth_select_hosts, $test_db, $time_dtf, $tmpline, $to_clean_pf, $try_loop_string, $use_git, @beforeLinesArray,
     @cnh_parms, @errtyp, @filelist, @lines, @params, @setnull_fields, @show_config, @show_version, @time_tm, @to_clean_pfs,
@@ -60,6 +61,9 @@ my ($lineno, $line);
 my ( $asa_dm_ver, $asa_fover, $cfsavd, $cfupdt, $confreg, $flash, $model, $ram, $reload_reason, $serno, $stamp, $sysimg, $uptime,
     $uptime_min, $version, $vtp_domain, $vtp_mode, $vtp_prune, $vtp_vers
 );
+
+# Vars from dcatspf.
+my ($cfsavd_fl);
 
 # Vars from invpf.
 my ($inv_name, $inv_descr, $inv_pid, $inv_vid, $inv_serno);
@@ -180,6 +184,8 @@ if ( ! defined($dbh) ) {
     printf("Database connection established successfully.\n");
     exit(0);
 }
+# We need a secondary connection without commitment control for independent update of dcatspf.
+$dbh_nc = DBI->connect($odbc_dsn_nc, $odbc_user, $odbc_pass, {PrintError => 0, LongTruncOk => 1});
 
 # ------------------------------------------------------------------------------
 
@@ -223,10 +229,40 @@ if ( defined($dbh->errstr) ) {
     syslog(LOG_ERR, "SQL preparation error: %s", $dbh->errstr);
     die;
 }
-my $sth_update_dcapf_vtp = $dbh->prepare("UPDATE dcapf SET vtp_domain=?, vtp_mode=?, vtp_vers=?, vtp_prune=? \
-    WHERE hostname=?");
+my $sth_update_dcapf_vtp = $dbh->prepare("UPDATE dcapf SET vtp_domain=?, vtp_mode=?, vtp_vers=?, vtp_prune=? WHERE hostname=?");
 if ( defined($dbh->errstr) ) {
     syslog(LOG_ERR, "SQL preparation error: %s", $dbh->errstr);
+    die;
+}
+
+my $sth_delete_dcatspf = $dbh_nc->prepare("DELETE FROM dcatspf WHERE hostname=?");
+if ( defined($dbh->errstr) ) {
+    syslog(LOG_ERR, "SQL preparation error: %s", $dbh_nc->errstr);
+    die;
+}
+my $sth_insert_dcatspf = $dbh_nc->prepare("INSERT INTO dcatspf (hostname) VALUES (?)");
+if ( defined($dbh->errstr) ) {
+    syslog(LOG_ERR, "SQL preparation error: %s", $dbh_nc->errstr);
+    die;
+}
+my $sth_update_dcatspf_cfsavd_fl = $dbh_nc->prepare("UPDATE dcatspf SET cfsavd_fl=? WHERE hostname=?");
+if ( defined($dbh->errstr) ) {
+    syslog(LOG_ERR, "SQL preparation error: %s", $dbh_nc->errstr);
+    die;
+}
+my $sth_update_dcatspf_cfsavd = $dbh_nc->prepare("UPDATE dcatspf SET cfsavd=? WHERE hostname=?");
+if ( defined($dbh->errstr) ) {
+    syslog(LOG_ERR, "SQL preparation error: %s", $dbh_nc->errstr);
+    die;
+}
+my $sth_update_dcatspf_cfupdt = $dbh_nc->prepare("UPDATE dcatspf SET cfupdt=? WHERE hostname=?");
+if ( defined($dbh->errstr) ) {
+    syslog(LOG_ERR, "SQL preparation error: %s", $dbh_nc->errstr);
+    die;
+}
+my $sth_update_dcatspf_reloaded = $dbh_nc->prepare("UPDATE dcatspf SET reloaded=? WHERE hostname=?");
+if ( defined($dbh->errstr) ) {
+    syslog(LOG_ERR, "SQL preparation error: %s", $dbh_nc->errstr);
     die;
 }
 
@@ -277,7 +313,7 @@ my $time_parser_config = DateTime::Format::Strptime->new(
 my $time_parser_flash = DateTime::Format::Strptime->new(
     pattern => "%b %d %Y %T %z",
 );
-my $time_formatter = DateTime::Format::Strptime->new(
+my $time_formatter_db2ts = DateTime::Format::Strptime->new(
     pattern => "%Y-%m-%d-%H.%M.%S.000000",
 );
 # This is for calculating a time window when comparing stamps with some deviation.
@@ -622,6 +658,22 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
 
     # ----------------------------------------------------------------------
 
+    # Delete old timestamp entries in database. We can ignore all errors here, because this data is meant for debugging.
+
+    syslog(LOG_DEBUG, "%s: debug-timestamps: deleting previous data", $hostnameport);
+    $sth_delete_dcatspf->execute($hostnameport);
+    if ( defined($dbh->errstr) ) {
+        syslog(LOG_NOTICE, "%s: debug-timestamps: SQL execution error deleting data: %s", $hostnameport, $dbh->errstr);
+    } else {
+        # Write blank record to the database.
+        $sth_insert_dcatspf->execute($hostnameport);
+        if ( defined($dbh->errstr) ) {
+            syslog(LOG_NOTICE, "%s: debug-timestamps: SQL execution error inserting data: %s", $hostnameport, $dbh->errstr);
+        }
+    }
+
+    # ----------------------------------------------------------------------
+
     # Handle show inventory.
     # Note: IOS 12.0 and earlier don't know this command.
 
@@ -742,7 +794,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                             $hostnameport, $1, $2, $3, $try_loop_string);
                         $time_dtf = $time_parser_flash->parse_datetime($1 . ' ' . $2 . ' '  . $3);
                         if ( ! defined($time_dtf) ) {
-                            syslog(LOG_DEBUG, "%s: flash: unable to extract saved config timestamp", $hostnameport);
+                            syslog(LOG_DEBUG, "%s: flash: unable to extract saved config timestamp (show)", $hostnameport);
                         }
                     } elsif ( $line =~ /^\d+\s+-rw-\s+\d+\s+(\S{3} \d{1,2} \d{4}) (\d{2}:\d{2}:\d{2} \S+)\s+nvram_config\s*$/ ) {
                         # This is for 'dir flash:'.
@@ -750,7 +802,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                             $hostnameport, $1, $2, $try_loop_string);
                         $time_dtf = $time_parser_flash->parse_datetime($1 . ' ' . $2);
                         if ( ! defined($time_dtf) ) {
-                            syslog(LOG_DEBUG, "%s: flash: unable to extract saved config timestamp", $hostnameport);
+                            syslog(LOG_DEBUG, "%s: flash: unable to extract saved config timestamp (dir)", $hostnameport);
                         }
                     }
                 }
@@ -758,8 +810,15 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
 
             # Format time from earlier found input.
             if ( $wartungstyp eq 'IOS' && defined($time_dtf) ) {
-                $cfsavd_flash = $time_formatter->format_datetime($time_dtf);
+                $cfsavd_flash = $time_formatter_db2ts->format_datetime($time_dtf);
                 syslog(LOG_DEBUG, "%s: flash: using formatted date '%s'", $hostnameport, $cfsavd_flash);
+
+                # Save found flash file system time stamp to dcatspf.
+                $sth_update_dcatspf_cfsavd_fl->execute($cfsavd_flash, $hostnameport);
+                if ( defined($dbh->errstr) ) {
+                    syslog(LOG_NOTICE, "%s: debug-timestamps: SQL execution error updating cfsavd_fl: %s",
+                        $hostnameport, $dbh->errstr);
+                }
             }
         } else {
             syslog(LOG_WARNING, "%s: flash: expect error %s encountered while trying '%s'",
@@ -830,13 +889,25 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                     $reloaded = $time_parser_config->parse_datetime($2);
                     if ( defined($reloaded) ) {
                         syslog(LOG_DEBUG, "%s: show version: reloaded(1): using formatted date '%s'",
-                            $hostnameport, $time_formatter->format_datetime($reloaded));
+                            $hostnameport, $time_formatter_db2ts->format_datetime($reloaded));
+                        # Save to dcatspf.
+                        $sth_update_dcatspf_reloaded->execute($reloaded, $hostnameport);
+                        if ( defined($dbh->errstr) ) {
+                            syslog(LOG_NOTICE, "%s: debug-timestamps: SQL execution error updating reloaded(1): %s",
+                                $hostnameport, $dbh->errstr);
+                        }
                     }
                 } elsif ( $line =~ /^System restarted at (.+)$/ ) {
                     $reloaded = $time_parser_config->parse_datetime($1);
                     if ( defined($reloaded) ) {
                         syslog(LOG_DEBUG, "%s: show version: reloaded(2): using formatted date '%s'",
-                            $hostnameport, $time_formatter->format_datetime($reloaded));
+                            $hostnameport, $time_formatter_db2ts->format_datetime($reloaded));
+                        # Save to dcatspf.
+                        $sth_update_dcatspf_reloaded->execute($reloaded, $hostnameport);
+                        if ( defined($dbh->errstr) ) {
+                            syslog(LOG_NOTICE, "%s: debug-timestamps: SQL execution error updating reloaded(2): %s",
+                                $hostnameport, $dbh->errstr);
+                        }
                     }
                 } elsif ( $line =~ /^System returned to ROM by \S+ at (.+)$/ ) {
                     # FIXME: This doesn't match, despite regexr.com 
@@ -844,7 +915,13 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                     $reloaded = $time_parser_config->parse_datetime($1);
                     if ( defined($reloaded) ) {
                         syslog(LOG_DEBUG, "%s: show version: reloaded(3): using formatted date '%s'",
-                            $hostnameport, $time_formatter->format_datetime($reloaded));
+                            $hostnameport, $time_formatter_db2ts->format_datetime($reloaded));
+                        # Save to dcatspf.
+                        $sth_update_dcatspf_reloaded->execute($reloaded, $hostnameport);
+                        if ( defined($dbh->errstr) ) {
+                            syslog(LOG_NOTICE, "%s: debug-timestamps: SQL execution error updating reloaded(3): %s",
+                                $hostnameport, $dbh->errstr);
+                        }
                     }
                 } elsif ( $line =~ /^Configuration register is (\w+)( \(will be \w+ at next reload\))?\s*$/ ) {
                     $confreg = $1;
@@ -1401,22 +1478,29 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
             }
         }
 
-        # If we were unable to extract something from configuration, use (hopefully available) flash information.
+        # If we were unable to extract timestamp from configuration, use (hopefully available) flash information.
         if ( ! defined($time_dtf) ) {
-            syslog(LOG_DEBUG, "%s: config saved: could not extract timestamp, trying stamp from flash mem", $hostnameport);
+            syslog(LOG_DEBUG, "%s: config saved: could not extract timestamp, trying file stamp from flash mem", $hostnameport);
             if ( defined($cfsavd_flash) ) {
                 $cfsavd = $cfsavd_flash;
             } else {
-                syslog(LOG_DEBUG, "%s: config saved: could not extract timestamp from flash mem", $hostnameport);
+                syslog(LOG_DEBUG, "%s: config saved: no file stamp timestamp from flash mem available", $hostnameport);
             }
         } else {
-            $cfsavd = $time_formatter->format_datetime($time_dtf);
+            $cfsavd = $time_formatter_db2ts->format_datetime($time_dtf);
+
+            # Save to dcatspf.
+            $sth_update_dcatspf_cfsavd->execute($cfsavd, $hostnameport);
+            if ( defined($dbh->errstr) ) {
+                syslog(LOG_NOTICE, "%s: debug-timestamps: SQL execution error updating cfsavd: %s",
+                    $hostnameport, $dbh->errstr);
+            }
         }
 
         # A XE device might not show "NVRAM config last updated". Try reload timestamp.
         if ( ! defined($cfsavd) ) {
                 syslog(LOG_DEBUG, "%s: config saved: could not extract timestamp, using reload stamp", $hostnameport);
-                $cfsavd = $time_formatter->format_datetime($reloaded);
+                $cfsavd = $time_formatter_db2ts->format_datetime($reloaded);
         }
 
         if ( ! defined($cfsavd) ) {
@@ -1550,8 +1634,15 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                     if ( $line =~ /^! Last configuration change at (\d{2}:\d{2}:\d{2} \S+ \S{3} \S{3} \d{1,2} \d{4})( by \S+)?$/ ) {
                         $time_dtf = $time_parser_config->parse_datetime($1);
                         if ( defined($time_dtf) ) {
-                            $cfupdt = $time_formatter->format_datetime($time_dtf);
+                            $cfupdt = $time_formatter_db2ts->format_datetime($time_dtf);
                             syslog(LOG_DEBUG, "%s: config changed: using formatted date '%s'", $hostnameport, $cfupdt);
+
+                            # Save to dcatspf.
+                            $sth_update_dcatspf_cfupdt->execute($cfupdt, $hostnameport);
+                            if ( defined($dbh->errstr) ) {
+                                syslog(LOG_NOTICE, "%s: debug-timestamps: SQL execution error updating cfupdt: %s",
+                                    $hostnameport, $dbh->errstr);
+                            }
                         } else {
                             syslog(LOG_INFO, "%s: config changed: could not extract timestamp, invalid time zone?", $hostnameport);
                         }
@@ -1656,8 +1747,17 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
             $dbh->do("UPDATE dcapf SET $setnull_field=NULL WHERE hostname='$hostnameport' AND \
                 $setnull_field='0001-01-01-00.00.00.000000'");
             if ( defined($dbh->errstr) ) {
-                syslog(LOG_NOTICE, "%s: DB: SQL execution error for '%s' (stamp) in cleanup database: %s, skipping to next field",
+                syslog(LOG_NOTICE, "%s: DB: SQL execution error for '%s' (stamp1) in cleanup database: %s, skipping to next field",
                     $hostnameport, $setnull_field, $dbh->errstr);
+            }
+        }
+        @setnull_fields = ('cfsavd_fl', 'cfsavd', 'cfupdt', 'reloaded');
+        foreach $setnull_field (@setnull_fields) {
+            $dbh_nc->do("UPDATE dcatspf SET $setnull_field=NULL WHERE hostname='$hostnameport' AND \
+                $setnull_field='0001-01-01-00.00.00.000000'");
+            if ( defined($dbh_nc->errstr) ) {
+                syslog(LOG_NOTICE, "%s: DB: SQL execution error for '%s' (stamp2) in cleanup database: %s, skipping to next field",
+                    $hostnameport, $setnull_field, $dbh_nc->errstr);
             }
         }
     }
@@ -1722,6 +1822,7 @@ if ( $do_scm == 1 ) {
     # ----------------------------------
 
     # Commit (all) changes, including added files from above.
+    # Note: dcatspf should not be included in journaling, so even partial data is recorded for debugging purposes.
     syslog(LOG_DEBUG, "SCM: committing changes");
     if ( $use_git == 0 ) {
         $retval = system( 'cd ' . $scmtmp . ' && cvs -Q commit -m "Automatic Cisco-Config-Backup"');
@@ -1765,6 +1866,12 @@ if ( $do_orphans == 1 ) {
             $dbh->do("commit");
         }
     }
+
+    $dbh_nc->do("DELETE FROM dcatspf WHERE hostname NOT IN (SELECT hostname FROM hstpf)");
+    if ( defined($dbh_nc->errstr) ) {
+        syslog(LOG_NOTICE, "DB: SQL execution error for 'dcatspf' in cleanup database: %s, skipping to next table",
+            $dbh_nc->errstr);
+    }
 }
 
 # ------------------------------------------------------------------------------
@@ -1799,6 +1906,27 @@ END {
     if ( $sth_update_dcapf_setasafailover ) {
         $sth_update_dcapf_setasafailover->finish;
     }
+    if ( $sth_update_dcapf_vtp ) {
+        $sth_update_dcapf_vtp->finish;
+    }
+    if ( $sth_delete_dcatspf ) {
+        $sth_delete_dcatspf->finish;
+    }
+    if ( $sth_insert_dcatspf ) {
+        $sth_insert_dcatspf->finish;
+    }
+    if ( $sth_update_dcatspf_cfsavd_fl ) {
+        $sth_update_dcatspf_cfsavd_fl->finish;
+    }
+    if ( $sth_update_dcatspf_cfsavd ) {
+        $sth_update_dcatspf_cfsavd->finish;
+    }
+    if ( $sth_update_dcatspf_cfupdt ) {
+        $sth_update_dcatspf_cfupdt->finish;
+    }
+    if ( $sth_update_dcatspf_reloaded ) {
+        $sth_update_dcatspf_reloaded->finish;
+    }
     if ( $sth_delete_cfgverpf ) {
         $sth_delete_cfgverpf->finish;
     }
@@ -1811,10 +1939,19 @@ END {
     if ( $sth_insert_acdcapf ) {
         $sth_insert_acdcapf->finish;
     }
+    if ( $sth_delete_vlanpf ) {
+        $sth_delete_vlanpf->finish;
+    }
+    if ( $sth_insert_vlanpf ) {
+        $sth_insert_vlanpf->finish;
+    }
     if ( $sth_select_count_hostname_scm ) {
         $sth_select_count_hostname_scm->finish;
     }
 
+    if ( $dbh_nc ) {
+        $dbh_nc->disconnect;
+    }
     if ( $dbh ) {
         $dbh->disconnect;
     }
