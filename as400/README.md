@@ -6,7 +6,7 @@ This document is part of the Cisco device management solution, to be found on [G
 ## Introduction.
 The application collection in here is meant for supporting the functions listed in the [root directory README](../README.md).
 
-Data is collected through a Perl script having been tested under Linux only (because it has some external module dependencies).
+Data is collected through a Perl script, having been tested under Linux only (because it has some external module dependencies).
 
 Please note that the AS/400 UI is currently in German language only.
 
@@ -47,7 +47,9 @@ The help panel groups have no dependencies and can be compiled independent of an
 ### Upgrading from earlier versions.
 Sometimes, you want to upgrade the code base to the latest version from github. But there might have been incompatible changes introduced meanwhile. Please read the [NEWS](../NEWS.md) for incompatible changes and remedies.
 
-Apart from this, the easiest way to upgrade is to upload/overwrite the source members, and follow the above directions to recompile the objects. **There is one notable exception! No physical files should be just recompiled.** If you try, one of two things might happen:
+Apart from this, the easiest way to upgrade is to upload/overwrite the source members, and follow the above directions to recompile the objects. Since there is no automatic dependency tracking, the easiest way is to just compile everything again, according to the instructions above.
+
+**There is one notable exception! No physical files should be just recompiled.** If you try, one of two things might happen:
 - Compilation stops because there are files relating to the PF, making it impossible to delete the PF without manual intervention,
 - Compilation commences and overwrites the PF and all contained data.
 
@@ -61,7 +63,7 @@ This will move the existing file out of the way, create a new file, copy back ex
 If changes could result in discarding of existing data, a screen will pop up and warn you. Usually, it's safe to commence the operation by answering `(I)gnore` (possible loss of data). My changes will always be done in a way to not discard important data. Afterwards, just continue as directed above with the other file types.
 
 ## Journal the database tables for commitment control.
-Commitment control is a way to collect multiple database changes, and either apply them completely or not. This assures a consistent state of all the database tables in question.
+Commitment control is a way to bundle multiple database changes, and either apply them completely or not. This assures a consistent state of all the database tables in question. Commitment control is currently only used by the already mentioned Perl script.
 
 Commitment control requires tables to be journaled. Create the journal related objects and start the journaling process.
 ```
@@ -93,4 +95,4 @@ Main Host list/master file: HSTDF HSTHP HSTPF HSTPG HSTPOSLF:
 
 ----
 
-2025-01-30 poc@pocnet.net
+2025-03-26 poc@pocnet.net

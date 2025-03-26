@@ -13,10 +13,10 @@ This document is part of the Cisco device management solution, to be found on [G
 
 ## Compatibility.
 The application is used in two production environments — at least that's what I know for sure — and thus is continuously tested against
-- Cisco ASA running software version 9.x
+- Cisco ASA running software version 9.12 and newer
 - Cisco IOS and IOS XE devices
   - Routers:
-    - classic IOS ranging from 2500s running 11.2 and 12.0, 2600s running IOS 12.3, 870, 1700 running 12.4, 880, c880, 2900 running 15.x
+    - classic IOS ranging from 2500s running 11.2 and 12.0, 2600s running IOS 12.3, 1700 running 12.4, 880, c880, 2900 running 15.x
     - 1100 and ISR4K running IOS XE 17.x
   - Switches:
     - classic IOS ranging from version 12.1 (Cat 2950) to 15.2 (Cat 2960, 3560, 3750)
@@ -29,7 +29,7 @@ If you can't find your device in this list, that doesn't mean it won't work. It 
 
 There is some basic support for Ubiquity switches, but this has not been tested for a long time and should be considered "likely broken".
 
-Some of the more elaborated HP switches should also work, but same applies here: No way for me to test.
+Some of the more elaborated HP switches (with available CLI) should also work, but same applies here: No way for me to test.
 
 ## Features.
 The Perl script automatically extracts and parses text output obtained by issuing commands to the device, according to the master data provided by the user. After parsing, the data is inserted into database tables. Acquired data includes the configuration, which is the NVRAM stored configuration on IOS based devices, and the currently active (running) configuration on ASAs. Configuration data is copied to a database table as well as saved into CVS or git repository to keep track of changes.
@@ -72,8 +72,7 @@ In any case, **read the already mentioned READMEs**. They point out important de
 A huge thank you goes to [Mathias Peter IT-Systemhaus](https://www.mathpeter.com), my current employer who allowed me to spend part of my work time on this project.
 
 We agreed on this "light" version of the application to be released as OpenSource, and a non-public, more complete version for our internal use, featuring:
-- customer numbers,
-- further device flags,
+- customer numbers, and further device flags in master data,
 - audit trails for individual tasks when doing a "maintenance run",
 - and more.
 
@@ -83,4 +82,4 @@ Contact me if you're interested. This version will be available for a fee.
 
 ----
 
-2024-08-04 poc@pocnet.net
+2025-03-26 poc@pocnet.net

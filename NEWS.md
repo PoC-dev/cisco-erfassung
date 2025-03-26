@@ -11,9 +11,9 @@ Because `cfupdt` and `cfsavd` are derived from the running configuration, issuin
 privilege exec level 2 show running-config
 ```
 
-**Note:** Cisco ASA doesn't provide a time stamp for its `running-config`.
+**Note:** Cisco ASA provides a time stamp for its `running-config` from output in `show version`.
 
-I'm aware that this can be a lot of work. But with clever shell scripting, copy-paste of configuration snippets, and the use of ssh-keys for device authentication, even changing dozens of devices is done in mere minutes. Both timestamps are optional, and a device not allowing `show running-config` isn't treated as fatal. Just the timestamps won't be obtained. If you add the privilege, a future version will provide optical indication of devices which have a newer *running-config* vs. *startup-config*: Admin has forgotten to issue a `write mem` — a classic.
+I'm aware that this can be a lot of work. But with clever shell scripting, copy-paste of configuration snippets, and the use of ssh-keys for device authentication, even changing dozens of devices is done in mere minutes. Both timestamps are optional, and a device not allowing `show running-config` isn't treated as fatal. Just the timestamps won't be obtained. If you add the privilege, the device list will provide optical indication of devices which have a newer *running-config* vs. *startup-config*: Admin has forgotten to issue a `write mem` — a classic.
 
 ## 2024-08-04: removed *ciscohp* panel group.
 Instructions for setting up your devices has been moved to [README-devices-requirements](linux/README-devices-requirements.md). Just delete the dangling panel group object and source member:
@@ -27,4 +27,4 @@ Done because while rearranging/matching fields and field descriptions between hs
 
 ----
 
-2024-08-18 poc@pocnet.net
+2025-03-26 poc@pocnet.net
