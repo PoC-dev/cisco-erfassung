@@ -27,7 +27,7 @@
      H* When going prod, enable this for more speed/less CPU load.
      HOPTIMIZE(*FULL)
      H*
-     H*************************************************************************
+     H**************************************************************************
      H* List of INxx, we use:
      H*- Keys:
      H* 01..24: Command Attn Keys. (DSPF)
@@ -43,7 +43,7 @@
      H*     71: CHAIN found no records in dca
      H*     72: CHAIN found no records in hst (should not happen)
      H*
-     H*************************************************************************
+     H**************************************************************************
      F* File descriptors. Unfortunately, we're bound to handle files by file
      F*  name or record name. We can't use variables to make this more dynamic.
      F* Restriction of RPG.
@@ -56,7 +56,7 @@
      FCFGVERDF  CF   E             WORKSTN
      F                                     SFILE(CFGSFL:SFLRCDNBR)
      F*
-     F*************************************************************************
+     F**************************************************************************
      D* Global Variables (additional to autocreated ones by referenced files).
      D* Sorted by size, descending, to minimise memory padding.
      D*
@@ -65,7 +65,7 @@
      DTS_NOW           S               Z
      DTS_RESULT        S              3S 0
      D*
-     D*************************************************************************
+     D**************************************************************************
      C* This is needed for parameter passing.
      C     *ENTRY        PLIST
      C                   PARM                    HOSTNAME$        38
@@ -134,7 +134,7 @@ E01  C                   ENDIF
      C* Handle Returned F-Keys. These are usually defined as CA in the DSPF and
      C*  return no data to handle.
 B01  C                   SELECT
-     C*------------------------------------------------------------------------
+     C*-------------------------------------------------------------------------
      C* Handle SFL Reload with data from database.
      C     *IN05         WHENEQ    *ON
      C                   EXSR      LOADDSPSFL
@@ -145,16 +145,16 @@ B01  C                   SELECT
      C                   MOVE      *OFF          *IN12
      C                   MOVE      *ON           *INLR
      C                   RETURN
-     C*------------------------------------------------------------------------
+     C*-------------------------------------------------------------------------
 E01  C                   ENDSL
      C*
      C* Properly end *PGM. With ACTGRP anything else than *NEW, we must set LR!
      C                   MOVE      *ON           *INLR
      C                   RETURN
      C*
-     C*************************************************************************
+     C**************************************************************************
      C* SFL subroutines
-     C*************************************************************************
+     C**************************************************************************
      C     CLEARSFL      BEGSR
      C* Reset stuff to before the first load.
      C                   MOVEA     '0010'        *IN(31)
@@ -163,7 +163,7 @@ E01  C                   ENDSL
      C                   MOVE      *OFF          *IN33
      C*
      C                   ENDSR
-     C*************************************************************************
+     C**************************************************************************
      C     LOADDSPSFL    BEGSR
      C* Read over next, at most SFLPAG count of records in the nicely sorted LF
      C*  and write them into the SFL. Increment SFLRCDNBR which determines the
@@ -213,5 +213,5 @@ E01  C                   ENDSL
      C                   MOVE      *ON           *IN32
      C*
      C                   ENDSR
-     C*************************************************************************
+     C**************************************************************************
      C* vim: syntax=rpgle colorcolumn=81 autoindent noignorecase

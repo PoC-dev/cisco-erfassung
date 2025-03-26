@@ -51,7 +51,8 @@ Show Inventory dargestellt.
 .* -----------------------------------------------------------------------------
 :HELP NAME='SFL/VID'.VID
 :XH3.VID
-:P.In diesem Bereich wird die VID einer Komponente aus Show Inventory dargestellt.
+:P.In diesem Bereich wird die VID einer Komponente aus Show Inventory
+dargestellt.
 :EHELP.
 .* -----------------------------------------------------------------------------
 :HELP NAME='SFL/SERNO'.Serial

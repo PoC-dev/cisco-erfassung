@@ -17,7 +17,8 @@
      A*  http://www.gnu.org/licenses/gpl.html
      A*
      A* Compile me with:
-     A* CRTPRTF FILE(RPTUPDTEPT) SRCFILE(SOURCES) PAGESIZE(74 166 *ROWCOL) OVRFLW(72)
+     A* CRTPRTF FILE(RPTUPDTEPT) SRCFILE(SOURCES) PAGESIZE(74 166 *ROWCOL) +
+     A* OVRFLW(72)
      A*-------------------------------------------------------------------------
      A          R PRT1PAG
      A                                    78'Update-Report'

@@ -53,7 +53,7 @@
      H*     98: Generic File Error Flag, always set when FSTAT > 0.
      H*     99: Set Reverse Video for SFL OPT entry.
      H*
-     H***************************************************************************
+     H**************************************************************************
      F* File descriptors. Unfortunately, we're bound to handle files by file
      F*  name or record name. We can't use variables to make this more dynamic.
      F* Restriction of RPG.
@@ -76,7 +76,7 @@
      F                                     SFILE(MISSSFL:MISSRCDNBR)
      F                                     SFILE(ORPHDLTSFL:SFLDLTNBR)
      F                                     SFILE(MISSADDSFL:SFLADDNBR)
-     F***************************************************************************
+     F**************************************************************************
      D* Global Variables (additional to autocreated ones by referenced files).
      D*
      D* String for getting current date into.
@@ -94,7 +94,7 @@
      DRAM_PRV          S                   LIKE(RAM_IST) INZ
      DVERS_PRV         S                   LIKE(VERS_IST) INZ
      D*
-     D***************************************************************************
+     D**************************************************************************
      C* Start the main loop: Write SFLCTL and wait for keypress to read.
      C* This will be handled after *INZSR was implicitly called by RPG.
      C*
@@ -129,14 +129,14 @@
      C* Reset global SFL Error State from last loop iteration.
      C                   MOVE      *OFF          *IN99
      C*
-     C*------------------------------------------------------------------------
+     C*-------------------------------------------------------------------------
      C* Handle Returned F-Keys. These are usually defined as CA in the DSPF and
      C*  return no data to handle. IN29 indicates any valid key has been
      C*  pressed. Watching IN29 here might save a few CPU cycles.
      C     *IN29         IFEQ      *ON
      C                   SELECT
      C*
-     C*------------------------------------------------------------------------
+     C*-------------------------------------------------------------------------
      C* Handle SFL Reload with data from database.
      C     *IN05         WHENEQ    *ON
      C*
@@ -441,8 +441,8 @@
      C                   ENDIF
      C*
      C                   ENDSR
-     C*************************************************************************
-     C*************************************************************************
+     C**************************************************************************
+     C**************************************************************************
      C     DLTPREP       BEGSR
      C* For every record selected (OPT 4, see above) copy entry into the
      C*  secondary subfile screen (not yet shown) and blindly set flag IN81.
@@ -454,7 +454,7 @@
      C                   MOVE      *ON           *IN81
      C*
      C                   ENDSR
-     C*************************************************************************
+     C**************************************************************************
      C     CLEARDLTSFL   BEGSR
      C* Reset stuff to before the first load.
      C                   MOVEA     '0110'        *IN(31)
@@ -464,7 +464,7 @@
      C                   MOVE      *OFF          *IN81
      C*
      C                   ENDSR
-     C*************************************************************************
+     C**************************************************************************
      C     DODLTSFL      BEGSR
      C* Show may-i-delete-SFL and wait for keypress. Handle deletions if still
      C*  selected with '4'. Note: The SFL has SFLNXTCHG set on permanently to
@@ -533,8 +533,8 @@
      C                   EXSR      CLEARDLTSFL
      C*
      C                   ENDSR
-     C*************************************************************************
-     C*************************************************************************
+     C**************************************************************************
+     C**************************************************************************
      C     ADDPREP       BEGSR
      C* For every record selected (OPT 1, see above) copy entry into the
      C*  secondary subfile screen (not yet shown) and blindly set flag IN82.
@@ -546,7 +546,7 @@
      C                   MOVE      *ON           *IN82
      C*
      C                   ENDSR
-     C*************************************************************************
+     C**************************************************************************
      C     CLEARADDSFL   BEGSR
      C* Reset stuff to before the first load.
      C                   MOVEA     '0110'        *IN(41)
@@ -556,7 +556,7 @@
      C                   MOVE      *OFF          *IN82
      C*
      C                   ENDSR
-     C*************************************************************************
+     C**************************************************************************
      C     DOADDSFL      BEGSR
      C* Show may-i-add-SFL and wait for keypress. Handle additions if still
      C*  selected with '1'. Note: The SFL has SFLNXTCHG set on permanently to

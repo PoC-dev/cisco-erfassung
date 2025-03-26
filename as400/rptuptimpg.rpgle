@@ -27,13 +27,13 @@
      H* When going prod, enable this for more speed.
      HOPTIMIZE(*FULL)
      H*
-     H**********************************************************************
+     H**************************************************************************
      H* List of INxx, we use:
      H*- Other Error Handling:
      H*     74: EOF from database file
      H*     75: Printing Overflow Indicator
      H*
-     H**********************************************************************
+     H**************************************************************************
      F* File descriptors. Unfortunately, we're bound to handle files by file
      F*  name or record name. We can't use variables to make this more dynamic.
      F* Restriction of RPG.
@@ -44,10 +44,10 @@
      F* Printer File for output.
      FRPTUPTIMPTO    E             PRINTER OFLIND(*IN75)
      F*
-     D**********************************************************************
+     D**************************************************************************
      D* Global Variables (additional to autocreated ones by referenced files).
      D*
-     C**********************************************************************
+     C**************************************************************************
      C* This is very straightforward. Read all records and copy to printer
      C*  file.
      C*
@@ -81,5 +81,5 @@
      C*
      C                   MOVE      *ON           *INLR
      C                   RETURN
-     C**********************************************************************
+     C**************************************************************************
      C* vim: syntax=rpgle colorcolumn=81 autoindent noignorecase

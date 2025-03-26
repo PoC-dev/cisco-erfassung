@@ -13,7 +13,7 @@ Please note that the AS/400 UI is currently in German language only.
 ## Preparation.
 For details regarding the handling/uploading of the files in this directory, please refer to the README of my templates project mentioned above. You need to
 - create a library for the data: `crtlib cisco` in a 5250 session,
-- create a source physical file to contain the sources within said library: `crtsrcpf cisco/sources rcdlen(112)` in a 5250 session,
+- create a source physical file to contain the sources within said library: `crtsrcpf cisco/sources` in a 5250 session,
 - upload the files: `ftp as400-ip < ftpupload.txt` from your host, assumedly Linux.
 
 **Note:** The applications rely on certain objects from the subfile templates mentioned before:
