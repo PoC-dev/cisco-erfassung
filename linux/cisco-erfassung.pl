@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # This is to be manually incremented on each "publish".
-my $versionstring = '2025-04-04.06';
+my $versionstring = '2025-04-04.07';
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -1430,7 +1430,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                 last;
             } elsif ( $wartungstyp eq 'IOS' &&
                     $line =~ /^! NVRAM config last updated at (\d{2}:\d{2}:\d{2} \S+ \S{3} \S{3} \d{1,2} \d{4})( by \S+)?$/ ) {
-                # FIXME: IOS XE based switches might not return this line from startup-config, possibly when freshly reloaded.
+                # Some (?) IOS XE based switches might not return this line, possibly when freshly reloaded.
                 $time_dtf = $time_parser_config->parse_datetime($1);
                 syslog(LOG_DEBUG, "%s: config saved: found IOS match '%s'", $hostnameport, $1);
                 last;
@@ -1544,7 +1544,6 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                 foreach $line (@show_config) {
                     if ( $line =~ /^! Last configuration change at (\d{2}:\d{2}:\d{2} \S+ \S{3} \S{3} \d{1,2} \d{4})( by \S+)?$/ ) {
                         $time_dtf = $time_parser_config->parse_datetime($1);
-
                         if ( defined($time_dtf) ) {
                             $cfupdt = $time_formatter_db2ts->format_datetime($time_dtf);
                             syslog(LOG_DEBUG, "%s: config changed (IOS): using formatted date '%s'", $hostnameport, $cfupdt);
@@ -1552,16 +1551,13 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                             syslog(LOG_INFO, "%s: config changed (IOS): could not format timestamp, invalid time zone?",
                                 $hostnameport);
                         }
-                        last;
                     } elsif ( $line =~ /^! No configuration change since last restart$/ ) {
+                        # Only valid for classic IOS routers.
                         $found__no_config_chance_since_restart = 1;
-                        last;
                     } elsif ( $line =~ /^! NVRAM config last updated at/ ) {
                         $found__cfgsavd_in_running_cfg = 1;
-                        last;
                     }
                 }
-
 
                 # Indicators for an IOS or IOS XE device which has been reloaded with no configuration updates happening since.
                 # We need this later when determining missed "write mem" of devices.
@@ -1569,10 +1565,11 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                 #       at cfupdt > cfsavd && cfupdt > reloaded proves to be unreliable due to time needed to parse the startup
                 #       config into the running config.
                 if ( $found__no_config_chance_since_restart == 1 || $found__cfgsavd_in_running_cfg == 0 ) {
-                    syslog(LOG_DEBUG, "%s: config changed (IOS): device seems freshly reloaded, using saved configuration stamp '%s'",
-                        $hostnameport, $cfsavd);
                     $just_reloaded = 1;
                     $cfupdt = $cfsavd;
+                    syslog(LOG_DEBUG,
+                        "%s: config changed (IOS): device seems freshly reloaded (%d, %d), using saved configuration stamp '%s'",
+                            $hostnameport, $found__no_config_chance_since_restart, $found__cfgsavd_in_running_cfg, $cfupdt);
                 } else {
                     $just_reloaded = 0;
                 }
@@ -1608,10 +1605,12 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
 
         # Rebooted ASAs have no cfupdt if no config change after reload.
         if ( ! defined($cfupdt) ) {
-            syslog(LOG_INFO, "%s: config changed (ASA): could not find timestamp line in 'show version' using saved-cfg timestamp",
-                $hostnameport);
-                    $just_reloaded = 1;
+            $just_reloaded = 1;
             $cfupdt = $cfsavd;
+            syslog(LOG_DEBUG, "%s: config changed (ASA): device seems freshly reloaded, using saved configuration stamp '%s'",
+                $hostnameport, $cfupdt);
+        } else {
+            $just_reloaded = 0;
         }
     }
 
