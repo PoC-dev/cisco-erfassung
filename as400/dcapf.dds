@@ -29,6 +29,8 @@
      A            UPTIME_MIN    10S 0       TEXT('Uptime in minutes')
      A            FLASH          5S 0
      A            RAM            4S 0
+     A            JUSTRLD        1A         TEXT('No cfg-change, just reloaded')
+     A                                      DFT('0')
      A            RLD$REASON   150A         ALWNULL
      A            SYSIMG        80A         ALWNULL
      A            UPTIME        50A         ALWNULL TEXT('Textual uptime')
