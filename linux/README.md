@@ -62,11 +62,8 @@ If no hostnames are given, all hosts found in the database are handled, if eligi
 
 **Note:** Logging is done entirely via syslog, facility *user*, unless you're using debug-mode, which also emits messages on stdout.
 
-If the script runs without issues, I recommend to run it at least daily from *cron*.
-
-## Bugs.
-There is a logic glitch for IOS devices about calculation if the device has a newer running-config compared to startup-config. There are numerous edge cases, e. g. after device reloads and different behavior of different IOS releases. Currently, some IOS XE devices being just reloaded and not experiencing a `wr` appear as if a `wr` was missing.
+If the script runs without issues, I recommend to run it at least daily from *cron*. You may then also use `-q` to suppress notices about unreachable hosts.
 
 ----
 
-2025-03-26 poc@pocnet.net
+2025-04-03 poc@pocnet.net
