@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # This is to be manually incremented on each "publish".
-my $versionstring = '2025-04-04.04';
+my $versionstring = '2025-04-04.05';
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -798,6 +798,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
             syslog(LOG_DEBUG, "%s: flash: using formatted date '%s'", $hostnameport, $cfsavd_flash);
         }
     }
+    $errcount = 0;
 
     # ----------------------------------------------------------------------
 
