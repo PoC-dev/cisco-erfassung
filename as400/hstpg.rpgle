@@ -590,7 +590,8 @@ E03  C                   ENDIF
      C* Color me yellow - if running-config is newer than startup-config.
      C                   EVAL      *IN39 = ((NOT(%NULLIND(CFUPDT)) AND
      C                                      (NOT(%NULLIND(CFSAVD)) AND
-     C                                      (CFUPDT > CFSAVD))))
+     C                                      (CFUPDT > CFSAVD) AND
+     C                                      JUSTRLD = '0')))
      C*
 X02  C                   ELSE
      C                   MOVE      *ON           *IN37
