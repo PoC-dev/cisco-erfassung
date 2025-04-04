@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # This is to be manually incremented on each "publish".
-my $versionstring = '2025-04-04.02';
+my $versionstring = '2025-04-04.03';
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -39,7 +39,7 @@ my $giturl = $config->{'giturl'};
 # ----------------------------------------------------------------------------------------------------------------------------------
 
 # General vars.
-my ($asa_serno, $cleanup, $cnh, $dbh, $dirfh, $do_orphans, $do_scm, $do_scm_add, $do_setnull, $errcount, $fh, $file,
+my ($asa_serno, $cfsavd_flash, $cleanup, $cnh, $dbh, $dirfh, $do_orphans, $do_scm, $do_scm_add, $do_setnull, $errcount, $fh, $file,
     $flash_size, $found__cfgsavd_in_running_cfg, $found__no_config_chance_since_restart, $hostname, $hostport, $inv_have_line_name,
     $inv_have_line_pid, $loopcount, $num_entries, $param, $quiet_mode, $retval, $scmdestfile, $scmtmp, $setnull_field,
     $show_config_command, $showverfeature, $sth_select_hosts, $test_db, $time_dtf, $tmpline, $to_clean_pf, $try_loop_string,
@@ -444,15 +444,17 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
 
     # Clear vars from previous iteration.
     # FIXME: How to make sure this list is complete?
-    $ac_type = $ac_ver = $ac_ver = $asa_dm_ver = $asa_fover = $asa_serno = $cfsavd = $cfupdt = $cfupdt = $confreg = $flash =
+    $ac_type = $ac_ver = $ac_ver = $asa_dm_ver = $asa_fover = $asa_serno = $cfsavd = $cfupdt = $cfsavd_flash = $confreg = $flash =
         $inv_descr = $inv_name = $inv_pid = $inv_serno = $inv_vid = $just_reloaded = $model = $ram = $reload_reason = $serno =
         $stamp = $sysimg = $time_dtf = $uptime = $uptime_min = $version = $vlan_descr = $vlan_no= $vtp_domain = $vtp_mode =
         $vtp_prune = $vtp_vers = undef;
 
     # Clear call array for telnet/ssh by expect from stray entries of former run.
     @cnh_parms = ();
-    $found__no_config_chance_since_restart = 0;
-    $found__cfgsavd_in_running_cfg = 0;
+
+    # Predefine variables for indicating we had a certain line in a multiline array. Default is no = 0.
+    $found__no_config_chance_since_restart = $found__cfgsavd_in_running_cfg = 0;
+
 
     # Connect and try to log in.
     if ( $conn_method eq "telnet" ) {
@@ -729,7 +731,6 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
 
             @beforeLinesArray = split("\n", $before);
             foreach $line (@beforeLinesArray) {
-
                 # Try to determine the flash memory size.
                 if ( ! defined($flash_size) ) {
                     if ( $line =~ /^(\d+) bytes total \(\d+ bytes free(\/\d+% free)?\)\s*$/ ) {
@@ -743,6 +744,26 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                         }
                     }
                 }
+
+                if ( $wartungstyp eq 'IOS' ) {
+                    if ( $line =~ /^\s+\d+\s+\d+\s+(\S{3} \d{2} \d{4}) (\d{2}:\d{2}:\d{2})\.\d{10} (\S+)\s+nvram_config\s*$/ ) {
+                        # This is for show commands.
+                        syslog(LOG_DEBUG, "%s: flash: extracting saved config timestamp: %s %s %s (with '%s')",
+                            $hostnameport, $1, $2, $3, $try_loop_string);
+                        $time_dtf = $time_parser_flash->parse_datetime($1 . ' ' . $2 . ' '  . $3);
+                        if ( ! defined($time_dtf) ) {
+                            syslog(LOG_DEBUG, "%s: flash: unable to extract saved config timestamp (show)", $hostnameport);
+                        }
+                    } elsif ( $line =~ /^\d+\s+-rw-\s+\d+\s+(\S{3} \d{1,2} \d{4}) (\d{2}:\d{2}:\d{2} \S+)\s+nvram_config\s*$/ ) {
+                        # This is for 'dir flash:'.
+                        syslog(LOG_DEBUG, "%s: flash: extracting saved config timestamp: %s %s (with '%s')",
+                            $hostnameport, $1, $2, $try_loop_string);
+                        $time_dtf = $time_parser_flash->parse_datetime($1 . ' ' . $2);
+                        if ( ! defined($time_dtf) ) {
+                            syslog(LOG_DEBUG, "%s: flash: unable to extract saved config timestamp (dir)", $hostnameport);
+                        }
+                    }
+                } 
             }
         } else {
             syslog(LOG_WARNING, "%s: flash: expect error %s encountered while trying '%s'",
@@ -757,6 +778,12 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
         # If there was an error before, or we have what we need, no need to iterate through another try.
         if ( $errcount++ > 0 || (defined($flash_size) && defined($time_dtf)) ) {
             last;
+        }
+
+        # Format time from earlier found input.
+        if ( $wartungstyp eq 'IOS' && defined($time_dtf) ) {
+            $cfsavd_flash = $time_formatter_db2ts->format_datetime($time_dtf);
+            syslog(LOG_DEBUG, "%s: flash: using formatted date '%s'", $hostnameport, $cfsavd_flash);
         }
     }
 
@@ -1407,6 +1434,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                 last;
             } elsif ( $wartungstyp eq 'IOS' &&
                     $line =~ /^! NVRAM config last updated at (\d{2}:\d{2}:\d{2} \S+ \S{3} \S{3} \d{1,2} \d{4})( by \S+)?$/ ) {
+                # FIXME: IOS XE based switches might not return this line from startup-config, possibly when freshly reloaded.
                 $time_dtf = $time_parser_config->parse_datetime($1);
                 syslog(LOG_DEBUG, "%s: config saved: found IOS match '%s'", $hostnameport, $1);
                 last;
@@ -1431,7 +1459,12 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                 syslog(LOG_NOTICE, "%s: config saved: could not convert timestamp, invalid time zone?", $hostnameport);
             }
         } else {
-            syslog(LOG_NOTICE, "%s: config saved: could not extract timestamp", $hostnameport);
+            if ( defined($cfsavd_flash) ) {
+                syslog(LOG_NOTICE, "%s: config saved: could not extract timestamp, using stamp from flash mem", $hostnameport);
+                $cfsavd_flash = $cfsavd_flash;
+            } else {
+                syslog(LOG_NOTICE, "%s: config saved: could not extract timestamp, nor derive it from flash mem", $hostnameport);
+            }
         }
 
         # --------------------------
@@ -1540,6 +1573,8 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                 #       at cfupdt > cfsavd && cfupdt > reloaded proves to be unreliable due to time needed to parse the startup
                 #       config into the running config.
                 if ( $found__no_config_chance_since_restart == 1 || $found__cfgsavd_in_running_cfg == 0 ) {
+                    syslog(LOG_DEBUG, "%s: config changed: device is freshly reloaded, using saved configuration stamp '%s'",
+                        $hostnameport, $cfsavd);
                     $just_reloaded = 1;
                     $cfupdt = $cfsavd;
                 } else {
