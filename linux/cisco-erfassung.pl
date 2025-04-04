@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # This is to be manually incremented on each "publish".
-my $versionstring = '2025-04-04.05';
+my $versionstring = '2025-04-04.06';
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -868,18 +868,6 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                     $flash = $1;
                 } elsif ( $line =~ /^Configuration register is (\w+)\s*$/ ) {
                     $confreg = $1;
-                } elsif ( $line =~ /^Configuration last modified by (.+) at (\d{2}:\d{2}:\d{2})\.\d+ (\S+ \S{3} \S{3} \d{1,2} \d{4})$/ ) {
-                    # Dorkily, ASA shows the last configuration change not in show run, but in show version.
-                    $time_dtf = $time_parser_config->parse_datetime($2 . ' ' .  $3);
-                    if ( defined($time_dtf) ) {
-                        $cfupdt = $time_formatter_db2ts->format_datetime($time_dtf);
-                        if ( defined($cfupdt) ) {
-                            # We write the derived value to dcapf much later when we handle $cfupdt in general.
-                            syslog(LOG_DEBUG, "%s: asa-config changed: using formatted date '%s'", $hostnameport, $cfupdt);
-                        }
-                    } else {
-                        syslog(LOG_INFO, "%s: asa-config changed: could not convert timestamp, invalid time zone?", $hostnameport);
-                    }
                 }
             } elsif ( $wartungstyp eq 'UBI' ) {
                 # Note: Currently untested due to lack of machines.
@@ -1469,7 +1457,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                     syslog(LOG_NOTICE, "%s: config saved: SQL execution error: %s", $hostnameport, $dbh->errstr);
                 }
             } else {
-                syslog(LOG_NOTICE, "%s: config saved: could not convert timestamp, invalid time zone?", $hostnameport);
+                syslog(LOG_NOTICE, "%s: config saved: could not format timestamp, invalid time zone?", $hostnameport);
             }
         } else {
             if ( defined($cfsavd_flash) ) {
@@ -1543,7 +1531,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
     # Parse IOS running config change timestamp. We're issuing "show run" for that purpose.
     # FIXME: Rebooted ASAs have no cfupdt if no config change after reload, and no reloaded => use cfsavd.
     if ( $wartungstyp eq 'IOS' ) {
-        syslog(LOG_DEBUG, "%s: config changed: looking for timestamp lines in 'show running-config'", $hostnameport);
+        syslog(LOG_DEBUG, "%s: config changed (IOS): looking for timestamp lines in 'show running-config'", $hostnameport);
         $cnh->send("show running-config\n");
 
         ($pat, $err, $match, $before, $after) = $cnh->expect(5, '-re', $prompt_re);
@@ -1554,7 +1542,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
 
             # Config usually ends with a fixed string, so we can check if the obtained configuration is complete.
             if ( $show_config[-1] ne "end" ) {
-                syslog(LOG_NOTICE, "%s: config changed: unexpected end of running-config: '%s', skipping timestamp handling",
+                syslog(LOG_NOTICE, "%s: config changed (IOS): unexpected end of running-config: '%s', skipping timestamp handling",
                     $hostnameport, $show_config[-1]);
                 next;
             } else {
@@ -1565,9 +1553,10 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
 
                         if ( defined($time_dtf) ) {
                             $cfupdt = $time_formatter_db2ts->format_datetime($time_dtf);
-                            syslog(LOG_DEBUG, "%s: config changed: using formatted date '%s'", $hostnameport, $cfupdt);
+                            syslog(LOG_DEBUG, "%s: config changed (IOS): using formatted date '%s'", $hostnameport, $cfupdt);
                         } else {
-                            syslog(LOG_INFO, "%s: config changed: could not convert timestamp, invalid time zone?", $hostnameport);
+                            syslog(LOG_INFO, "%s: config changed (IOS): could not format timestamp, invalid time zone?",
+                                $hostnameport);
                         }
                         last;
                     } elsif ( $line =~ /^! No configuration change since last restart$/ ) {
@@ -1586,7 +1575,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                 #       at cfupdt > cfsavd && cfupdt > reloaded proves to be unreliable due to time needed to parse the startup
                 #       config into the running config.
                 if ( $found__no_config_chance_since_restart == 1 || $found__cfgsavd_in_running_cfg == 0 ) {
-                    syslog(LOG_DEBUG, "%s: config changed: device is freshly reloaded, using saved configuration stamp '%s'",
+                    syslog(LOG_DEBUG, "%s: config changed (IOS): device seems freshly reloaded, using saved configuration stamp '%s'",
                         $hostnameport, $cfsavd);
                     $just_reloaded = 1;
                     $cfupdt = $cfsavd;
@@ -1594,33 +1583,58 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                     $just_reloaded = 0;
                 }
 
-
                 # Save to dcapf.
                 $sth_update_dcapf_justrld->execute($just_reloaded, $hostnameport);
                 if ( defined($dbh->errstr) ) {
-                    syslog(LOG_NOTICE, "%s: config chganged: SQL execution error updating justrld: %s",
+                    syslog(LOG_NOTICE, "%s: ios config chganged: SQL execution error updating justrld: %s",
                         $hostnameport, $dbh->errstr);
-                }
-
-                # Actually insert data.
-                if ( defined($cfupdt) ) {
-                    $sth_update_dcapf_cfupdt->execute($cfupdt, $hostnameport);
-                    if ( defined($dbh->errstr) ) {
-                        syslog(LOG_NOTICE, "%s: config changed: SQL execution error: %s", $hostnameport, $dbh->errstr);
-                    }
-                } else {
-                    syslog(LOG_NOTICE, "%s: config changed: could not extract timestamp, nor derive it from startup-config",
-                        $hostnameport);
                 }
             }
         } else {
-            syslog(LOG_WARNING, "%s: config changed: expect error %s encountered while trying 'show running-config', skipping host",
-                $hostnameport, $err);
+            syslog(LOG_WARNING,
+                "%s: config changed (IOS): expect error %s encountered while trying 'show running-config', skipping host",
+                    $hostnameport, $err);
             # Usually this means we've lost the connection to the device and is always fatal => Skip host.
             $cnh->soft_close();
             $dbh->do("rollback");
             next;
         }
+    } elsif ( $wartungstyp eq 'ASA' ) {
+        # Dorkily, ASA shows the last configuration change not in show run, but in show version.
+        syslog(LOG_DEBUG, "%s: config changed (ASA): looking for timestamp line in 'show version'", $hostnameport);
+
+        foreach $line (@show_version) {
+            # Remove CR line by line for parsing into the database.
+            $line =~ tr/\015//d;
+
+            # Extract config changed timestamp.
+            if ( $line =~ /^Configuration last modified by (.+) at (\d{2}:\d{2}:\d{2})\.\d+ (\S+ \S{3} \S{3} \d{1,2} \d{4})$/ ) {
+                $time_dtf = $time_parser_config->parse_datetime($2 . ' ' .  $3);
+                if ( defined($time_dtf) ) {
+                    $cfupdt = $time_formatter_db2ts->format_datetime($time_dtf);
+                    syslog(LOG_DEBUG, "%s: config changed (ASA): using formatted date '%s'", $hostnameport, $cfupdt);
+                } else {
+                    syslog(LOG_INFO, "%s: config changed (ASA): could not format timestamp, invalid time zone?", $hostnameport);
+                }
+            }
+        }
+        # FIXME: What is the correct way to determine if an ASA has been freshly reloaded?
+        if ( ! defined($cfupdt) ) {
+            syslog(LOG_INFO, "%s: config changed (ASA): could not find timestamp line in 'show version' using saved-cfg timestamp",
+                $hostnameport);
+            $cfupdt = $cfsavd;
+        }
+    }
+
+    # Actually insert data.
+    if ( defined($cfupdt) ) {
+        $sth_update_dcapf_cfupdt->execute($cfupdt, $hostnameport);
+        if ( defined($dbh->errstr) ) {
+            syslog(LOG_NOTICE, "%s: config changed (common): SQL execution error: %s", $hostnameport, $dbh->errstr);
+        }
+    } else {
+        syslog(LOG_NOTICE, "%s: config changed (common): could not extract timestamp, nor derive it from startup-config",
+            $hostnameport);
     }
 
     # ----------------------------------------------------------------------
