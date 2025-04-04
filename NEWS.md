@@ -25,6 +25,9 @@ rmvm file(*curlib/sources) mbr(ciscohp)
 ## 2024-08-18: shortened *uptime* field from 52 to 50 positions.
 Done because while rearranging/matching fields and field descriptions between hst* and dca*, uptime field length made the field wrap in dcadf. The slightly shorter length should not be a problem.
 
+## 2025-04-02: added *justrld* field to dcapf.
+This new field indicates a just reloaded device, and is required to exclude such devices from being considered by the "someone forgot to do a wr" logic.
+
 ----
 
-2025-03-26 poc@pocnet.net
+2025-04-02 poc@pocnet.net
