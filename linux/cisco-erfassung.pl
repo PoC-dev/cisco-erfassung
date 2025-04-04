@@ -212,17 +212,12 @@ if ( defined($dbh->errstr) ) {
     syslog(LOG_ERR, "SQL preparation error: %s", $dbh->errstr);
     die;
 }
-my $sth_update_dcapf_cfupdt = $dbh->prepare("UPDATE dcapf SET cfupdt=? WHERE hostname=?");
+my $sth_update_dcapf_cfupdt_justrld = $dbh->prepare("UPDATE dcapf SET justrld=?, cfupdt=? WHERE hostname=?");
 if ( defined($dbh->errstr) ) {
     syslog(LOG_ERR, "SQL preparation error: %s", $dbh->errstr);
     die;
 }
 my $sth_update_dcapf_setasafailover = $dbh->prepare("UPDATE dcapf SET asa_fover=? WHERE hostname=?");
-if ( defined($dbh->errstr) ) {
-    syslog(LOG_ERR, "SQL preparation error: %s", $dbh->errstr);
-    die;
-}
-my $sth_update_dcapf_justrld = $dbh->prepare("UPDATE dcapf SET justrld=? WHERE hostname=?");
 if ( defined($dbh->errstr) ) {
     syslog(LOG_ERR, "SQL preparation error: %s", $dbh->errstr);
     die;
@@ -1529,7 +1524,6 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
     # ----------------------------------------------------------------------
 
     # Parse IOS running config change timestamp. We're issuing "show run" for that purpose.
-    # FIXME: Rebooted ASAs have no cfupdt if no config change after reload, and no reloaded => use cfsavd.
     if ( $wartungstyp eq 'IOS' ) {
         syslog(LOG_DEBUG, "%s: config changed (IOS): looking for timestamp lines in 'show running-config'", $hostnameport);
         $cnh->send("show running-config\n");
@@ -1582,13 +1576,6 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                 } else {
                     $just_reloaded = 0;
                 }
-
-                # Save to dcapf.
-                $sth_update_dcapf_justrld->execute($just_reloaded, $hostnameport);
-                if ( defined($dbh->errstr) ) {
-                    syslog(LOG_NOTICE, "%s: ios config chganged: SQL execution error updating justrld: %s",
-                        $hostnameport, $dbh->errstr);
-                }
             }
         } else {
             syslog(LOG_WARNING,
@@ -1618,17 +1605,19 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                 }
             }
         }
-        # FIXME: What is the correct way to determine if an ASA has been freshly reloaded?
+
+        # Rebooted ASAs have no cfupdt if no config change after reload.
         if ( ! defined($cfupdt) ) {
             syslog(LOG_INFO, "%s: config changed (ASA): could not find timestamp line in 'show version' using saved-cfg timestamp",
                 $hostnameport);
+                    $just_reloaded = 1;
             $cfupdt = $cfsavd;
         }
     }
 
     # Actually insert data.
     if ( defined($cfupdt) ) {
-        $sth_update_dcapf_cfupdt->execute($cfupdt, $hostnameport);
+        $sth_update_dcapf_cfupdt_justrld->execute($just_reloaded, $cfupdt, $hostnameport);
         if ( defined($dbh->errstr) ) {
             syslog(LOG_NOTICE, "%s: config changed (common): SQL execution error: %s", $hostnameport, $dbh->errstr);
         }
@@ -1829,11 +1818,8 @@ END {
     if ( $sth_update_dcapf_cfsavd ) {
         $sth_update_dcapf_cfsavd->finish;
     }
-    if ( $sth_update_dcapf_cfupdt ) {
-        $sth_update_dcapf_cfupdt->finish;
-    }
-    if ( $sth_update_dcapf_justrld ) {
-        $sth_update_dcapf_justrld->finish;
+    if ( $sth_update_dcapf_cfupdt_justrld ) {
+        $sth_update_dcapf_cfupdt_justrld->finish;
     }
     if ( $sth_update_dcapf_setasafailover ) {
         $sth_update_dcapf_setasafailover->finish;
