@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # This is to be manually incremented on each "publish".
-my $versionstring = '2025-04-04.01';
+my $versionstring = '2025-04-04.02';
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -1422,6 +1422,11 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
             $cfsavd = $time_formatter_db2ts->format_datetime($time_dtf);
             if ( defined($cfsavd) ) {
                 syslog(LOG_DEBUG, "%s: config saved: using formatted date '%s'", $hostnameport, $cfsavd);
+                # Actually write data.
+                $sth_update_dcapf_cfsavd->execute($cfsavd, $hostnameport);
+                if ( defined($dbh->errstr) ) {
+                    syslog(LOG_NOTICE, "%s: config saved: SQL execution error: %s", $hostnameport, $dbh->errstr);
+                }
             } else {
                 syslog(LOG_NOTICE, "%s: config saved: could not convert timestamp, invalid time zone?", $hostnameport);
             }
