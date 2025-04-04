@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # This is to be manually incremented on each "publish".
-my $versionstring = '2025-04-04.03';
+my $versionstring = '2025-04-04.04';
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -730,21 +730,31 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
             $before =~ tr/\000-\010|\013-\037|\177-\377//d;
 
             @beforeLinesArray = split("\n", $before);
+            # Get flash memory size.
             foreach $line (@beforeLinesArray) {
                 # Try to determine the flash memory size.
-                if ( ! defined($flash_size) ) {
-                    if ( $line =~ /^(\d+) bytes total \(\d+ bytes free(\/\d+% free)?\)\s*$/ ) {
-                        $flash_size = sprintf("%.0f", $1 / 1024 / 1024);
-                    } elsif ( $line =~ /^(\d+) bytes available \((\d+) bytes used\)\s*$/ ) {
-                        if ( defined($1) && defined($2) ) {
-                            $flash_size = sprintf("%.0f", ($1 + $2) / 1024 / 1024);
-                        } else {
-                            syslog(LOG_NOTICE, "%s: flash: size NOT read from %s, because it is malformed. (%s, %s)",
-                                $hostnameport, $try_loop_string, $1, $2);
-                        }
+                if ( $line =~ /^(\d+) bytes total \(\d+ bytes free(\/\d+% free)?\)\s*$/ ) {
+                    syslog(LOG_DEBUG, "%s: flash: size: match(1): %s Bytes", $hostnameport, $1);
+                    $flash_size = sprintf("%.0f", $1 / 1024 / 1024);
+                    last;
+                } elsif ( $line =~ /^(\d+) bytes available \((\d+) bytes used\)\s*$/ ) {
+                    if ( defined($1) && defined($2) ) {
+                        syslog(LOG_DEBUG, "%s: flash: size: match(2): Available: %s Bytes, Used: %s Bytes",
+                            $hostnameport, $1, $2);
+                        $flash_size = sprintf("%.0f", ($1 + $2) / 1024 / 1024);
+                        last;
+                    } else {
+                        syslog(LOG_NOTICE, "%s: flash: size NOT read from %s, because it is malformed. (%s, %s)",
+                            $hostnameport, $try_loop_string, $1, $2);
                     }
                 }
+            }
+            if ( defined($flash_size) ) {
+                syslog(LOG_DEBUG, "%s: flash: found flash size to be %s MiB", $hostnameport, $flash_size);
+            }
 
+            # Get file date of nvram_config.
+            foreach $line (@beforeLinesArray) {
                 if ( $wartungstyp eq 'IOS' ) {
                     if ( $line =~ /^\s+\d+\s+\d+\s+(\S{3} \d{2} \d{4}) (\d{2}:\d{2}:\d{2})\.\d{10} (\S+)\s+nvram_config\s*$/ ) {
                         # This is for show commands.
@@ -752,7 +762,8 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                             $hostnameport, $1, $2, $3, $try_loop_string);
                         $time_dtf = $time_parser_flash->parse_datetime($1 . ' ' . $2 . ' '  . $3);
                         if ( ! defined($time_dtf) ) {
-                            syslog(LOG_DEBUG, "%s: flash: unable to extract saved config timestamp (show)", $hostnameport);
+                            syslog(LOG_DEBUG, "%s: flash: unable to extract saved config timestamp (%s)",
+                                $hostnameport, $try_loop_string);
                         }
                     } elsif ( $line =~ /^\d+\s+-rw-\s+\d+\s+(\S{3} \d{1,2} \d{4}) (\d{2}:\d{2}:\d{2} \S+)\s+nvram_config\s*$/ ) {
                         # This is for 'dir flash:'.
@@ -760,7 +771,8 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                             $hostnameport, $1, $2, $try_loop_string);
                         $time_dtf = $time_parser_flash->parse_datetime($1 . ' ' . $2);
                         if ( ! defined($time_dtf) ) {
-                            syslog(LOG_DEBUG, "%s: flash: unable to extract saved config timestamp (dir)", $hostnameport);
+                            syslog(LOG_DEBUG, "%s: flash: unable to extract saved config timestamp (%s)",
+                                $hostnameport, $try_loop_string);
                         }
                     }
                 } 
