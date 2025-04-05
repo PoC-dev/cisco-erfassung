@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # This is to be manually incremented on each "publish".
-my $versionstring = '2025-04-04.07';
+my $versionstring = '2025-04-05.00';
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -1615,14 +1615,16 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
     }
 
     # Actually insert data.
-    if ( defined($cfupdt) ) {
-        $sth_update_dcapf_cfupdt_justrld->execute($just_reloaded, $cfupdt, $hostnameport);
-        if ( defined($dbh->errstr) ) {
-            syslog(LOG_NOTICE, "%s: config changed (common): SQL execution error: %s", $hostnameport, $dbh->errstr);
+    if ( $wartungstyp eq 'ASA' || $wartungstyp eq 'IOS' ) {
+        if ( defined($cfupdt) ) {
+            $sth_update_dcapf_cfupdt_justrld->execute($just_reloaded, $cfupdt, $hostnameport);
+            if ( defined($dbh->errstr) ) {
+                syslog(LOG_NOTICE, "%s: config changed (common): SQL execution error: %s", $hostnameport, $dbh->errstr);
+            }
+        } else {
+            syslog(LOG_NOTICE, "%s: config changed (common): could not extract timestamp, nor derive it from startup-config",
+                $hostnameport);
         }
-    } else {
-        syslog(LOG_NOTICE, "%s: config changed (common): could not extract timestamp, nor derive it from startup-config",
-            $hostnameport);
     }
 
     # ----------------------------------------------------------------------
