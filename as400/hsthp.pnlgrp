@@ -303,8 +303,8 @@ schließt ein:
 :P.Hier wird hinterlegt, über welches Protokoll ein Gerät kontaktiert wird.
 :P.Gültige Werte sind:
 :UL.
-:LI.ssh, standardmäßig über Port 22, verschlüsselte Verbindung
-:LI.telnet, standardmäßig über Port 23, Klartextverbindung
+:LI.:HP2.ssh:EHP2., standardmäßig über Port 22, verschlüsselte Verbindung
+:LI.:HP2.telnet:EHP2., standardmäßig über Port 23, Klartextverbindung
 :EUL.
 :P.Dieses Feld darf nicht leer sein.
 :EHELP.
