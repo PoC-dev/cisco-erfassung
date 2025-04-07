@@ -51,7 +51,7 @@ Bildschirmanzeige kann dieser Vorgang bestätigt oder abgebrochen werden.
 :PT.5=Details
 :PD.Allgemeine, automatisch erfasste Detaildaten werden für markierte Einträge
 angezeigt.
-:PT.7=Show running-configuration
+:PT.7=Show configuration
 :PD.Die zuletzt erfasste Konfiguration wird für markierte Einträge angezeigt.
 :PT.8=Show version
 :PD.Die zuletzt erfasste Ausgabe von Show version wird für markierte Einträge
