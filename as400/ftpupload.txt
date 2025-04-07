@@ -98,7 +98,7 @@ quote rcmd CHGPFM FILE(CISCO/SOURCES) MBR(OSMRPTMLF) SRCTYPE(LF) TEXT('Edit miss
 quote rcmd CHGPFM FILE(CISCO/SOURCES) MBR(OSMRPTOLF) SRCTYPE(LF) TEXT('Edit missing/orphaned osmatchpf-records: orphans')
 quote rcmd CHGPFM FILE(CISCO/SOURCES) MBR(OSMRPTPG) SRCTYPE(RPGLE) TEXT('Edit missing/orphaned osmatchpf-records')
 quote rcmd CHGPFM FILE(CISCO/SOURCES) MBR(OSUPDTELF) SRCTYPE(LF) TEXT('List hosts if OS updates are available')
-quote rcmd CHGPFM FILE(CISCO/SOURCES) MBR(RPTPRTPG) SRCTYPE(CLP) TEXT('Print to printer and state that we've printed')
+quote rcmd CHGPFM FILE(CISCO/SOURCES) MBR(RPTPRTPG) SRCTYPE(CLP) TEXT('Print to printer and state that we''ve printed')
 quote rcmd CHGPFM FILE(CISCO/SOURCES) MBR(RPTUPDTEPG) SRCTYPE(RPGLE) TEXT('List hosts if updates are available')
 quote rcmd CHGPFM FILE(CISCO/SOURCES) MBR(RPTUPDTEPT) SRCTYPE(PRTF) TEXT('List hosts if updates are available')
 quote rcmd CHGPFM FILE(CISCO/SOURCES) MBR(RPTUPTIMLF) SRCTYPE(LF) TEXT('List hosts by uptime')
