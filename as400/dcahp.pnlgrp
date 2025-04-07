@@ -158,8 +158,6 @@ Erfassungs-Script daher mindestens alle zwei Tage, besser täglich laufen.:ENOTE.
 :P.Der Zeitstempel wird aus der :HP1.running-config:EHP1. ausgelesen.
 :NOTE.Diese Zeile erscheint leer, wenn kein Zeitstempel ausgelesen werden
 konnte.:ENOTE.
-:NOTE.ASA hat keine Möglichkeit, diesen Zeitstempel anzuzeigen.:ENOTE.
-:EHELP.
 .* -----------------------------------------------------------------------------
 :HELP NAME='DCA1/CFSAVD'.Cfg-Speicherungs-Zeitstempel
 :XH3.Cfg-Speicherungs-Zeitstempel
