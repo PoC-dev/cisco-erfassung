@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # This is to be manually incremented on each "publish".
-my $versionstring = '2025-04-05.00';
+my $versionstring = '2025-04-09.00';
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -145,27 +145,13 @@ if ( defined($options{o}) ) {
     $do_orphans = 1;
 }
 
-syslog(LOG_INFO, "Startup: our version is '%s'", $versionstring);
-
-# Use git instead of default CVS?
-if ( $do_scm == 1 ) {
-    if ( defined($giturl) && ! defined($cvsproject) ) {
-        $use_git = 1;
-        syslog(LOG_DEBUG, "SCM: using git with URL '%s'", $giturl);
-    } elsif ( ! defined($giturl) && defined($cvsproject) ) {
-        $use_git = 0;
-        syslog(LOG_DEBUG, "SCM: using cvs with project '%s'", $cvsproject);
-    } else {
-        syslog(LOG_ERR, "SCM: both cvsproject and giturl found in configuration, this is invalid");
-        die;
-    }
-}
-
 # ----------------------------------------------------------------------------------------------------------------------------------
 
 # Now let the game begin!
 if ( $test_db == 1 ) {
     printf("Connecting to database...\n");
+} else {
+    syslog(LOG_INFO, "Startup: our version is '%s'", $versionstring);
 }
 syslog(LOG_DEBUG, "Init: connecting to database");
 $dbh = DBI->connect($odbc_dsn, $odbc_user, $odbc_pass, {PrintError => 0, LongTruncOk => 1});
@@ -178,6 +164,21 @@ if ( ! defined($dbh) ) {
 } elsif ( defined($dbh) && $test_db == 1 ) {
     printf("Database connection established successfully.\n");
     exit(0);
+}
+
+
+# Use git or CVS?
+if ( $do_scm == 1 ) {
+    if ( defined($giturl) && ! defined($cvsproject) ) {
+        $use_git = 1;
+        syslog(LOG_DEBUG, "SCM: using git with URL '%s'", $giturl);
+    } elsif ( ! defined($giturl) && defined($cvsproject) ) {
+        $use_git = 0;
+        syslog(LOG_DEBUG, "SCM: using cvs with project '%s'", $cvsproject);
+    } else {
+        syslog(LOG_ERR, "SCM: both cvsproject and giturl found in configuration, this is invalid");
+        die;
+    }
 }
 
 # ------------------------------------------------------------------------------
@@ -280,10 +281,6 @@ my $time_parser_flash = DateTime::Format::Strptime->new(
 );
 my $time_formatter_db2ts = DateTime::Format::Strptime->new(
     pattern => "%Y-%m-%d-%H.%M.%S.000000",
-);
-# This is for calculating a time window when comparing stamps with some deviation.
-my $duration = DateTime::Duration->new(
-    minutes => 2
 );
 
 # ----------------------------------------------------------------------------------------------------------------------------------
