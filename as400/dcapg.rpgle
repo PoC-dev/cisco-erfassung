@@ -1,4 +1,4 @@
-     HCOPYRIGHT('Patrik Schindler <poc@pocnet.net>, 2024-08-20')
+     HCOPYRIGHT('Patrik Schindler <poc@pocnet.net>, 2025-05-01')
      H*
      H* This file is part of cisco-erfassung, an application conglomerate for
      H*  management of Cisco devices on AS/400, i5/OS and IBM i.
@@ -48,12 +48,13 @@
      H*     47: Show red 'Config not saved' warning.
      H*     50: Show red 'End of Support!' warning.
      H*     51: Show VER_SOLL/Update if version is different to given version.
-     H*     52: Show ASDM version (if not NULL).
-     H*     53: Show reload reason (if not NULL).
-     H*     54: Color reload reason red, so it indicates error.
-     H*     55: Show string if failover is present.
-     H*     56: Show VTP pruning (if not NULL).
-     H*     57: VTP_PRUNING = 1
+     H*     52: Show Boot-ROM version (if not NULL).
+     H*     53: Show ASDM version (if not NULL).
+     H*     54: Show reload reason (if not NULL).
+     H*     55: Color reload reason red, so it indicates error.
+     H*     56: Show string if failover is present.
+     H*     57: Show VTP pruning (if not NULL).
+     H*     58: VTP_PRUNING = 1
      H*     60: Show DSPREC Form 2 instead of 1.
      H*- Other Error Handling:
      H*     71: CHAIN found no records in hosts
@@ -224,16 +225,17 @@
      C*
      C                   ENDIF
      C*----------------------------
-     C                   EVAL      *IN52 = (NOT(%NULLIND(ASA_DM_VER)))
-     C                   EVAL      *IN53 = (NOT(%NULLIND(RLD$REASON)))
+     C                   EVAL      *IN52 = (NOT(%NULLIND(ROMVER)))
+     C                   EVAL      *IN53 = (NOT(%NULLIND(ASA_DM_VER)))
+     C                   EVAL      *IN54 = (NOT(%NULLIND(RLD$REASON)))
      C*
      C* If reload was due to some error, color field.
-     C     'error'       SCAN      RLD$REASON:1                           54
-     C     'Critical'    SCAN      RLD$REASON:1                           54
-     C     'fault'       SCAN      RLD$REASON:1                           54
+     C     'error'       SCAN      RLD$REASON:1                           55
+     C     'Critical'    SCAN      RLD$REASON:1                           55
+     C     'fault'       SCAN      RLD$REASON:1                           55
      C*
      C* This numeric A, so we can use it directly.
-     C                   MOVE      ASA_FOVER     *IN55
+     C                   MOVE      ASA_FOVER     *IN56
      C*
      C*-------------------------------------------------------------------------
      C* Now, show forms as desired. This is a crude multipage-form workaround.
@@ -318,11 +320,11 @@
      C*
      C* Ouput VTP Pruning status.
      C                   IF        NOT %NULLIND(VTP_PRUNE)
-     C                   MOVE      *ON           *IN56
+     C                   MOVE      *ON           *IN57
      C* This numeric A, so we can use it directly.
-     C                   MOVE      VTP_PRUNE     *IN57
+     C                   MOVE      VTP_PRUNE     *IN58
      C                   ELSE
-     C                   MOVE      *OFF          *IN56
+     C                   MOVE      *OFF          *IN57
      C                   ENDIF
      C*
      C* Display the subfile- and subfile control records, or indicate an empty

@@ -131,14 +131,16 @@
      A                                      HLPPNLGRP('DCA2/MODEL' DCAHP)
      A          H                           HLPARA(7 2 7 39)
      A                                      HLPPNLGRP('DCA2/RAM' DCAHP)
-     A          H                           HLPARA(8 2 8 39)
+     A          H                           HLPARA(7 56 7 80)
      A                                      HLPPNLGRP('DCA2/FLASH' DCAHP)
-     A          H                           HLPARA(9 2 9 42)
+     A          H                           HLPARA(8 2 8 42)
      A                                      HLPPNLGRP('DCA2/SERNO' DCAHP)
-     A          H                           HLPARA(11 2 11 5)
+     A          H                           HLPARA(10 2 10 5)
      A                                      HLPPNLGRP('DCA2/SOFTWARE' DCAHP)
-     A          H                           HLPARA(12 2 12 80)
+     A          H                           HLPARA(11 2 11 80)
      A                                      HLPPNLGRP('DCA2/VERSION' DCAHP)
+     A          H                           HLPARA(12 2 12 50)
+     A                                      HLPPNLGRP('DCA2/ROMVER' DCAHP)
      A          H                           HLPARA(13 2 13 50)
      A                                      HLPPNLGRP('DCA2/ASA_DM_VER' DCAHP)
      A          H                           HLPARA(14 2 15 80)
@@ -169,30 +171,32 @@
      A                                  7  3'RAM  . . . . . . . . . . .'
      A            RAM       R     Y     7 32EDTCDE(1)
      A                                  7 38'MB'
-     A                                  8  3'Flash  . . . . . . . . . .'
-     A            FLASH     R     Y     8 31EDTCDE(1)
-     A                                  8 38'MB'
-     A                                  9  3'Seriennummer . . . . . . .'
-     A            SERNO     R           9 31
-     A                                 11  2'Software' DSPATR(HI)
-     A                                 12  3'Version  . . . . . . . . .'
-     A            VERSION   R          12 31
-     A  51                             12 56'Upd.' COLOR(TRQ)
-     A  51        VER_SOLL  R          12 61REFFLD(VERSION) COLOR(TRQ)
-     A  52                             13  3'ASDM-Version . . . . . . .'
-     A  52        ASA_DM_VERR          13 31
+     A                                  7 56'Flash . . . . .'
+     A            FLASH     R     Y     7 72EDTCDE(1)
+     A                                  7 79'MB'
+     A                                  8  3'Seriennummer . . . . . . .'
+     A            SERNO     R           8 31
+     A                                 10  2'Software' DSPATR(HI)
+     A                                 11  3'Version  . . . . . . . . .'
+     A            VERSION   R          11 31
+     A  51                             11 56'Upd.' COLOR(TRQ)
+     A  51        VER_SOLL  R          11 61REFFLD(VERSION) COLOR(TRQ)
+     A  52                             12  3'ROM-Version  . . . . . . .'
+     A  52        ROMVER    R          12 31
+     A  53                             13  3'ASDM-Version . . . . . . .'
+     A  53        ASA_DM_VERR          13 31
      A                                 14  3'OS-Image . . . . . . . . .'
      A            SYSIMG    R        B 14 31CNTFLD(50) DSPATR(PR)
-     A  53                             16  3'Reload Reason  . . . . . .'
-     A  53        RLD$REASONR        B 16 31CNTFLD(50) DSPATR(PR)
-     A  54                                  COLOR(RED)
+     A  54                             16  3'Reload Reason  . . . . . .'
+     A  54        RLD$REASONR        B 16 31CNTFLD(50) DSPATR(PR)
+     A  55                                  COLOR(RED)
      A                                 19  3'Uptime . . . . . . . . . .'
      A            UPTIME    R          19 31
      A                                 20  3'Config-Register  . . . . .'
      A            CONFREG   R          20 31
-     A  55                             21 31'Achtung!'
+     A  56                             21 31'Achtung!'
      A                                      COLOR(YLW) DSPATR(RI)
-     A  55                             21 40'Host ist Teil eines Failover--
+     A  56                             21 40'Host ist Teil eines Failover--
      A                                      Clusters!'
      A                                 22 75'Ende' DSPATR(HI)
      A                                 23  2'F3=Verlassen   F10=Vlan-Info   -
@@ -249,9 +253,9 @@
      A            VTP_MODE  R           4 16
      A                                  5  2'Version . . .'
      A            VTP_VERS  R           5 16EDTCDE(1)
-     A  56                              6  2'Pruning . . .'
-     A  56N57                           6 16'Nein'
-     A  56 57                           6 16'Ja'
+     A  57                              6  2'Pruning . . .'
+     A  57N58                           6 16'Nein'
+     A  57 58                           6 16'Ja'
      A                                  8  1'Lokale Vlan-Liste' DSPATR(HI)
      A                                 10  4'ID' DSPATR(HI) HLPID(1)
      A                                 10  8'Name' DSPATR(HI) HLPID(2)

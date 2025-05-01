@@ -158,6 +158,7 @@ Erfassungs-Script daher mindestens alle zwei Tage, besser t‰glich laufen.:ENOTE.
 :P.Der Zeitstempel wird aus der :HP1.running-config:EHP1. ausgelesen.
 :NOTE.Diese Zeile erscheint leer, wenn kein Zeitstempel ausgelesen werden
 konnte.:ENOTE.
+:EHELP.
 .* -----------------------------------------------------------------------------
 :HELP NAME='DCA1/CFSAVD'.Cfg-Speicherungs-Zeitstempel
 :XH3.Cfg-Speicherungs-Zeitstempel
@@ -219,6 +220,11 @@ Show Version in Erfahrung gebracht.:ENOTE.
 :P.Hier wird die gem‰ﬂ Show Version ausgegebene Betriebssystemversion angezeigt.
 :NOTE.Ist eine abweichende OS-Version hinterlegt, wird ein entsprechender
 Hinweis angezeigt.:ENOTE.
+:EHELP.
+.* -----------------------------------------------------------------------------
+:HELP NAME='DCA2/ROMVER'.ROM-Version
+:XH3.ROM-Version
+:P.Hier wird die gem‰ﬂ Show Version ausgegebene Version des Boot-ROM angezeigt.
 :EHELP.
 .* -----------------------------------------------------------------------------
 :HELP NAME='DCA2/ASA_DM_VER'.ASDM-Version

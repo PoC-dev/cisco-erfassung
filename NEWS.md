@@ -28,6 +28,9 @@ Done because while rearranging/matching fields and field descriptions between hs
 ## 2025-04-02: added *justrld* field to dcapf.
 This new field indicates a just reloaded device, and is required to exclude such devices from being considered by the "someone forgot to do a wr" logic.
 
+## 2025-05-01: added *romver* field to dcapf.
+This new field holds the version of the Boot-ROM of devices. It has been introduced because Cisco 1100 being upgraded from very old versions become stuck in a boot loop with very old ROMMON versions. Note that there is no special function to list ROMMON versions, yet.
+
 ----
 
-2025-04-02 poc@pocnet.net
+2025-05-01 poc@pocnet.net

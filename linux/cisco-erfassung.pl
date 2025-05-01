@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # This is to be manually incremented on each "publish".
-my $versionstring = '2025-04-09.00';
+my $versionstring = '2025-05-01.00';
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -57,8 +57,8 @@ my ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp);
 my ($lineno, $line);
 
 # Vars from dcapf. Also see handler if $do_setnull == 1!
-my ( $asa_dm_ver, $asa_fover, $cfsavd, $cfupdt, $confreg, $flash, $just_reloaded, $model, $ram, $reload_reason, $serno, $stamp,
-    $sysimg, $uptime, $uptime_min, $version, $vtp_domain, $vtp_mode, $vtp_prune, $vtp_vers
+my ( $asa_dm_ver, $asa_fover, $cfsavd, $cfupdt, $confreg, $flash, $just_reloaded, $model, $ram, $reload_reason, $romver, $serno,
+    $stamp, $sysimg, $uptime, $uptime_min, $version, $vtp_domain, $vtp_mode, $vtp_prune, $vtp_vers
 );
 
 # Vars from invpf.
@@ -202,8 +202,8 @@ if ( defined($dbh->errstr) ) {
     syslog(LOG_ERR, "SQL preparation error: %s", $dbh->errstr);
     die;
 }
-my $sth_insert_dcapf = $dbh->prepare("INSERT INTO dcapf (confreg, flash, hostname, model, ram, serno, stamp, sysimg, uptime, \
-    uptime_min, version, asa_dm_ver, rld\$reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+my $sth_insert_dcapf = $dbh->prepare("INSERT INTO dcapf (confreg, flash, hostname, model, ram, romver, serno, stamp, sysimg, \
+    uptime, uptime_min, version, asa_dm_ver, rld\$reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 if ( defined($dbh->errstr) ) {
     syslog(LOG_ERR, "SQL preparation error: %s", $dbh->errstr);
     die;
@@ -437,8 +437,8 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
     # Clear vars from previous iteration.
     # FIXME: How to make sure this list is complete?
     $ac_type = $ac_ver = $ac_ver = $asa_dm_ver = $asa_fover = $asa_serno = $cfsavd = $cfupdt = $cfsavd_flash = $confreg = $flash =
-        $inv_descr = $inv_name = $inv_pid = $inv_serno = $inv_vid = $just_reloaded = $model = $ram = $reload_reason = $serno =
-        $stamp = $sysimg = $time_dtf = $uptime = $uptime_min = $version = $vlan_descr = $vlan_no= $vtp_domain = $vtp_mode =
+        $inv_descr = $inv_name = $inv_pid = $inv_serno = $inv_vid = $just_reloaded = $model = $ram = $reload_reason = $romver =
+        $serno = $stamp = $sysimg = $time_dtf = $uptime = $uptime_min = $version = $vlan_descr = $vlan_no= $vtp_domain = $vtp_mode =
         $vtp_prune = $vtp_vers = undef;
 
     # Clear call array for telnet/ssh by expect from stray entries of former run.
@@ -816,6 +816,12 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                 if ( $line =~ /^(Cisco )?IOS(-XE)? (Software( \[\S+\])?,|\(tm\)) .* Software \((\S+)\), Version ([0-9A-Za-z\.\(\)]+)[,]? RELEASE SOFTWARE \(fc\d+\)\s*$/ ) {
                     $showverfeature = $5;
                     $version = $6;
+                } elsif ( $line =~ /^ROM: Bootstrap program is (C\d{4} boot loader)\s*$/ ) {
+                    $romver = $1;
+                } elsif ( $line =~ /^ROM: System Bootstrap, Version (\S+), RELEASE SOFTWARE \(fc\d\)\s*$/ ) {
+                    $romver = $1;
+                } elsif ( $line =~ /^ROM: (\S+)\s*$/ ) {
+                    $romver = $1;
                 } elsif ( $line =~ /^[Cc]isco\s+(\S+)\s+(\(.+\)\s+processor\s+)?(\(revision \S+\))?\s?+with\s+(\d+)K(\/(\d+)K)?\s+bytes\s+of\s+(physical )?memory\.\s*$/ ) {
                     $model = $1;
                     $ram = $4;
@@ -847,6 +853,8 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
             } elsif ( $wartungstyp eq 'ASA' ) {
                 if ( $line =~ /^Cisco Adaptive Security Appliance Software Version (\S+)\s*$/ ) {
                     $version = $1;
+                } elsif ( $line =~ /^ROMMON Version\s+: (\S+)\s*$/ ) {
+                    $romver = $1;
                 } elsif ( $line =~ /^Device Manager Version (\S+)\s*$/ ) {
                     $asa_dm_ver = $1;
                 } elsif ( $line =~ /^Hardware:\s+(\S+), (\d+) MB RAM/ ) {
@@ -1068,6 +1076,9 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
     if ( ! defined($reload_reason) ) {
         $reload_reason = 'NULL';
     }
+    if ( ! defined($romver) ) {
+        $romver = 'NULL';
+    }
     if ( ! defined($sysimg) ) {
         $sysimg = 'NULL';
     }
@@ -1089,8 +1100,8 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
 
         # Deletion succeeded, continue with insert.
         syslog(LOG_DEBUG, "%s: show version: inserting fresh data into dcapf", $hostnameport);
-        $sth_insert_dcapf->execute($confreg, $flash, $hostnameport, $model, $ram, $serno, $stamp, $sysimg, $uptime, $uptime_min,
-            $version, $asa_dm_ver, $reload_reason);
+        $sth_insert_dcapf->execute($confreg, $flash, $hostnameport, $model, $ram, $romver, $serno, $stamp, $sysimg, $uptime, 
+            $uptime_min, $version, $asa_dm_ver, $reload_reason);
         if ( defined($dbh->errstr) ) {
             syslog(LOG_WARNING, "%s: show version: SQL execution error inserting into dcapf: %s, skipping host",
                 $hostnameport, $dbh->errstr);
@@ -1647,8 +1658,8 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
         syslog(LOG_DEBUG, "%s: DB: Set \"empty\" dcapf fields to NULL", $hostnameport);
 
         # Text fields.
-        @setnull_fields = ('asa_dm_ver', 'asa_fover', 'confreg', 'rld$reason', 'sysimg', 'uptime',
-            'vtp_domain', 'vtp_mode', 'vtp_prune');
+        @setnull_fields = ('asa_dm_ver', 'asa_fover', 'confreg', 'rld$reason', 'romver', 'sysimg', 'uptime', 'vtp_domain',
+            'vtp_mode', 'vtp_prune');
         foreach $setnull_field (@setnull_fields) {
             $dbh->do("UPDATE dcapf SET $setnull_field=NULL WHERE hostname='$hostnameport' AND $setnull_field IN ('', 'NULL')");
             if ( defined($dbh->errstr) ) {
