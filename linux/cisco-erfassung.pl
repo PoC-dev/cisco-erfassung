@@ -820,7 +820,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                     $romver = $1;
                 } elsif ( $line =~ /^ROM: Bootstrap program is ([Cc]\d{4} boot loader)\s*$/ ) {
                     $romver = $1;
-                } elsif ( $line =~ /^ROM: System Bootstrap, Version (\S+), RELEASE SOFTWARE \(fc\d\)\s*$/ ) {
+                } elsif ( $line =~ /^(BOOTLDR|ROM): System Bootstrap, Version (\S+), RELEASE SOFTWARE \((fc\d|P)\)\s*$/ ) {
                     $romver = $1;
                 } elsif ( $line =~ /^ROM: (\S+)\s*$/ ) {
                     $romver = $1;
