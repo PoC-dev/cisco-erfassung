@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # This is to be manually incremented on each "publish".
-my $versionstring = '2025-05-01.00';
+my $versionstring = '2025-05-02.00';
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -854,6 +854,8 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                 if ( $line =~ /^Cisco Adaptive Security Appliance Software Version (\S+)\s*$/ ) {
                     $version = $1;
                 } elsif ( $line =~ /^ROMMON Version\s+: (\S+)\s*$/ ) {
+                    $romver = $1;
+                } elsif ( $line =~ /^\s+Boot microcode\s+: (\S+)\s*$/ ) {
                     $romver = $1;
                 } elsif ( $line =~ /^Device Manager Version (\S+)\s*$/ ) {
                     $asa_dm_ver = $1;
