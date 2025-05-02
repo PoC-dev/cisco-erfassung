@@ -816,7 +816,9 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                 if ( $line =~ /^(Cisco )?IOS(-XE)? (Software( \[\S+\])?,|\(tm\)) .* Software \((\S+)\), Version ([0-9A-Za-z\.\(\)]+)[,]? RELEASE SOFTWARE \(fc\d+\)\s*$/ ) {
                     $showverfeature = $5;
                     $version = $6;
-                } elsif ( $line =~ /^ROM: Bootstrap program is (C\d{4} boot loader)\s*$/ ) {
+                } elsif ( $line =~ /^BOOTLDR: \S+ Boot Loader \(\S+\) Version (\S+), RELEASE SOFTWARE \(fc\d\)\s*$/ ) {
+                    $romver = $1;
+                } elsif ( $line =~ /^ROM: Bootstrap program is ([Cc]\d{4} boot loader)\s*$/ ) {
                     $romver = $1;
                 } elsif ( $line =~ /^ROM: System Bootstrap, Version (\S+), RELEASE SOFTWARE \(fc\d\)\s*$/ ) {
                     $romver = $1;
