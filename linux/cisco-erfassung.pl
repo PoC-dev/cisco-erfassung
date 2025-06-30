@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # This is to be manually incremented on each "publish".
-my $versionstring = '2025-05-02.00';
+my $versionstring = '2025-06-30.00';
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -1448,6 +1448,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                 last;
             } elsif ( $wartungstyp eq 'NEX' &&
                     $line =~ /^!Startup config saved at: (\S{3} \S{3} \d{1,2} \d{2}:\d{2}:\d{2} \d{4})$/ ) {
+                # Note: Nexus might stop outputting this for no apparent reason.
                 $time_dtf = $time_parser_config_nexus->parse_datetime($1);
                 syslog(LOG_DEBUG, "%s: config saved: found NEX match '%s'", $hostnameport, $1);
                 last;
@@ -1471,7 +1472,9 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                 syslog(LOG_NOTICE, "%s: config saved: could not extract timestamp, using stamp from flash mem", $hostnameport);
                 $cfsavd_flash = $cfsavd_flash;
             } else {
-                syslog(LOG_NOTICE, "%s: config saved: could not extract timestamp, nor derive it from flash mem", $hostnameport);
+                if ( $wartungstyp ne 'NEX' ) {
+                    syslog(LOG_NOTICE, "%s: config saved: could not extract timestamp, nor derive it from flash mem", $hostnameport);
+                }
             }
         }
 
