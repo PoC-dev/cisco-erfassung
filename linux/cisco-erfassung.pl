@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # This is to be manually incremented on each "publish".
-my $versionstring = '2025-06-30.00';
+my $versionstring = '2025-07-30.00';
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -517,6 +517,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                 } elsif ( $pat eq 3 ) {
                     syslog(LOG_WARNING, "%s: connect: failed local authorization, skipping host", $hostnameport);
                     $cnh->soft_close();
+                    $errcount++;
                     next;
                 }
             } else {
