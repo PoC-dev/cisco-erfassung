@@ -1,4 +1,4 @@
-This directory contains text-based full-screen applications derived from parts of my [AS/400 Subfile Template](https://github.com/PoC-dev/as400-sfltemplates), and the accompanying table definitions supporting the script in the `../linux` subdirectory.
+This directory contains text-based full-screen applications derived from parts of my [AS/400 Subfile Template](https://github.com/PoC-dev/as400-sfltemplates), and the accompanying table definitions supporting the acquire-script in the `../linux` subdirectory.
 
 ## License.
 This document is part of the Cisco device management solution, to be found on [GitHub](https://github.com/PoC-dev/cisco-erfassung). Its content is subject to the [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) license, also known as *Attribution-ShareAlike 4.0 International*. The project itself is subject to the GNU Public License version 2.
@@ -8,7 +8,7 @@ The application collection in here is meant for supporting the functions listed 
 
 Data is collected through a Perl script, having been tested under Linux only (because it has some external module dependencies).
 
-Please note that the AS/400 UI is currently in German language only.
+Please note that the AS/400 UI and help texts are currently in German language only.
 
 ## Preparation.
 For details regarding the handling/uploading of the files in this directory, please refer to the README of my templates project mentioned above. You need to
@@ -42,7 +42,9 @@ The order of types is:
 
 The help panel groups have no dependencies and can be compiled independent of any order.
 
-**Note:** The main menu cannot be compiled with option 14. You can find the correct compile command at the beginning of CMDCISCO.
+**Note:** The main menu cannot be compiled with option 14, because this will try to generate a generic panel group object. You can find the correct compile command at the beginning of the CMDCISCO source member.
+
+**Note:**  To ease the chore and error-proneness of manual compilation steps, a REXX script named *COMPILE* has been provided for your convenience. As delivered, it does **not** generate (and hence overwrite) PFs, but uses `chgpf` to update existing PFs according to their according source members. If you want the PFs to be generated, change each *chgpf* call to *crtpf*.
 
 ### Upgrading from earlier versions.
 Sometimes, you want to upgrade the code base to the latest version from github. But there might have been incompatible changes introduced meanwhile. Please read the [NEWS](../NEWS.md) for incompatible changes and remedies.
@@ -95,4 +97,4 @@ Main Host list/master file: HSTDF HSTHP HSTPF HSTPG HSTPOSLF:
 
 ----
 
-2025-03-26 poc@pocnet.net
+2025-08-04 poc@pocnet.net

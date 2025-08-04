@@ -14,6 +14,7 @@ This document is part of the Cisco device management solution, to be found on [G
 ## Compatibility.
 The application is used in two production environments — at least that's what I know for sure — and thus is continuously tested against
 - Cisco ASA running software version 9.12 and newer
+  - this includes Cisco FirePower 1k devices running the ASA image
 - Cisco IOS and IOS XE devices
   - Routers:
     - classic IOS ranging from 2500s running 11.2 and 12.0, 2600s running IOS 12.3, 1700 running 12.4, 880, c880, 2900 running 15.x
@@ -52,7 +53,7 @@ In addition, while using the applications, secondary information is calculated a
 - highlight if an ASA indicates being member of a failover cluster, to not forget to handle both devices on upgrade,
 - highlight if a given OS release has an end-of-support date set.
 
-Extensive online help (in German language) is provided in the AS/400 part.
+The applications themselves are in German language. Extensive online help (in German language) is provided, also.
 
 ## Setup, terse.
 The involved steps basically comprise of:
@@ -82,4 +83,4 @@ Contact me if you're interested. This version will be available for a fee.
 
 ----
 
-2025-03-26 poc@pocnet.net
+2025-08-04 poc@pocnet.net
