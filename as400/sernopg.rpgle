@@ -1,4 +1,4 @@
-     HCOPYRIGHT('Patrik Schindler <poc@pocnet.net>, 2023-11-27')
+     HCOPYRIGHT('Patrik Schindler <poc@pocnet.net>, 2025-08-04')
      H*
      H* This file is part of cisco-erfassung, an application conglomerate for
      H*  management of Cisco devices on AS/400, i5/OS and IBM i.
@@ -415,6 +415,19 @@
      C                   CAT       '...':0       HOSTNAME$
      C                   ELSE
      C     STRLEN_MAX    SUBST     HOSTNAME:1    HOSTNAME$
+     C                   ENDIF
+     C*
+     C* Pre-Calculate length for one field-to-be-shortened.
+     C                   EVAL      STRLEN_MAX=%LEN(INV$NAME$)
+     C     STRLEN_MAX    SUB       3             STRLEN_MIN
+     C* Cut string and optionally add ellipse (if DB field is larger).
+     C                   MOVEL     *BLANK        INV$NAME$
+     C                   EVAL      STRLEN_CUR=%LEN(%TRIMR(INV$NAME))
+     C     STRLEN_CUR    IFGT      STRLEN_MAX
+     C     STRLEN_MIN    SUBST     INV$NAME:1    INV$NAME$
+     C                   CAT       '...':0       INV$NAME$
+     C                   ELSE
+     C     STRLEN_MAX    SUBST     INV$NAME:1    INV$NAME$
      C                   ENDIF
      C*
      C                   ENDSR

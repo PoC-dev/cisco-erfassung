@@ -31,7 +31,7 @@
      A*         ##Pull values from the table definition itself...
      A            INV$SERNO$    16A  O  9  7
      A            HOSTNAME$     22A  O  9 25
-     A            INV$NAME  R        O  9 49
+     A            INV$NAME$     32A  O  9 49
      A            INV$SERNO R        H
      A            HOSTNAME  R        H
      A* Subfile Control Screen -------------------------------------------------
