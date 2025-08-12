@@ -1,4 +1,4 @@
-     HCOPYRIGHT('Patrik Schindler <poc@pocnet.net>, 2025-08-04')
+     HCOPYRIGHT('Patrik Schindler <poc@pocnet.net>, 2025-08-12')
      H*
      H* This file is part of cisco-erfassung, an application conglomerate for
      H*  management of Cisco devices on AS/400, i5/OS and IBM i.
@@ -17,9 +17,6 @@
      H*  with it; if not, write to the Free Software Foundation, Inc., 59
      H*  Temple Place, Suite 330, Boston, MA 02111-1307 USA or get it at
      H*  http://www.gnu.org/licenses/gpl.html
-     H*
-     H* Compiler flags.
-     HDFTACTGRP(*NO) ACTGRP(*NEW)
      H*
      H* Tweak default compiler output: Don't be too verbose.
      HOPTION(*NOXREF : *NOSECLVL : *NOSHOWCPY : *NOEXT : *NOSHOWSKP)
@@ -142,6 +139,7 @@
      C*  to the DOUEQ-Loop to prevent another loop-cycle and thus late exit.
      C     *IN03         IFEQ      *ON
      C                   MOVE      *OFF          *IN03
+     C                   MOVE      *OFF          *INLR
      C                   RETURN
      C                   ENDIF
      C*------------------------------------------------------------------------
@@ -299,6 +297,7 @@
      C* End of main loop.
      C                   ENDDO
      C* Properly end *PGM.
+     C                   MOVE      *OFF          *INLR
      C                   RETURN
      C*========================================================================
      C* SFL subroutines
