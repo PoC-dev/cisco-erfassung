@@ -1402,13 +1402,13 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                 if ( $wartungstyp eq 'IOS' &&
                         $line =~ /^crypto vpn anyconnect flash:\/webvpn\/(anyconnect|cisco-secure-client)-(\S+)-([\d.]+)(-webdeploy)?-k9\.pkg sequence \d+$/ ) {
                     syslog(LOG_DEBUG, "%s: anyconnect: (IOS) found '%s'", $hostnameport, $line);
-                    $ac_type = $1;
-                    $ac_ver = $2;
+                    $ac_type = $2;
+                    $ac_ver = $3;
                 } elsif ( $wartungstyp eq 'ASA' &&
                         $line =~ /^\s*anyconnect image disk0:\/(anyconnect|cisco-secure-client)-(\S+)-([\d.]+)(-webdeploy)?-k9\.pkg \d+$/ ) {
                     syslog(LOG_DEBUG, "%s: anyconnect: (ASA) found '%s'", $hostnameport, $line);
-                    $ac_type = $1;
-                    $ac_ver = $2;
+                    $ac_type = $2;
+                    $ac_ver = $3;
                 } else {
                     $ac_type = $ac_ver = undef;
                 }
