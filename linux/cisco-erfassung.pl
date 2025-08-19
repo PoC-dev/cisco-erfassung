@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # This is to be manually incremented on each "publish".
-my $versionstring = '2025-07-30.00';
+my $versionstring = '2025-08-19.00';
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -1400,12 +1400,12 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                 $line =~ tr/\015//d;
 
                 if ( $wartungstyp eq 'IOS' &&
-                        $line =~ /^crypto vpn anyconnect flash:\/webvpn\/anyconnect-(\S+)-([\d.]+)(-webdeploy)?-k9\.pkg sequence \d+$/ ) {
+                        $line =~ /^crypto vpn anyconnect flash:\/webvpn\/(anyconnect|cisco-secure-client)-(\S+)-([\d.]+)(-webdeploy)?-k9\.pkg sequence \d+$/ ) {
                     syslog(LOG_DEBUG, "%s: anyconnect: (IOS) found '%s'", $hostnameport, $line);
                     $ac_type = $1;
                     $ac_ver = $2;
                 } elsif ( $wartungstyp eq 'ASA' &&
-                        $line =~ /^\s*anyconnect image disk0:\/anyconnect-(\S+)-([\d.]+)(-webdeploy)?-k9\.pkg \d+$/ ) {
+                        $line =~ /^\s*anyconnect image disk0:\/(anyconnect|cisco-secure-client)-(\S+)-([\d.]+)(-webdeploy)?-k9\.pkg \d+$/ ) {
                     syslog(LOG_DEBUG, "%s: anyconnect: (ASA) found '%s'", $hostnameport, $line);
                     $ac_type = $1;
                     $ac_ver = $2;
