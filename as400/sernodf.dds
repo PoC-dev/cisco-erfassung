@@ -65,16 +65,14 @@
      A          H                           HLPARA(5 1 7 80)
      A                                      HLPPNLGRP('MAIN/SFLOPTS' SERNOHP)
      A          H                           HLPARA(*CNST 1)
-     A                                      HLPPNLGRP('MAIN/START' SERNOHP)
-     A          H                           HLPARA(*CNST 2)
      A                                      HLPPNLGRP('SFLHDR/OPT' SERNOHP)
-     A          H                           HLPARA(*CNST 3)
+     A          H                           HLPARA(*CNST 2)
      A                                      HLPPNLGRP('SFLHDR/SERNO' SERNOHP)
-     A          H                           HLPARA(*CNST 4)
+     A          H                           HLPARA(*CNST 3)
      A                                      HLPPNLGRP('SFLHDR/HOSTNAME' SERNOHP)
-     A          H                           HLPARA(*CNST 5)
+     A          H                           HLPARA(*CNST 4)
      A                                      HLPPNLGRP('SFLHDR/INVNAME' SERNOHP)
-     A          H                           HLPARA(9 3 21 80)
+     A          H                           HLPARA(9 3 22 80)
      A                                      HLPPNLGRP('MAIN/SFLDTA' SERNOHP)
      A            SFLRCDNBR      3S 0H      SFLRCDNBR(CURSOR)
      A            SFLSIZ         5S 0P
@@ -92,19 +90,16 @@
      A                                      configuration  8=Show version  -
      A                                      9=Show inventory'
      A                                      COLOR(BLU)
-     A  35                              7 70'Beginn ...' DSPATR(HI) HLPID(1)
-     A                                  8  2'Opt' DSPATR(HI) HLPID(2)
-     A                                  8  7'Seriennummer' DSPATR(HI) HLPID(3)
-     A                                  8 25'Hostname' DSPATR(HI) HLPID(4)
-     A                                  8 49'Komponente' DSPATR(HI) HLPID(5)
+     A                                  8  2'Opt' DSPATR(HI) HLPID(1)
+     A                                  8  7'Seriennummer' DSPATR(HI) HLPID(2)
+     A                                  8 25'Hostname' DSPATR(HI) HLPID(3)
+     A                                  8 49'Komponente' DSPATR(HI) HLPID(4)
      A* Footer of the form -----------------------------------------------------
-     A* A subfile control record may contain elements above or below
-     A* the actual subfile, but not both.
+     A* A subfile control record may contain elements above or below the actual
+     A* subfile, but not both.
      A          R MAINBTM
      A                                      HLPTITLE('Geräteseriennummern --
      A                                      Listendarstellung')
-     A          H                           HLPARA(22 69 22 80)
-     A                                      HLPPNLGRP('MAIN/END' SERNOHP)
      A          H                           HLPARA(*RCD)
      A                                      HLPPNLGRP('MAIN/SFLBTM' SERNOHP)
      A                                 23  2'F1=Hilfe   -

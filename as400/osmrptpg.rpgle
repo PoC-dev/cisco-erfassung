@@ -1,4 +1,4 @@
-     HCOPYRIGHT('Patrik Schindler <poc@pocnet.net>, 2025-08-12')
+     HCOPYRIGHT('Patrik Schindler <poc@pocnet.net>, 2025-09-01')
      H*
      H* This file is part of cisco-erfassung, an application conglomerate for
      H*  management of Cisco devices on AS/400, i5/OS and IBM i.
@@ -123,7 +123,7 @@
      C     *IN12         OREQ      *ON
      C                   MOVE      *OFF          *IN03
      C                   MOVE      *OFF          *IN12
-     C                   MOVE      *OFF          *INLR
+     C                   MOVE      *ON           *INLR
      C                   RETURN
      C                   ENDIF
      C*
@@ -307,7 +307,7 @@
      C* End of main loop.
      C                   ENDDO
      C*
-     C                   MOVE      *OFF          *INLR
+     C                   MOVE      *ON           *INLR
      C                   RETURN
      C**************************************************************************
      C* Some useful Subroutines

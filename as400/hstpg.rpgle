@@ -1,4 +1,4 @@
-     HCOPYRIGHT('Patrik Schindler <poc@pocnet.net>, 2025-08-12')
+     HCOPYRIGHT('Patrik Schindler <poc@pocnet.net>, 2025-09-01')
      H*
      H* This file is part of cisco-erfassung, an application conglomerate for
      H*  management of Cisco devices on AS/400, i5/OS and IBM i.
@@ -234,7 +234,7 @@
      C*  to the DOUEQ-Loop to prevent another loop-cycle and thus late exit.
      C     *IN03         IFEQ      *ON
      C                   MOVE      *OFF          *IN03
-     C                   MOVE      *OFF          *INLR
+     C                   MOVE      *ON           *INLR
      C                   RETURN
      C                   ENDIF
      C*
@@ -395,7 +395,7 @@
      C* User may quit from current READC-loop.
      C     *IN03         IFEQ      *ON
      C                   MOVE      *OFF          *IN03
-     C                   MOVE      *OFF          *INLR
+     C                   MOVE      *ON           *INLR
      C                   RETURN
      C                   ENDIF
      C*
@@ -467,7 +467,7 @@
      C* End of main loop.
      C                   ENDDO
      C* Properly end *PGM.
-     C                   MOVE      *OFF          *INLR
+     C                   MOVE      *ON           *INLR
      C                   RETURN
      C*========================================================================
      C* SFL subroutines
@@ -525,7 +525,7 @@
      C                   MOVE      *ON           *IN31
      C*
      C* Try to find out if next record will be EOF or not: So we can indicate
-     C*  "more" or EOF to the user. This prevents a scrolldown to an empty SFL
+     C*  "more" or EOF to the user. This prevents a page down to an empty SFL
      C*  showing "no records".
      C* Do check only if SFL is full. If not, we're certainly at EOF.
      C     SFLRCDCNT     IFEQ      SFLSIZ
@@ -533,11 +533,11 @@
      C     *IN34         IFEQ      *OFF
      C                   READP     FWDPOS                                 35
      C                   ENDIF
-     C                   ELSE
-     C* If SFL is not full, allow scrollback, if we have enough records in PF.
+     C                   ENDIF
+     C*
+     C* Blindly allow scrollback if we have enough records in PF.
      C     DBRCDCNT      IFGT      SFLSIZ
      C                   MOVE      *OFF          *IN35
-     C                   ENDIF
      C                   ENDIF
      C*------------------
      C                   ELSE
@@ -630,7 +630,7 @@ E01  C                   ENDIF
      C     *LOVAL        SETLL     FWDPOS
      C*
      C                   EXSR      LOADDSPSFL
-     C                   MOVE      *ON           *IN35
+     C                   MOVEA     '01'          *IN(34)
      C*
      C                   ENDSR
      C*************************************************************************
@@ -645,9 +645,11 @@ E01  C                   ENDIF
      C                   ENDSR
      C*************************************************************************
      C     PAGEUP        BEGSR
-     C* What to do if user pressed pageup: Calculate proper count of backward
-     C*  reads and do it.
+     C* What to do if user pressed pageup: Blindly switch off BOF indicator,
+     C*  calculate proper count of backward reads and start another iteration
+     C*  of load-from-here-into-SFL.
      C     *IN34         IFEQ      *OFF
+     C*
      C     SFLSIZ        MULT      2             READPVAL
      C                   ELSE
      C     SFLSIZ        ADD       SFLRCDCNT     READPVAL

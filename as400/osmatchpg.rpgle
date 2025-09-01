@@ -1,4 +1,4 @@
-     HCOPYRIGHT('Patrik Schindler <poc@pocnet.net>, 2025-08-12')
+     HCOPYRIGHT('Patrik Schindler <poc@pocnet.net>, 2025-09-01')
      H*
      H* This file is part of cisco-erfassung, an application conglomerate for
      H*  management of Cisco devices on AS/400, i5/OS and IBM i.
@@ -194,7 +194,7 @@
      C*  to the DOUEQ-Loop to prevent another loop-cycle and thus late exit.
      C     *IN03         IFEQ      *ON
      C                   MOVE      *OFF          *IN03
-     C                   MOVE      *OFF          *INLR
+     C                   MOVE      *ON           *INLR
      C                   RETURN
      C                   ENDIF
      C*
@@ -315,7 +315,7 @@
      C* User may quit from current READC-loop.
      C     *IN03         IFEQ      *ON
      C                   MOVE      *OFF          *IN03
-     C                   MOVE      *OFF          *INLR
+     C                   MOVE      *ON           *INLR
      C                   RETURN
      C                   ENDIF
      C*
@@ -379,7 +379,7 @@
      C* End of main loop.
      C                   ENDDO
      C* Properly end *PGM.
-     C                   MOVE      *OFF          *INLR
+     C                   MOVE      *ON           *INLR
      C                   RETURN
      C*========================================================================
      C* SFL subroutines
@@ -1097,7 +1097,7 @@
      C     *IN03         IFEQ      *ON
      C                   CLOSE     OSMATCHRPL
      C                   MOVE      *OFF          *IN03
-     C                   MOVE      *OFF          *INLR
+     C                   MOVE      *ON           *INLR
      C                   RETURN
      C                   ENDIF
      C     *IN12         IFEQ      *ON
