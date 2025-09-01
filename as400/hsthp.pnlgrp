@@ -32,6 +32,12 @@ auf die Eingabetaste positioniert den Listenausschnitt zur ersten (teilweisen)
 textuellen Übereinstimmung.
 :EHELP.
 .* -----------------------------------------------------------------------------
+:HELP NAME='MAIN/ANZ'.Anzahl
+:XH3.Anzahl
+:P.Hier wird die Gesamtanzahl der vorhandenen Geräte in den Stammdaten
+angezeigt.
+:EHELP.
+.* -----------------------------------------------------------------------------
 :HELP NAME='MAIN/SFLOPTS'.Auswahloptionen
 :XH3.Auswahloptionen
 :P.Für die Liste gültige Auswahl-Werte, welche in der Spalte :HP1.Opt:EHP1.
@@ -275,7 +281,7 @@ auf dieses Gerät hinterlegt werden.
 :P.Verschiedene Gerätetypen verwenden leicht andere Befehle, um an bestimmte
 Daten heranzukommen, oder die Ausgaben sind unterschiedlich und müssen daher
 individuell interpretiert werden.
-:P.Der Typ gibt an, um welche Art von Gerät es sich handelt und wird hier
+:P.Der Hosttyp gibt an, um welche Art von Gerät es sich handelt und wird hier
 hinterlegt.
 :P.Gültige Werte sind:
 :PARML.
