@@ -90,7 +90,15 @@ This presents you with a menu from where you can choose the individual applicati
 - Adding entries from missing OS-Device-Associations needs two times enter and sometimes results in an error message.
 - Working with missing/orphaned OS-Device-Associations: Deleting entries from the orphaned list prevents the rebuild of the missing list.
 
+Both can be mitigated by leaving the respective application with `F3` and starting over.
+
 ## ToDo.
+- Expand ASA Anyconnect associations functionality with mass-replacing of new releases.
+- Additional SFL for osmatch*: Show Hostnames for a selected model
+- Translate to English.
+
+Report: Outdated machines: List all machines with hostnames where EOS date is past
+
 Main Host list/master file: HSTDF HSTHP HSTPF HSTPG HSTPOSLF:
 - Use transactions for deleting auxiliary table contents
 - Expand error handling for auxiliary table updates
