@@ -501,7 +501,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
         }
         push(@cnh_parms, $username . "@" . $hostname);
         $cnh = Expect->spawn("/usr/bin/ssh", @cnh_parms);
-        $cnh->log_stdout(1);
+        $cnh->log_stdout(0);
         $cnh->exp_internal(0);
 
         # Clear any requests from ssh in a loop until we have a defined $pat
