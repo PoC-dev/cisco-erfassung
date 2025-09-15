@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # This is to be manually incremented on each "publish".
-my $versionstring = '2025-08-19.01';
+my $versionstring = '2025-09-15.01';
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -491,12 +491,17 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
             next;
         }
     } elsif ( $conn_method eq "ssh" ) {
+        push(@cnh_parms, "-oControlMaster=no");
+        push(@cnh_parms, "-oControlPersist=no");                        
+        push(@cnh_parms, "-oPasswordAuthentication=yes");
+        push(@cnh_parms, "-oPreferredAuthentications=keyboard-interactive,password");
+        push(@cnh_parms, "-oPubkeyAuthentication=no");
         if ( $hostport ) {
             push(@cnh_parms, "-p " . $hostport);
         }
         push(@cnh_parms, $username . "@" . $hostname);
         $cnh = Expect->spawn("/usr/bin/ssh", @cnh_parms);
-        $cnh->log_stdout(0);
+        $cnh->log_stdout(1);
         $cnh->exp_internal(0);
 
         # Clear any requests from ssh in a loop until we have a defined $pat
