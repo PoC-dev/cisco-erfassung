@@ -492,7 +492,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
         }
     } elsif ( $conn_method eq "ssh" ) {
         push(@cnh_parms, "-oControlMaster=no");
-        push(@cnh_parms, "-oControlPersist=no");                        
+        push(@cnh_parms, "-oControlPersist=no");
         push(@cnh_parms, "-oPasswordAuthentication=yes");
         push(@cnh_parms, "-oPreferredAuthentications=keyboard-interactive,password");
         push(@cnh_parms, "-oPubkeyAuthentication=no");
