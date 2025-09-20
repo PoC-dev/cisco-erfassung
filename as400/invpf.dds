@@ -27,6 +27,7 @@
      A            INV$SERNO     24A
      A            INV$PID       24A
      A            INV$VID       14A
+     A            INV$SIZE       8P 0
      A* Index fields
      A          K HOSTNAME
      A* For vim ----------------------------------------------------------------

@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # This is to be manually incremented on each "publish".
-my $versionstring = '2025-09-15.01';
+my $versionstring = '2025-09-20.01';
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -62,7 +62,7 @@ my ( $asa_dm_ver, $asa_fover, $cfsavd, $cfupdt, $confreg, $flash, $just_reloaded
 );
 
 # Vars from invpf.
-my ($inv_name, $inv_descr, $inv_pid, $inv_vid, $inv_serno);
+my ($inv_name, $inv_descr, $inv_pid, $inv_vid, $inv_serno, $inv_size);
 
 # Vars from acdcapf.
 my ($ac_type, $ac_ver);
@@ -190,8 +190,8 @@ if ( defined($dbh->errstr) ) {
     syslog(LOG_ERR, "SQL preparation error: %s", $dbh->errstr);
     die;
 }
-my $sth_insert_invpf = $dbh->prepare("INSERT INTO invpf (hostname, inv\$name, inv\$descr, inv\$pid, inv\$vid, inv\$serno) \
-    VALUES (?, ?, ?, ?, ?, ?)");
+my $sth_insert_invpf = $dbh->prepare("INSERT INTO invpf (hostname, inv\$name, inv\$descr, inv\$pid, inv\$vid, inv\$serno, inv\$size) \
+    VALUES (?, ?, ?, ?, ?, ?, ?)");
 if ( defined($dbh->errstr) ) {
     syslog(LOG_ERR, "SQL preparation error: %s", $dbh->errstr);
     die;
@@ -671,7 +671,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                             $asa_serno = $inv_serno;
                         }
 
-                        $sth_insert_invpf->execute($hostnameport, $inv_name, $inv_descr, $inv_pid, $inv_vid, $inv_serno);
+                        $sth_insert_invpf->execute($hostnameport, $inv_name, $inv_descr, $inv_pid, $inv_vid, $inv_serno, $inv_size);
                         if ( defined($dbh->errstr) ) {
                             syslog(LOG_NOTICE, "%s: show inventory: SQL execution error inserting data: %s",
                                 $hostnameport, $dbh->errstr);
@@ -686,7 +686,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                     $inv_have_line_name = 1;
                     $inv_name = $1;
                     $inv_descr = $2;
-                } elsif ( $line =~ /^PID: (\S*)\s*, VID: (.*)\s*, SN: (.*)\s*$/ ) {
+                } elsif ( $line =~ /^PID: (\S+)\s*, VID: (\S+)\s*, SN: (\S+)\s*(, SIZE: (\d+) MB\s*)?$/ ) {
                     $inv_have_line_pid = 1;
 
                     # Fix excess blanks at string end.
@@ -698,6 +698,13 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
 
                     $inv_serno = $3;
                     $inv_serno =~ tr/[ ]*$//d;
+
+                    if ( defined($5) ) {
+                        $inv_size = $5;
+                        $inv_size =~ tr/[ ]*$//d;
+                    } else {
+                        $inv_size = 0;
+                    }
                 } elsif ( $line =~ /^% Invalid input detected at '^' marker\.$/ ) {
                     syslog(LOG_NOTICE, "%s: show inventory: device doesn't support command: %s", $hostnameport);
                     last;

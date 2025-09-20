@@ -18,8 +18,8 @@
 :PNLGRP.
 .* -----------------------------------------------------------------------------
 :HELP NAME='GLOBAL'.Geräte-Inventar
-:P.Diese Applikation ermöglicht das Einsehen von mittels Show Inventory
-erfassten Daten.
+:P.Diese Applikation ermöglicht das Einsehen von mittels :HP1.Show
+Inventory:EHP1. erfassten Daten.
 :P.Die Cisco-Wartungsverwaltung ist eine Sammlung von Applikationen zur
 Verwaltung von Cisco- und auf Kommandozeilenebene kompatiblen Geräten. Eine
 Funktionsübersicht findet sich in der Hilfefunktion im Hauptmenü.
@@ -31,40 +31,29 @@ Funktionsübersicht findet sich in der Hilfefunktion im Hauptmenü.
 Domain Name) der derzeit angezeigten Liste ausgegeben.
 :EHELP.
 .* -----------------------------------------------------------------------------
-:HELP NAME='SFL/NAME'.Name
-:XH3.Name
-:P.In diesem Bereich wird der Name einer Komponente aus Show Inventory
-dargestellt.
-:EHELP.
-.* -----------------------------------------------------------------------------
-:HELP NAME='SFL/DESCR'.Beschreibung
-:XH3.Beschreibung
-:P.In diesem Bereich wird die Beschreibung einer Komponente aus Show Inventory
-dargestellt.
-:EHELP.
-.* -----------------------------------------------------------------------------
-:HELP NAME='SFL/PID'.PID
-:XH3.PID
-:P.In diesem Bereich wird die PID (Product Identification) einer Komponente aus
-Show Inventory dargestellt.
-:EHELP.
-.* -----------------------------------------------------------------------------
-:HELP NAME='SFL/VID'.VID
-:XH3.VID
-:P.In diesem Bereich wird die VID einer Komponente aus Show Inventory
-dargestellt.
-:EHELP.
-.* -----------------------------------------------------------------------------
-:HELP NAME='SFL/SERNO'.Serial
-:XH3.Serial
-:P.In diesem Bereich wird die Seriennummer einer Komponente aus Show Inventory
-dargestellt.
-:EHELP.
-.* -----------------------------------------------------------------------------
 :HELP NAME='MAIN/SFLDTA'.Datenbereich
 :XH3.Datenbereich
-:P.In diesem Bereich werden weitere Datensätze dargestellt. Detaillierte Hilfe
-zu den Datensätzen werden nur für den ersten Satz zu Verfügung gestellt.
+:P.In diesem Bereich werden die eigentlichen Datensätze angezeigt. Durch den
+Umfang der anzuzeigenden Informationen ist eine streng tabellarische Anzeige
+nicht möglich. Jeder Komponenteneintrag wird daher in einen separaten Block von
+jeweils vier Zeilen aufgeschlüsselt.
+:P.Folgende Informationen zu den gefunden Komponenten können dargestellt werden:
+:DL.
+:DT.Name
+:DD.Der Name der Komponente
+:DT.Beschreibung
+:DD.Die Beschreibung der Komponente
+:DT.PID
+:DD.Die PID (Product Identification) der Komponente
+:DT.VID
+:DD.Die VID der Komponente
+:DT.Serial
+:DD.Die Seriennummer der Komponente
+:DT.Größe
+:DD.Die Kapazität der Komponente, sofern es sich bei der Komponente um einen
+Datenträger handelt. Falls hier 0 angezeigt wird, handelt es sich nicht um einen
+Datenträger.
+:EDL.
 :EHELP.
 .* -----------------------------------------------------------------------------
 :HELP NAME='MAIN/SFLBTM'.Funktionstasten
