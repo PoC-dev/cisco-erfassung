@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # This is to be manually incremented on each "publish".
-my $versionstring = '2025-09-20.01';
+my $versionstring = '2025-10-12.01';
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -752,35 +752,41 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                         syslog(LOG_NOTICE, "%s: flash: size NOT read from %s, because it is malformed. (%s, %s)",
                             $hostnameport, $try_loop_string, $1, $2);
                     }
+                } elsif ( $line =~ /^%Error: No PCMCIA flash chip information available\s*$/ ) {
+                    $flash_size = 0;
+                    syslog(LOG_NOTICE, "%s: flash: could not determine flash size because of unsupported flash card",
+                        $hostnameport);
                 }
             }
+
+            # No need to poke in invalid output.
             if ( defined($flash_size) ) {
                 syslog(LOG_DEBUG, "%s: flash: found flash size to be %s MiB", $hostnameport, $flash_size);
-            }
 
-            # Get file date of nvram_config.
-            foreach $line (@beforeLinesArray) {
-                if ( $wartungstyp eq 'IOS' ) {
-                    if ( $line =~ /^\s+\d+\s+\d+\s+(\S{3} \d{2} \d{4}) (\d{2}:\d{2}:\d{2})\.\d{10} (\S+)\s+nvram_config\s*$/ ) {
-                        # This is for show commands.
-                        syslog(LOG_DEBUG, "%s: flash: extracting saved config timestamp: %s %s %s (with '%s')",
-                            $hostnameport, $1, $2, $3, $try_loop_string);
-                        $time_dtf = $time_parser_flash->parse_datetime($1 . ' ' . $2 . ' '  . $3);
-                        if ( ! defined($time_dtf) ) {
-                            syslog(LOG_DEBUG, "%s: flash: unable to extract saved config timestamp (%s)",
-                                $hostnameport, $try_loop_string);
+                # Get file date of nvram_config.
+                foreach $line (@beforeLinesArray) {
+                    if ( $wartungstyp eq 'IOS' ) {
+                        if ( $line =~ /^\s+\d+\s+\d+\s+(\S{3} \d{2} \d{4}) (\d{2}:\d{2}:\d{2})\.\d{10} (\S+)\s+nvram_config\s*$/ ) {
+                            # This is for show commands.
+                            syslog(LOG_DEBUG, "%s: flash: extracting saved config timestamp: %s %s %s (with '%s')",
+                                $hostnameport, $1, $2, $3, $try_loop_string);
+                            $time_dtf = $time_parser_flash->parse_datetime($1 . ' ' . $2 . ' '  . $3);
+                            if ( ! defined($time_dtf) ) {
+                                syslog(LOG_DEBUG, "%s: flash: unable to extract saved config timestamp (%s)",
+                                    $hostnameport, $try_loop_string);
+                            }
+                        } elsif ( $line =~ /^\d+\s+-rw-\s+\d+\s+(\S{3} \d{1,2} \d{4}) (\d{2}:\d{2}:\d{2} \S+)\s+nvram_config\s*$/ ) {
+                            # This is for 'dir flash:'.
+                            syslog(LOG_DEBUG, "%s: flash: extracting saved config timestamp: %s %s (with '%s')",
+                                $hostnameport, $1, $2, $try_loop_string);
+                            $time_dtf = $time_parser_flash->parse_datetime($1 . ' ' . $2);
+                            if ( ! defined($time_dtf) ) {
+                                syslog(LOG_DEBUG, "%s: flash: unable to extract saved config timestamp (%s)",
+                                    $hostnameport, $try_loop_string);
+                            }
                         }
-                    } elsif ( $line =~ /^\d+\s+-rw-\s+\d+\s+(\S{3} \d{1,2} \d{4}) (\d{2}:\d{2}:\d{2} \S+)\s+nvram_config\s*$/ ) {
-                        # This is for 'dir flash:'.
-                        syslog(LOG_DEBUG, "%s: flash: extracting saved config timestamp: %s %s (with '%s')",
-                            $hostnameport, $1, $2, $try_loop_string);
-                        $time_dtf = $time_parser_flash->parse_datetime($1 . ' ' . $2);
-                        if ( ! defined($time_dtf) ) {
-                            syslog(LOG_DEBUG, "%s: flash: unable to extract saved config timestamp (%s)",
-                                $hostnameport, $try_loop_string);
-                        }
-                    }
-                } 
+                    } 
+                }
             }
         } else {
             syslog(LOG_WARNING, "%s: flash: expect error %s encountered while trying '%s'",
@@ -793,7 +799,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
         }
 
         # If there was an error before, or we have what we need, no need to iterate through another try.
-        if ( $errcount++ > 0 || (defined($flash_size) && defined($time_dtf)) ) {
+        if ( $errcount++ > 0 || defined($flash_size) ) {
             last;
         }
 
