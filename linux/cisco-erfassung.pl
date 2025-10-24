@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # This is to be manually incremented on each "publish".
-my $versionstring = '2025-10-12.01';
+my $versionstring = '2025-10-24.00';
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -40,7 +40,7 @@ my $giturl = $config->{'giturl'};
 
 # General vars.
 my ($asa_serno, $cfsavd_flash, $cleanup, $cnh, $dbh, $dirfh, $do_orphans, $do_scm, $do_scm_add, $do_setnull, $errcount, $fh, $file,
-    $flash_size, $found__cfgsavd_in_running_cfg, $found__no_config_chance_since_restart, $hostname, $hostport, $inv_have_line_name,
+    $flash_size, $found__cfgsavd_in_running_cfg, $found__no_config_change_since_restart, $hostname, $hostport, $inv_have_line_name,
     $inv_have_line_pid, $loopcount, $num_entries, $param, $quiet_mode, $retval, $scmdestfile, $scmtmp, $setnull_field,
     $show_config_command, $showverfeature, $sth_select_hosts, $test_db, $time_dtf, $tmpline, $to_clean_pf, $try_loop_string,
     $use_git, @beforeLinesArray, @cnh_parms, @errtyp, @filelist, @lines, @params, @setnull_fields, @show_config, @show_version,
@@ -445,7 +445,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
     @cnh_parms = ();
 
     # Predefine variables for indicating we had a certain line in a multiline array. Default is no = 0.
-    $found__no_config_chance_since_restart = $found__cfgsavd_in_running_cfg = 0;
+    $found__no_config_change_since_restart = $found__cfgsavd_in_running_cfg = 0;
 
 
     # Connect and try to log in.
@@ -1587,7 +1587,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                         }
                     } elsif ( $line =~ /^! No configuration change since last restart$/ ) {
                         # Only valid for classic IOS routers.
-                        $found__no_config_chance_since_restart = 1;
+                        $found__no_config_change_since_restart = 1;
                     } elsif ( $line =~ /^! NVRAM config last updated at/ ) {
                         $found__cfgsavd_in_running_cfg = 1;
                     }
@@ -1598,12 +1598,18 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                 # Note: This seems to be a more reliable way to find such devices. Determining if a reload happened just by looking
                 #       at cfupdt > cfsavd && cfupdt > reloaded proves to be unreliable due to time needed to parse the startup
                 #       config into the running config.
-                if ( $found__no_config_chance_since_restart == 1 || $found__cfgsavd_in_running_cfg == 0 ) {
+                if ( $found__no_config_change_since_restart == 1 || $found__cfgsavd_in_running_cfg == 0 ) {
                     $just_reloaded = 1;
-                    $cfupdt = $cfsavd;
-                    syslog(LOG_DEBUG,
-                        "%s: config changed (IOS): device seems freshly reloaded (%d, %d), using saved configuration stamp '%s'",
-                            $hostnameport, $found__no_config_chance_since_restart, $found__cfgsavd_in_running_cfg, $cfupdt);
+                    if ( defined($cfsavd) ) {
+                        syslog(LOG_DEBUG,
+                            "%s: config changed (IOS): device seems freshly reloaded (%d, %d), using saved configuration stamp '%s'",
+                                $hostnameport, $found__no_config_change_since_restart, $found__cfgsavd_in_running_cfg, $cfupdt);
+                        $cfupdt = $cfsavd;
+                    } else {
+                        syslog(LOG_DEBUG,
+                            "%s: config changed (IOS): device seems freshly reloaded (%d, %d), but no saved config stamp available",
+                                $hostnameport, $found__no_config_change_since_restart, $found__cfgsavd_in_running_cfg);
+                    }
                 } else {
                     $just_reloaded = 0;
                 }
