@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # This is to be manually incremented on each "publish".
-my $versionstring = '2025-10-24.00';
+my $versionstring = '2025-10-31.00';
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -41,7 +41,7 @@ my $giturl = $config->{'giturl'};
 # General vars.
 my ($asa_serno, $cfsavd_flash, $cleanup, $cnh, $dbh, $dirfh, $do_orphans, $do_scm, $do_scm_add, $do_setnull, $errcount, $fh, $file,
     $flash_size, $found__cfgsavd_in_running_cfg, $found__no_config_change_since_restart, $hostname, $hostport, $inv_have_line_name,
-    $inv_have_line_pid, $loopcount, $num_entries, $param, $quiet_mode, $retval, $scmdestfile, $scmtmp, $setnull_field,
+    $inv_have_line_pid, $loopcount, $num_entries, $param, $quiet_mode, $reloaded, $retval, $scmdestfile, $scmtmp, $setnull_field,
     $show_config_command, $showverfeature, $sth_select_hosts, $test_db, $time_dtf, $tmpline, $to_clean_pf, $try_loop_string,
     $use_git, @beforeLinesArray, @cnh_parms, @errtyp, @filelist, @lines, @params, @setnull_fields, @show_config, @show_version,
     @time_tm, @to_clean_pfs, @try_loop_strings
@@ -203,7 +203,7 @@ if ( defined($dbh->errstr) ) {
     die;
 }
 my $sth_insert_dcapf = $dbh->prepare("INSERT INTO dcapf (confreg, flash, hostname, model, ram, romver, serno, stamp, sysimg, \
-    uptime, uptime_min, version, asa_dm_ver, rld\$reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    uptime, uptime_min, version, asa_dm_ver, rld\$reason, reloaded) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, =)");
 if ( defined($dbh->errstr) ) {
     syslog(LOG_ERR, "SQL preparation error: %s", $dbh->errstr);
     die;
@@ -437,9 +437,9 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
     # Clear vars from previous iteration.
     # FIXME: How to make sure this list is complete?
     $ac_type = $ac_ver = $ac_ver = $asa_dm_ver = $asa_fover = $asa_serno = $cfsavd = $cfupdt = $cfsavd_flash = $confreg = $flash =
-        $inv_descr = $inv_name = $inv_pid = $inv_serno = $inv_vid = $just_reloaded = $model = $ram = $reload_reason = $romver =
-        $serno = $stamp = $sysimg = $time_dtf = $uptime = $uptime_min = $version = $vlan_descr = $vlan_no= $vtp_domain = $vtp_mode =
-        $vtp_prune = $vtp_vers = undef;
+        $inv_descr = $inv_name = $inv_pid = $inv_serno = $inv_vid = $just_reloaded = $model = $ram = $reloaded = $reload_reason =
+        $romver = $serno = $stamp = $sysimg = $time_dtf = $uptime = $uptime_min = $version = $vlan_descr = $vlan_no= $vtp_domain =
+        $vtp_mode = $vtp_prune = $vtp_vers = undef;
 
     # Clear call array for telnet/ssh by expect from stray entries of former run.
     @cnh_parms = ();
@@ -864,8 +864,20 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                     $flash = sprintf("%.0f", $1 / 1024);
                 } elsif ( $line =~ /^\S+ uptime is (.+)\s*$/ ) {
                     $uptime = $1;
-                } elsif ( $line =~ /^System returned to ROM by (\S+)\s*$/ ) {
-                    $reload_reason = $1;
+                } elsif ( $line =~ /^System (restarted|returned to ROM) by (.+) at (.+)$/ ) {
+                    # IOS 11
+                    $reload_reason = $2;
+                    $reloaded = $time_parser_config->parse_datetime($3);
+                    if ( defined($reloaded) ) {
+                        syslog(LOG_DEBUG, "%s: show version: reloaded(1): using formatted date '%s'",
+                            $hostnameport, $time_formatter_db2ts->format_datetime($reloaded));
+                    }
+                } elsif ( $line =~ /^System restarted at (.+)$/ ) {
+                    $reloaded = $time_parser_config->parse_datetime($1);
+                    if ( defined($reloaded) ) {
+                        syslog(LOG_DEBUG, "%s: show version: reloaded(2): using formatted date '%s'",
+                            $hostnameport, $time_formatter_db2ts->format_datetime($reloaded));
+                    }
                 } elsif ( $line =~ /^System restarted (by )?(\S+) at/ ) {
                     $reload_reason = $2;
                 } elsif ( $line =~ /^Configuration register is (\w+)( \(will be \w+ at next reload\))?\s*$/ ) {
@@ -1124,7 +1136,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
         # Deletion succeeded, continue with insert.
         syslog(LOG_DEBUG, "%s: show version: inserting fresh data into dcapf", $hostnameport);
         $sth_insert_dcapf->execute($confreg, $flash, $hostnameport, $model, $ram, $romver, $serno, $stamp, $sysimg, $uptime, 
-            $uptime_min, $version, $asa_dm_ver, $reload_reason);
+            $uptime_min, $version, $asa_dm_ver, $reload_reason, $reloaded);
         if ( defined($dbh->errstr) ) {
             syslog(LOG_WARNING, "%s: show version: SQL execution error inserting into dcapf: %s, skipping host",
                 $hostnameport, $dbh->errstr);
@@ -1492,7 +1504,8 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
                 $cfsavd_flash = $cfsavd_flash;
             } else {
                 if ( $wartungstyp ne 'NEX' ) {
-                    syslog(LOG_NOTICE, "%s: config saved: could not extract timestamp, nor derive it from flash mem", $hostnameport);
+                    syslog(LOG_NOTICE, "%s: config saved: could not extract timestamp, using reload stamp", $hostnameport);
+                    $cfsavd = $reloaded;
                 }
             }
         }

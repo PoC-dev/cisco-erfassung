@@ -36,6 +36,7 @@
      A            UPTIME        50A         ALWNULL TEXT('Textual uptime')
      A            CFUPDT          Z         ALWNULL TEXT('Device cfg changed')
      A            CFSAVD          Z         ALWNULL TEXT('Device cfg written')
+     A            RELOADED        Z         ALWNULL TEXT('Device reloaded')
      A            ASA_DM_VER    20A         ALWNULL TEXT('ASDM version')
      A            ROMVER        20A         ALWNULL TEXT('Boot-ROM version')
      A            VTP_DOMAIN    16A         ALWNULL
