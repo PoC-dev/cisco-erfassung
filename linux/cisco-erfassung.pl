@@ -203,7 +203,7 @@ if ( defined($dbh->errstr) ) {
     die;
 }
 my $sth_insert_dcapf = $dbh->prepare("INSERT INTO dcapf (confreg, flash, hostname, model, ram, romver, serno, stamp, sysimg, \
-    uptime, uptime_min, version, asa_dm_ver, rld\$reason, reloaded) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, =)");
+    uptime, uptime_min, version, asa_dm_ver, rld\$reason, reloaded) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 if ( defined($dbh->errstr) ) {
     syslog(LOG_ERR, "SQL preparation error: %s", $dbh->errstr);
     die;
