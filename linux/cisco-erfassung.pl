@@ -1501,7 +1501,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
         } else {
             if ( defined($cfsavd_flash) ) {
                 syslog(LOG_NOTICE, "%s: config saved: could not extract timestamp, using stamp from flash mem", $hostnameport);
-                $cfsavd_flash = $cfsavd_flash;
+                $cfsavd = $cfsavd_flash;
             } else {
                 if ( $wartungstyp ne 'NEX' ) {
                     syslog(LOG_NOTICE, "%s: config saved: could not extract timestamp, using reload stamp", $hostnameport);
