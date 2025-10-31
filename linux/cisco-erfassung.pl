@@ -1724,7 +1724,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
         }
 
         # Timestamp fields.
-        @setnull_fields = ('cfsavd', 'cfupdt');
+        @setnull_fields = ('cfsavd', 'cfupdt', 'reloaded');
         foreach $setnull_field (@setnull_fields) {
             $dbh->do("UPDATE dcapf SET $setnull_field=NULL WHERE hostname='$hostnameport' AND \
                 $setnull_field='0001-01-01-00.00.00.000000'");

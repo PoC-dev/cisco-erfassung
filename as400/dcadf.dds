@@ -36,34 +36,36 @@
      A                                      Erfasste Daten')
      A          H                           HLPARA(3 2 3 68)
      A                                      HLPPNLGRP('DCA/HOSTNAME' DCAHP)
-     A          H                           HLPARA(4 2 4 34)
-     A                                      HLPPNLGRP('DCA1/DCA' DCAHP)
-     A          H                           HLPARA(5 2 5 34)
-     A                                      HLPPNLGRP('DCA1/UPD_IGN' DCAHP)
-     A          H                           HLPARA(6 2 6 34)
-     A                                      HLPPNLGRP('DCA1/ACU_IGN' DCAHP)
-     A          H                           HLPARA(8 2 8 8)
-     A                                      HLPPNLGRP('DCA1/ACCESS' DCAHP)
-     A          H                           HLPARA(9 2 9 33)
-     A                                      HLPPNLGRP('DCA1/SERVTYP' DCAHP)
-     A          H                           HLPARA(10 2 10 36)
-     A                                      HLPPNLGRP('DCA1/CONN' DCAHP)
-     A          H                           HLPARA(11 2 11 46)
-     A                                      HLPPNLGRP('DCA1/USERNAME' DCAHP)
-     A          H                           HLPARA(12 2 12 46)
-     A                                      HLPPNLGRP('DCA1/PASSWD' DCAHP)
-     A          H                           HLPARA(13 2 13 46)
-     A                                      HLPPNLGRP('DCA1/ENABLE' DCAHP)
-     A          H                           HLPARA(15 2 16 52)
+     A          H                           HLPARA(4 2 4 80)
      A                                      HLPPNLGRP('DCA1/COMMT' DCAHP)
-     A          H                           HLPARA(18 2 18 12)
+     A          H                           HLPARA(5 2 5 34)
+     A                                      HLPPNLGRP('DCA1/DCA' DCAHP)
+     A          H                           HLPARA(6 2 6 34)
+     A                                      HLPPNLGRP('DCA1/UPD_IGN' DCAHP)
+     A          H                           HLPARA(7 2 7 34)
+     A                                      HLPPNLGRP('DCA1/ACU_IGN' DCAHP)
+     A          H                           HLPARA(9 2 9 8)
+     A                                      HLPPNLGRP('DCA1/ACCESS' DCAHP)
+     A          H                           HLPARA(10 2 10 33)
+     A                                      HLPPNLGRP('DCA1/SERVTYP' DCAHP)
+     A          H                           HLPARA(11 2 11 36)
+     A                                      HLPPNLGRP('DCA1/CONN' DCAHP)
+     A          H                           HLPARA(12 2 12 46)
+     A                                      HLPPNLGRP('DCA1/USERNAME' DCAHP)
+     A          H                           HLPARA(13 2 13 46)
+     A                                      HLPPNLGRP('DCA1/PASSWD' DCAHP)
+     A          H                           HLPARA(14 2 14 46)
+     A                                      HLPPNLGRP('DCA1/ENABLE' DCAHP)
+     A          H                           HLPARA(16 2 16 12)
      A                                      HLPPNLGRP('DCA1/STAMPS' DCAHP)
-     A          H                           HLPARA(19 2 19 80)
+     A          H                           HLPARA(17 2 17 80)
      A                                      HLPPNLGRP('DCA1/STAMP' DCAHP)
-     A          H                           HLPARA(20 2 20 46)
+     A          H                           HLPARA(18 2 18 46)
      A                                      HLPPNLGRP('DCA1/CFUPDT' DCAHP)
-     A          H                           HLPARA(21 2 21 80)
+     A          H                           HLPARA(19 2 19 80)
      A                                      HLPPNLGRP('DCA1/CFSAVD' DCAHP)
+     A          H                           HLPARA(20 2 20 46)
+     A                                      HLPPNLGRP('DCA1/RELOADED' DCAHP)
      A          H                           HLPARA(22 70 22 80)
      A                                      HLPPNLGRP('DCA1/MORE' DCAHP)
      A          H                           HLPARA(23 1 23 45)
@@ -74,40 +76,42 @@
      A                                  3  2'Hostname  . . . . . . . . .'
      A                                      DSPATR(HI)
      A            HOSTNAME  R           3 31REFFLD(HOSTNAME HSTPF)
-     A                                  4  3'Automatische Erfassung'
-     A N40                              4 31'Nein'
-     A  40                              4 31'Ja'
-     A                                  5  3'Ignoriere neues OS . . . .'
-     A N41                              5 31'Nein'
-     A  41                              5 31'Ja'
-     A                                  6  3'Ignoriere neuen Anyconnect'
-     A N42                              6 31'Nein'
-     A  42                              6 31'Ja'
+     A                                  4  3'Bemerkung . . . . . . . . .'
+     A            COMMT     R           4 31REFFLD(COMMT HSTPF)
+     A                                  5  3'Automatische Erfassung'
+     A N40                              5 31'Nein'
+     A  40                              5 31'Ja'
+     A                                  6  3'Ignoriere neues OS . . . .'
+     A N41                              6 31'Nein'
+     A  41                              6 31'Ja'
+     A                                  7  3'Ignoriere neuen Anyconnect'
+     A N42                              7 31'Nein'
+     A  42                              7 31'Ja'
      A                                      COLOR(TRQ)
-     A                                  8  2'Zugriff' DSPATR(HI)
-     A                                  9  3'Hosttyp  . . . . . . . . .'
-     A            SERVTYP   R           9 31REFFLD(SERVTYP HSTPF)
-     A                                 10  3'Zugriffsmethode  . . . . .'
-     A            CONN      R          10 31REFFLD(CONN HSTPF)
-     A                                 11  3'Benutzer . . . . . . . . .'
-     A            USERNAME  R          11 31REFFLD(USERNAME HSTPF)
-     A                                 12  3'Passwort . . . . . . . . .'
-     A            PASSWD    R          12 31REFFLD(PASSWD HSTPF)
-     A  43                             13  3'Enable-Secret  . . . . . .'
-     A  43        ENABLE    R          13 31REFFLD(ENABLE HSTPF)
-     A                                 15  2'Bemerkung' DSPATR(HI)
-     A            COMMT     R          16  3REFFLD(COMMT HSTPF)
-     A                                 18  2'Zeitstempel' DSPATR(HI)
-     A                                 19  3'Erfassung  . . . . . . . .'
-     A            STAMP$        16A    19 31
-     A  44                             19 53'Erfassung älter als 3 Tage!'
+     A                                  9  2'Zugriff' DSPATR(HI)
+     A                                 10  3'Hosttyp  . . . . . . . . .'
+     A            SERVTYP   R          10 31REFFLD(SERVTYP HSTPF)
+     A                                 11  3'Zugriffsmethode  . . . . .'
+     A            CONN      R          11 31REFFLD(CONN HSTPF)
+     A                                 12  3'Benutzer . . . . . . . . .'
+     A            USERNAME  R          12 31REFFLD(USERNAME HSTPF)
+     A                                 13  3'Passwort . . . . . . . . .'
+     A            PASSWD    R          13 31REFFLD(PASSWD HSTPF)
+     A  43                             14  3'Enable-Secret  . . . . . .'
+     A  43        ENABLE    R          14 31REFFLD(ENABLE HSTPF)
+     A                                 16  2'Zeitstempel' DSPATR(HI)
+     A                                 17  3'Erfassung  . . . . . . . .'
+     A            STAMP$        16A    17 31
+     A  44                             17 53'Erfassung älter als 3 Tage!'
      A                                      COLOR(RED)
-     A  45                             20  3'Cfg Geändert (run) . . . .'
-     A  45        CFUPDT$       16A    20 31
-     A  46                             21  3'Cfg Gesichert (save) . . .'
-     A  46        CFSAVD$       16A    21 31
-     A  47                             21 53'Älter als run, wr vergessen!'
+     A  45                             18  3'Cfg Geändert (run) . . . .'
+     A  45        CFUPDT$       16A    18 31
+     A  46                             19  3'Cfg Gesichert (save) . . .'
+     A  46        CFSAVD$       16A    19 31
+     A  47                             19 53'Älter als run, wr vergessen!'
      A                                      COLOR(RED)
+     A  48                             20  3'Device reloaded  . . . . .'
+     A  48        RELOADED$     16A    20 31
      A                                 22 70'Weitere ...' DSPATR(HI)
      A                                 23  2'F3=Verlassen   F10=Vlan-Info   -
      A                                      F12=Abbrechen'

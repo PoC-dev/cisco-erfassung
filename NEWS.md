@@ -31,6 +31,9 @@ This new field indicates a just reloaded device, and is required to exclude such
 ## 2025-05-01: added *romver* field to dcapf.
 This new field holds the version of the Boot-ROM of devices. It has been introduced because Cisco 1100 being upgraded from very old versions become stuck in a boot loop with very old ROMMON versions. Note that there is no special function to list ROMMON versions. It's just displayed in the device details screen.
 
+## 2025-10-31: added *reloaded* field to dcapf.
+This new field holds the timestamp of the last reload. It's used as reference when timestaps for saved or running configuration could not be obtained through other means.
+
 ----
 
-2025-08-04 poc@pocnet.net
+2025-10-31 poc@pocnet.net

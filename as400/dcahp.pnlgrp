@@ -169,6 +169,13 @@ lokalen Festwertspeicher des Endgeräts angezeigt.
 konnte.:ENOTE.
 :EHELP.
 .* -----------------------------------------------------------------------------
+:HELP NAME='DCA1/RELOADED'.Reload-Zeitstempel
+:XH3.Reload-Zeitstempel
+:P.Hier wird der Zeitpunkt des letzten Neustarts des Geräts angezeigt.
+:NOTE.Diese Zeile erscheint leer, wenn kein Zeitstempel ausgelesen werden
+konnte.:ENOTE.
+:EHELP.
+.* -----------------------------------------------------------------------------
 :HELP NAME='DCA1/MORE'.Bedienhinweis: Weitere...
 :XH3.Bedienhinweis: Weitere...
 :P.Diese Ausgabe zeigt, dass mit der Taste RollUp bzw. ScrollDown eine weitere

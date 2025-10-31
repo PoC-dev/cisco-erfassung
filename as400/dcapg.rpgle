@@ -1,4 +1,4 @@
-     HCOPYRIGHT('Patrik Schindler <poc@pocnet.net>, 2025-08-12')
+     HCOPYRIGHT('Patrik Schindler <poc@pocnet.net>, 2025-10-31')
      H*
      H* This file is part of cisco-erfassung, an application conglomerate for
      H*  management of Cisco devices on AS/400, i5/OS and IBM i.
@@ -46,6 +46,7 @@
      H*     45: Show CFSAVD field (if not NULL).
      H*     46: Show CFUPDT field (if not NULL).
      H*     47: Show red 'Config not saved' warning.
+     H*     48: Show RELOADED field (if not NULL).
      H*     50: Show red 'End of Support!' warning.
      H*     51: Show VER_SOLL/Update if version is different to given version.
      H*     52: Show Boot-ROM version (if not NULL).
@@ -194,6 +195,16 @@
      C                   EVAL      *IN47 = ((NOT(%NULLIND(CFUPDT)) AND
      C                                      (NOT(%NULLIND(CFSAVD)) AND
      C                                      (CFUPDT > CFSAVD))))
+     C*
+     C* Show cfsavd depending on availability.
+     C                   IF        NOT %NULLIND(RELOADED)
+     C     16            SUBST     RELOADED:1    RELOADED$
+     C     '.':':'       XLATE     RELOADED$     RELOADED$
+     C     '-':' '       XLATE     RELOADED$:11  RELOADED$
+     C                   MOVE      *ON           *IN48
+     C                   ELSE
+     C                   MOVE      *OFF          *IN48
+     C                   ENDIF
      C*------------------------------------------
      C* Display for page two.
      C*----------------------------
