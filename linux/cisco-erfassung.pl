@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # This is to be manually incremented on each "publish".
-my $versionstring = '2025-10-31.00';
+my $versionstring = '2026-02-03.00';
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -437,9 +437,9 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
     # Clear vars from previous iteration.
     # FIXME: How to make sure this list is complete?
     $ac_type = $ac_ver = $ac_ver = $asa_dm_ver = $asa_fover = $asa_serno = $cfsavd = $cfupdt = $cfsavd_flash = $confreg = $flash =
-        $inv_descr = $inv_name = $inv_pid = $inv_serno = $inv_vid = $just_reloaded = $model = $ram = $reloaded = $reload_reason =
-        $romver = $serno = $stamp = $sysimg = $time_dtf = $uptime = $uptime_min = $version = $vlan_descr = $vlan_no= $vtp_domain =
-        $vtp_mode = $vtp_prune = $vtp_vers = undef;
+        $flash_size = $inv_descr = $inv_name = $inv_pid = $inv_serno = $inv_vid = $just_reloaded = $model = $ram = $reloaded =
+        $reload_reason = $romver = $serno = $stamp = $sysimg = $time_dtf = $uptime = $uptime_min = $version = $vlan_descr =
+        $vlan_no= $vtp_domain = $vtp_mode = $vtp_prune = $vtp_vers = undef;
 
     # Clear call array for telnet/ssh by expect from stray entries of former run.
     @cnh_parms = ();
