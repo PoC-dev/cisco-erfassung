@@ -210,6 +210,9 @@ zu Rate gezogen werden.:ENOTE.
 :XH3.EOS
 :P.Hier wird das optionale Datum der herstellerseitigen Abkündügung (EOS, End of
 Service) eingetragen.
+:NOTE.Empfohlen wird, einheitlich das von Cisco publizierte Datum :HP1.End of
+Vulnerability/Security Support: HW:EHP1. einzutragen. Dies ist recht einfach mit
+einer Webrecherche nach dem Gerätetyp und "EOL" zu finden.:ENOTE.
 :EHELP.
 .* -----------------------------------------------------------------------------
 :HELP NAME='DFIELD/CHANGED'.Geändert
