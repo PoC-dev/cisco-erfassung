@@ -98,7 +98,7 @@ zu Rate gezogen werden.:ENOTE.
 .* -----------------------------------------------------------------------------
 :HELP NAME='SFLHDR/EOS'.Spalte EOS
 :XH3.Spalte EOS
-:P.Hier wird das optionale Datum der herstellerseitigen Abkündügung (EOS, End of
+:P.Hier wird das optionale Datum der herstellerseitigen Abkündigung (EOS, End of
 Service) angezeigt.
 :NOTE.Liegt das Datum in der Vergangenheit, wird es rot eingefärbt.:ENOTE.
 :EHELP.
@@ -208,7 +208,7 @@ zu Rate gezogen werden.:ENOTE.
 .* -----------------------------------------------------------------------------
 :HELP NAME='DFIELD/EOS'.EOS
 :XH3.EOS
-:P.Hier wird das optionale Datum der herstellerseitigen Abkündügung (EOS, End of
+:P.Hier wird das optionale Datum der herstellerseitigen Abkündigung (EOS, End of
 Service) eingetragen.
 :NOTE.Empfohlen wird, einheitlich das von Cisco publizierte Datum :HP1.End of
 Vulnerability/Security Support: HW:EHP1. einzutragen. Dies ist recht einfach mit
