@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # This is to be manually incremented on each "publish".
-my $versionstring = '2026-02-03.00';
+my $versionstring = '2026-03-03.00';
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -1334,7 +1334,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
     syslog(LOG_DEBUG, "%s: config: sending command '%s' and parsing output", $hostnameport, $show_config_command);
     $cnh->send($show_config_command . "\n");
 
-    ($pat, $err, $match, $before, $after) = $cnh->expect(5, '-re', $prompt_re);
+    ($pat, $err, $match, $before, $after) = $cnh->expect(15, '-re', $prompt_re);
     if ( ! defined($err) ) {
         # Filter nasty (un)printables. Don't keep CR, because config usually has no empty lines.
         $before =~ tr/\000-\010|\013-\037|\177-\377//d;
