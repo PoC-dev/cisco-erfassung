@@ -1131,6 +1131,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
     } else {
         # Prepare timestamps for, well, timestamps. In the database, that is.
         @time_tm = localtime();
+        # FIXME: Why don't we use $time_formatter_db2 here?
         $stamp = strftime('%Y-%m-%d-%H.%M.%S.000000', @time_tm);
 
         # Deletion succeeded, continue with insert.
