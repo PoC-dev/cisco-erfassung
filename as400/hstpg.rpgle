@@ -582,7 +582,7 @@ X01  C                   ELSE
      C     HOSTNAME      CHAIN(N)  DCATBL                             71
 B02  C     *IN71         IFEQ      *OFF
      C*
-     C* Color me red - if dca is oder than three days.
+     C* Color me red - if dca is older than three days.
      C                   TIME                    TS_NOW
      C                   MOVE      STAMP         TS_DB
      C     TS_NOW        SUBDUR    TS_DB         TS_RESULT:*D

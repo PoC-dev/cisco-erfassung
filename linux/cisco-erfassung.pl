@@ -1730,7 +1730,7 @@ while ( ($hostnameport, $conn_method, $username, $passwd, $enable, $wartungstyp)
             $dbh->do("UPDATE dcapf SET $setnull_field=NULL WHERE hostname='$hostnameport' AND \
                 $setnull_field='0001-01-01-00.00.00.000000'");
             if ( defined($dbh->errstr) ) {
-                syslog(LOG_NOTICE, "%s: DB: SQL execution error for '%s' (stamp1) in cleanup database: %s, skipping to next field",
+                syslog(LOG_NOTICE, "%s: DB: SQL execution error for '%s' (stamp) in cleanup database: %s, skipping to next field",
                     $hostnameport, $setnull_field, $dbh->errstr);
             }
         }
